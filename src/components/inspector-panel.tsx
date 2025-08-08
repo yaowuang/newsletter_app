@@ -1,17 +1,6 @@
 "use client";
 
 import { TextBlock, ImageElement, SectionStyle } from "@/lib/store";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 // Refactored components
 import { TextInspector } from "./inspector-panel/TextInspector";
 import { ImageInspector } from "./inspector-panel/ImageInspector";

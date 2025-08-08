@@ -20,6 +20,13 @@ import { useMemo } from "react";
 
 
 export default function EditorPage() {
+  const {
+    title, date, textBlocks, images, layout, theme, selectedElement, sectionStyles,
+    setTitle, setDate, setLayout, setTheme, addTextBlock, addImage,
+    updateTextBlock, updateImage, selectElement, updateStyle, setSectionCount,
+    deleteElement,
+  } = useStore();
+
   // Listen for delete-element event and call deleteElement from store
   useEffect(() => {
     const handleDeleteElement = (e: CustomEvent) => {
@@ -30,13 +37,7 @@ export default function EditorPage() {
     };
     window.addEventListener('delete-element', handleDeleteElement as EventListener);
     return () => window.removeEventListener('delete-element', handleDeleteElement as EventListener);
-  }, []);
-  const {
-    title, date, textBlocks, images, layout, theme, selectedElement, sectionStyles,
-    setTitle, setDate, setLayout, setTheme, addTextBlock, addImage,
-    updateTextBlock, updateImage, selectElement, updateStyle, setSectionCount,
-    deleteElement,
-  } = useStore();
+  }, [deleteElement]);
 
   // Update handler to accept property and value for granular updates
   const handleUpdateTextBlock = (id: string, property: 'title' | 'content', value: string) => {

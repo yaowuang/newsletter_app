@@ -9,11 +9,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toPng, toSvg } from 'html-to-image';
-import { useStore } from "@/lib/store";
-// @ts-ignore - types may not be resolvable in some build setups
+import { useStore, EditorSnapshot } from "@/lib/store";
 import { saveAs } from 'file-saver';
 
-function encodeSnapshot(obj: any): Blob {
+function encodeSnapshot(obj: Record<string, unknown>): Blob {
   const json = JSON.stringify(obj);
   // Simple binary encoding (UTF-8 bytes)
   const encoder = new TextEncoder();
@@ -21,7 +20,7 @@ function encodeSnapshot(obj: any): Blob {
   return new Blob([bytes], { type: 'application/octet-stream' });
 }
 
-async function decodeSnapshot(file: File): Promise<any> {
+async function decodeSnapshot(file: File): Promise<EditorSnapshot> {
   const buffer = await file.arrayBuffer();
   const decoder = new TextDecoder();
   const json = decoder.decode(buffer);

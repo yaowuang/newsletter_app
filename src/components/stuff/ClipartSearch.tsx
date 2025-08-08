@@ -38,9 +38,16 @@ export const ClipartSearch: React.FC = () => {
       if (!res.ok) throw new Error('HTTP '+res.status);
       const data = await res.json();
       const hits = Array.isArray(data.hits) ? data.hits : [];
-      setResults(hits.map((h:any) => ({ id: h.id, title: h.tags, thumb: h.previewURL, full: h.largeImageURL || h.webformatURL || h.previewURL, isVector: h.image_type === 'vector' })));
-    } catch (e:any) {
-      setResults([]); setError(e.message || 'Error');
+      setResults(hits.map((h: {
+        id: number;
+        tags: string;
+        previewURL: string;
+        largeImageURL?: string;
+        webformatURL?: string;
+        image_type: string;
+      }) => ({ id: h.id, title: h.tags, thumb: h.previewURL, full: h.largeImageURL || h.webformatURL || h.previewURL, isVector: h.image_type === 'vector' })));
+    } catch (e: Error | unknown) {
+      setResults([]); setError(e instanceof Error ? e.message : 'Error');
     } finally { setLoading(false); }
   };
 
@@ -50,7 +57,7 @@ export const ClipartSearch: React.FC = () => {
     <div className='space-y-4'>
       <div className='flex gap-2 items-center'>
         <input type='text' value={query} onChange={e => setQuery(e.target.value)} placeholder='Search (e.g. school, teacher, books)' className='flex-grow px-2 py-1 text-sm border rounded-md bg-transparent' onKeyDown={e => { if (e.key==='Enter') { e.preventDefault(); search(); } }} />
-        <select value={mode} onChange={e => setMode(e.target.value as any)} className='text-sm border rounded-md px-2 py-1 bg-transparent'>
+        <select value={mode} onChange={e => setMode(e.target.value as 'illustration' | 'vector')} className='text-sm border rounded-md px-2 py-1 bg-transparent'>
           <option value='illustration'>Illustrations</option>
           <option value='vector'>Vectors</option>
         </select>

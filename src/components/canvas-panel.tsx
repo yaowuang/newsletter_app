@@ -1,12 +1,12 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { LayoutSelection } from '@/lib/store';
+import { LayoutSelection, useStore } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import { TextBlock, ImageElement, SectionStyles } from '@/lib/store';
 import { Theme } from '@/lib/themes';
 import { CSSProperties, useState } from 'react';
 import { useEffect } from 'react';
-import { Image as ImageIcon, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { Image as ImageIcon, ZoomIn, ZoomOut } from 'lucide-react';
 import { Rnd } from 'react-rnd';
 import { Button } from '@/components/ui/button';
 
@@ -44,7 +44,6 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
   const tableHeaderBg = style.headingBackgroundColor || themeStyle.headingBackgroundColor || '#f5f5f5';
   const tableHeaderColor = style.headingColor || themeStyle.headingColor || 'inherit';
   const tableCellBg = style.backgroundColor || themeStyle.backgroundColor || 'transparent';
-  const tableAltBg = style.backgroundColor || themeStyle.backgroundColor ? undefined : undefined; // placeholder if we add zebra later
 
   return (
     <>
@@ -81,7 +80,7 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
-            table: ({node, ...props}) => (
+            table: ({ ...props}) => (
               <div className="overflow-x-auto">
                 <table
                   {...props}
@@ -94,10 +93,10 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
                 />
               </div>
             ),
-            thead: ({node, ...props}) => (
+            thead: ({ ...props}) => (
               <thead {...props} style={{ backgroundColor: tableHeaderBg, color: tableHeaderColor }} />
             ),
-            th: ({node, ...props}) => (
+            th: ({ ...props}) => (
               <th
                 {...props}
                 style={{
@@ -111,7 +110,7 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
                 }}
               />
             ),
-            td: ({node, ...props}) => (
+            td: ({ ...props}) => (
               <td
                 {...props}
                 style={{
@@ -135,7 +134,7 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
 export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, onSelectElement, selectedElement, sectionStyles, theme, onUpdateImage }: CanvasPanelProps) {
   const [zoom, setZoom] = useState(1);
   const { base, variant } = layoutSelection;
-  const { swapTextBlocks } = require('@/lib/store').useStore.getState();
+  const { swapTextBlocks } = useStore.getState();
 
   // Delete selected element on Delete or Backspace key
   useEffect(() => {
@@ -156,7 +155,7 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedElement]);
   useEffect(() => {
-    const handler = (e: any) => {
+    const handler = (e: CustomEvent) => {
       const { sourceId, targetId } = e.detail || {};
       if (sourceId && targetId) {
         swapTextBlocks(sourceId, targetId);
