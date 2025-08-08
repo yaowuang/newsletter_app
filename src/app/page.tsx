@@ -1,103 +1,112 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { CanvasPanel } from "@/components/canvas-panel";
+import { InspectorPanel } from "@/components/inspector-panel";
+import { StuffPanel } from "@/components/stuff-panel";
+
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { useStore } from "@/lib/store";
+import { useEffect } from "react";
+import { useMemo } from "react";
+
+
+
+
+// Re-export types for convenience
+
+
+export default function EditorPage() {
+  // Listen for delete-element event and call deleteElement from store
+  useEffect(() => {
+    const handleDeleteElement = (e: CustomEvent) => {
+      const detail = e.detail;
+      if (detail && detail.id && (detail.type === 'text' || detail.type === 'image')) {
+        deleteElement(detail.id, detail.type);
+      }
+    };
+    window.addEventListener('delete-element', handleDeleteElement as EventListener);
+    return () => window.removeEventListener('delete-element', handleDeleteElement as EventListener);
+  }, []);
+  const {
+    title, date, textBlocks, images, layout, theme, selectedElement, sectionStyles,
+    setTitle, setDate, setLayout, setTheme, addTextBlock, addImage,
+    updateTextBlock, updateImage, selectElement, updateStyle, setSectionCount,
+    deleteElement,
+  } = useStore();
+
+  // Update handler to accept property and value for granular updates
+  const handleUpdateTextBlock = (id: string, property: 'title' | 'content', value: string) => {
+    if (typeof updateTextBlock === 'function') {
+      updateTextBlock(id, property, value);
+    }
+  };
+
+  
+
+  const selectedBlock = useMemo(() => {
+    if (!selectedElement) return undefined;
+    if (selectedElement.type === 'text') {
+      return textBlocks.find(b => b.id === selectedElement.id);
+    }
+    return images.find(i => i.id === selectedElement.id);
+  }, [textBlocks, images, selectedElement]);
+
+  
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+    <div className="flex flex-col h-screen min-h-0">
+      <ResizablePanelGroup direction="horizontal" className="flex-grow h-full min-h-0 max-w-screen">
+        <ResizablePanel defaultSize={25} minSize={20} maxSize={30} className="flex flex-col min-h-0">
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <StuffPanel 
+              currentLayoutSelection={layout}
+              onLayoutChange={setLayout}
+              currentTheme={theme}
+              onThemeChange={setTheme}
+              onAddTextBlock={addTextBlock}
+              onAddImage={addImage}
+              onSetSectionCount={setSectionCount}
+              sectionCount={textBlocks.length}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel defaultSize={50} className="flex flex-col min-h-0">
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <CanvasPanel 
+              title={title}
+              date={date}
+              textBlocks={textBlocks}
+              images={images}
+              layoutSelection={layout}
+              onSelectElement={selectElement} 
+              selectedElement={selectedElement}
+              sectionStyles={sectionStyles}
+              theme={theme}
+              onUpdateImage={updateImage}
+            />
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel defaultSize={25} minSize={20} maxSize={30} className="flex flex-col min-h-0">
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <InspectorPanel 
+              selectedElement={selectedBlock}
+              onStyleChange={updateStyle}
+              onUpdateTextBlock={handleUpdateTextBlock}
+              onUpdateImage={updateImage}
+              title={title}
+              date={date}
+              onTitleChange={setTitle}
+              onDateChange={setDate}
+            />
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }
