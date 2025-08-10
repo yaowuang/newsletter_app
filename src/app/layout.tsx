@@ -75,13 +75,16 @@ export default function RootLayout({
         {/* Use next/script for deterministic script handling to avoid hydration mismatches */}
         <Script id="school-schema" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(schoolSchema) }} />
         {process.env.NODE_ENV === 'production' && (
-          <Script
-            id="adsense"
-            async
-            strategy="afterInteractive"
-            crossOrigin="anonymous"
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4218207840308637"
-          />
+          <>
+            <meta name="google-adsense-account" content="ca-pub-4218207840308637"></meta>
+            <Script
+              id="adsense"
+              async
+              strategy="afterInteractive"
+              crossOrigin="anonymous"
+              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4218207840308637"
+            />
+          </>
         )}
       </head>
       <body
