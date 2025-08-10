@@ -211,7 +211,7 @@ function Features() {
   return (
     <section id="features" className="py-28 border-t border-b border-white/10 bg-gradient-to-b from-slate-900/40 to-slate-950/60" aria-labelledby="features-heading">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 id="features-heading" className="text-3xl md:text-4xl font-bold mb-14 text-center tracking-tight">Key Features for Parent Resources</h2>
+        <h2 id="features-heading" className="text-3xl md:text-4xl font-bold mb-14 text-center tracking-tight">Key Features</h2>
         <div className="grid md:grid-cols-3 gap-8 md:gap-10">
           {[
             { title: 'Live Section Styling', desc: 'Adjust fonts, borders, colors & backgrounds with instant visual feedback.' },
