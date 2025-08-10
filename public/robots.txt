@@ -1,0 +1,22 @@
+# robots.txt for Elementary School Newsletters
+# Allow all well-behaved crawlers to index public content.
+# Block non-canonical or utility endpoints not useful for search results.
+
+User-agent: *
+# Allow entire site
+Allow: /
+
+# Optional: block dynamic builder export endpoints (uncomment if needed)
+# Disallow: /api/
+# Disallow: /api/*
+
+# Prevent indexing of potential future account/auth pages (placeholders)
+Disallow: /auth/
+Disallow: /login
+Disallow: /signup
+
+# Crawl-delay (commented out; rarely needed and ignored by Google)
+# Crawl-delay: 5
+
+# Sitemap location (add sitemap.xml generation to improve discovery)
+Sitemap: https://elementaryschoolnewsletters.com/sitemap.xml
