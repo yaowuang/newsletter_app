@@ -132,6 +132,22 @@ export default function BuilderPage() {
           </>
         )}
       </ResizablePanelGroup>
+      {/* Sticky AdSense ad at the bottom, only in production */}
+      {typeof window !== 'undefined' && process.env.NODE_ENV === 'production' && (
+        <div style={{ position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 50, background: 'rgba(255,255,255,0.95)', boxShadow: '0 -2px 8px rgba(0,0,0,0.08)' }}>
+          <div style={{ maxWidth: 728, margin: '0 auto', padding: '8px 0', display: 'flex', justifyContent: 'center' }}>
+            <ins
+              className="adsbygoogle"
+              style={{ display: 'block', width: '100%', height: '90px' }}
+              data-ad-client="ca-pub-4218207840308637"
+              data-ad-slot="4972122172"
+              data-ad-format="auto"
+              data-full-width-responsive="true"
+            ></ins>
+          </div>
+          <script dangerouslySetInnerHTML={{ __html: '(adsbygoogle = window.adsbygoogle || []).push({});' }} />
+        </div>
+      )}
     </div>
   );
 }
