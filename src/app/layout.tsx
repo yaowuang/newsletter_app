@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Nunito, Merriweather, Playfair_Display, Raleway, Creepster, Mountains_of_Christmas, Pacifico, Ultra, Roboto_Condensed, Fredoka, Comic_Neue, Bangers, Orbitron, Rye, Special_Elite, Cinzel, Cinzel_Decorative, Oswald, Source_Sans_3, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/header";
+// import { Header } from "@/components/header";
 import { cn } from "@/lib/utils";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"], variable: "--font-poppins" });
@@ -30,8 +30,20 @@ const sourceSans3 = Source_Sans_3({ subsets:["latin"], weight:["400","600"], var
 
 
 export const metadata: Metadata = {
-  title: "Elementary Newsletter Builder",
-  description: "Create beautiful newsletters for your classroom.",
+  title: "Elementary School Newsletters | Builder & Templates",
+  description: "Create engaging elementary school classroom & PTA newsletters with a free drag-and-drop builder. Accessible themes, kid-friendly fonts, instant exports.",
+  keywords: [
+    'elementary school newsletter',
+    'classroom newsletter template',
+    'pta newsletter builder',
+    'teacher communication tool',
+    'school newsletter creator'
+  ],
+  openGraph: {
+    title: 'Elementary School Newsletter Builder',
+    description: 'Drag-and-drop editor for classroom & PTA newsletters. Accessible, fast, free during beta.',
+    type: 'website'
+  }
 };
 
 export default function RootLayout({
@@ -67,10 +79,7 @@ export default function RootLayout({
           sourceSans3.variable
         )}
       >
-        <div className="flex flex-col h-screen">
-          <Header />
-          <main className="flex flex-col flex-grow min-h-0">{children}</main>
-        </div>
+        {children}
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 "use client";
-
-import { FileText, Sun, Download } from "lucide-react";
+import React from 'react';
+import { FileText, Sun, Moon, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,6 +11,7 @@ import {
 import { toPng, toSvg } from 'html-to-image';
 import { useStore, EditorSnapshot } from "@/lib/store";
 import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
 
 function encodeSnapshot(obj: Record<string, unknown>): Blob {
   const json = JSON.stringify(obj);
@@ -46,7 +47,7 @@ export function Header() {
     };
   };
 
-  const handleDownload = async (format: 'enl' | 'png' | 'svg') => {
+  const handleDownload = async (format: 'enl' | 'png' | 'svg' | 'pdf') => {
     try {
       if (format === 'enl') {
         const snapshot = buildSnapshot();
@@ -72,11 +73,27 @@ export function Header() {
         link.click();
       } else if (format === 'svg') {
         const dataUrl = await toSvg(captureTarget, { cacheBust: true });
-        // dataUrl is an SVG data URI; convert to blob for file-saver
         const res = await fetch(dataUrl);
         const svgText = await res.text();
         const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
         saveAs(blob, `${safeTitle}.svg`);
+      } else if (format === 'pdf') {
+        // Reuse html-to-image (already working for PNG) to avoid html2canvas lab() parsing error
+        const dataUrl = await toPng(captureTarget, { cacheBust: true, pixelRatio: 3 });
+        const img = new Image();
+        img.src = dataUrl;
+        await new Promise(res => { img.onload = () => res(null); });
+        const orientation = img.width > img.height ? 'landscape' : 'portrait';
+        const pdf = new jsPDF({ orientation, unit: 'pt', format: 'letter' });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const ratio = Math.min(pageWidth / img.width, pageHeight / img.height);
+        const imgWidth = img.width * ratio;
+        const imgHeight = img.height * ratio;
+        const x = (pageWidth - imgWidth) / 2;
+        const y = (pageHeight - imgHeight) / 2;
+        pdf.addImage(dataUrl, 'PNG', x, y, imgWidth, imgHeight);
+        pdf.save(`${safeTitle}.pdf`);
       }
 
       selectedBorders.forEach(el => el.classList.add('border-blue-500', 'border-2'));
@@ -98,11 +115,51 @@ export function Header() {
     }
   };
 
+  const [isDark, setIsDark] = React.useState(false);
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem('theme');
+      const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const enable = stored ? stored === 'dark' : prefers;
+      if (enable) {
+        document.documentElement.classList.add('dark');
+        setIsDark(true);
+      } else {
+        document.documentElement.classList.remove('dark');
+        setIsDark(false);
+      }
+    } catch {}
+  }, []);
+  const toggleTheme = () => {
+    setIsDark(prev => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme','dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme','light');
+      }
+      return next;
+    });
+  };
+
   return (
-    <header className="flex items-center justify-between p-2 border-b">
-      <div className="flex items-center gap-2">
-        <FileText className="h-6 w-6" />
-        <span className="font-semibold">{storeTitle}</span>
+    <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-2 border-b bg-white/80 dark:bg-gray-900/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-gray-900/60 shadow-sm">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="relative flex items-center justify-center">
+          <svg viewBox="0 0 64 64" className="h-8 w-8 text-blue-600 dark:text-blue-400 drop-shadow-sm" aria-hidden="true">
+            <rect x="6" y="14" width="16" height="36" rx="2" className="fill-blue-500/90 dark:fill-blue-500" />
+            <rect x="24" y="10" width="16" height="40" rx="2" className="fill-purple-500/90 dark:fill-purple-500" />
+            <rect x="42" y="18" width="16" height="32" rx="2" className="fill-pink-500/90 dark:fill-pink-500" />
+            <rect x="9" y="20" width="10" height="2" className="fill-white/80" />
+            <rect x="27" y="16" width="10" height="2" className="fill-white/80" />
+            <rect x="45" y="24" width="10" height="2" className="fill-white/80" />
+          </svg>
+        </div>
+        <div className="flex flex-col leading-tight">
+          <span className="font-semibold tracking-tight text-sm sm:text-base bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">Elementary School Newsletters</span>
+        </div>
       </div>
       <div className="flex items-center gap-2">
         {/* Unified Download dropdown: ENL (project), PNG, SVG */}
@@ -114,6 +171,7 @@ export function Header() {
             <DropdownMenuItem onClick={() => handleDownload('enl')}>Download Project (.enl)</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleDownload('png')}>Download PNG</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleDownload('svg')}>Download SVG</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDownload('pdf')}>Download PDF</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         {/* Load project */}
@@ -122,8 +180,8 @@ export function Header() {
           <Button variant="outline" onClick={() => document.getElementById('import-file')?.click()}>Load</Button>
         </div>
         {/* Theme toggle */}
-        <Button variant="ghost" size="icon" aria-label="Toggle theme">
-          <Sun className="h-4 w-4" />
+        <Button variant="ghost" size="icon" aria-label="Toggle theme" onClick={toggleTheme} aria-pressed={isDark}>
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </Button>
       </div>
     </header>

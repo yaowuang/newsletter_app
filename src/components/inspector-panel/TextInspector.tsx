@@ -1,5 +1,5 @@
 import React from "react";
-import { TextBlock, SectionStyle } from "@/lib/store";
+import { TextBlock, SectionStyle, useStore } from "@/lib/store";
 import { Theme } from "@/lib/themes";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
   onUpdateTextBlock,
   onStyleChange,
 }) => {
+  const deleteElement = useStore(s => s.deleteElement);
   const handleStyleChange = (property: keyof SectionStyle, value: string | number) => {
     onStyleChange(block.id, { [property]: value });
   };
@@ -68,17 +69,153 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
     });
   };
 
+  // Common elementary newsletter section title suggestions
+  const titleSuggestions = React.useMemo(() => [
+    "Announcements",
+    "Art & Music",
+    "Birthday Celebrations",
+    "Class Highlights",
+    "Community News",
+    "Counselor's Corner",
+    "Field Trips",
+    "Homework",
+    "Important Dates",
+    "Looking Ahead",
+    "Lunch Menu",
+    "Math Corner",
+    "Quote of the Week",
+    "Physical Education",
+    "Principal's Message",
+    "PTA News",
+    "Reading Corner",
+    "Reminders",
+    "Safety Reminders",
+    "Science Spotlight",
+    "Student of the Week",
+    "Technology Tips",
+    "Upcoming Events",
+    "Volunteer Opportunities",
+  ], []);
+
+  // Enhanced autocomplete state for Section Title
+  const [titleInput, setTitleInput] = React.useState(block.title || "");
+  const [openTitleSuggestions, setOpenTitleSuggestions] = React.useState(false);
+  const [activeSuggestion, setActiveSuggestion] = React.useState<number>(-1);
+  const suggestionsRef = React.useRef<HTMLUListElement | null>(null);
+  const titleInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  // Sync internal state when external block changes
+  React.useEffect(() => {
+    setTitleInput(block.title || "");
+  }, [block.id, block.title]);
+
+  const filteredTitleSuggestions = React.useMemo(() => {
+    const q = titleInput.trim().toLowerCase();
+    return titleSuggestions
+      .filter(s => s.toLowerCase().includes(q) && s !== titleInput)
+      .slice(0, 8);
+  }, [titleInput, titleSuggestions]);
+
+  const commitTitle = (value: string) => {
+    setTitleInput(value);
+    onUpdateTextBlock(block.id, 'title', value);
+    setOpenTitleSuggestions(false);
+    setActiveSuggestion(-1);
+  };
+
+  const handleTitleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    if (!openTitleSuggestions && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      setOpenTitleSuggestions(true);
+      return;
+    }
+    if (openTitleSuggestions) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveSuggestion(i => {
+          const next = i + 1;
+          return next >= filteredTitleSuggestions.length ? 0 : next;
+        });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveSuggestion(i => {
+          const next = i - 1;
+            return next < 0 ? filteredTitleSuggestions.length - 1 : next;
+        });
+      } else if (e.key === 'Enter' || e.key === 'Tab') {
+        if (filteredTitleSuggestions.length && activeSuggestion >= 0) {
+          e.preventDefault();
+          commitTitle(filteredTitleSuggestions[activeSuggestion]);
+        }
+      } else if (e.key === 'Escape') {
+        setOpenTitleSuggestions(false);
+        setActiveSuggestion(-1);
+      }
+    }
+  };
+
+  const handleTitleBlur: React.FocusEventHandler<HTMLInputElement> = () => {
+    // Delay closing so click can register
+    setTimeout(() => {
+      setOpenTitleSuggestions(false);
+      setActiveSuggestion(-1);
+    }, 120);
+  };
+  const titleListId = React.useId();
+
   return (
     <div className="space-y-6">
+      <div className="flex justify-end -mb-2">
+        <Button type="button" size="sm" variant="destructive" onClick={() => deleteElement(block.id, 'text')} aria-label="Delete section">Delete Section</Button>
+      </div>
       {/* Title & Content */}
       <div className="rounded-xl bg-white dark:bg-gray-900 shadow p-4 space-y-2 border border-gray-100 dark:border-gray-800">
         <Label className="text-base font-medium">Section Title</Label>
-        <Input
-          type="text"
-          value={block.title || ''}
-          onChange={e => onUpdateTextBlock(block.id, 'title', e.target.value)}
-          className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="relative">
+          <Input
+            ref={titleInputRef}
+            type="text"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded={openTitleSuggestions && filteredTitleSuggestions.length > 0}
+            aria-controls={titleListId}
+            aria-activedescendant={activeSuggestion >= 0 ? `${titleListId}-item-${activeSuggestion}` : undefined}
+            placeholder="Start typing e.g. Principal's Message"
+            value={titleInput}
+            onChange={e => {
+              const v = e.target.value;
+              setTitleInput(v);
+              onUpdateTextBlock(block.id, 'title', v);
+              setOpenTitleSuggestions(true);
+              setActiveSuggestion(-1);
+            }}
+            onKeyDown={handleTitleKeyDown}
+            onFocus={() => setOpenTitleSuggestions(true)}
+            onBlur={handleTitleBlur}
+            className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
+          />
+          {openTitleSuggestions && filteredTitleSuggestions.length > 0 && (
+            <ul
+              id={titleListId}
+              ref={suggestionsRef}
+              role="listbox"
+              className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg text-sm focus:outline-none"
+            >
+              {filteredTitleSuggestions.map((s, i) => (
+                <li
+                  id={`${titleListId}-item-${i}`}
+                  key={s}
+                  role="option"
+                  aria-selected={i === activeSuggestion}
+                  onMouseEnter={() => setActiveSuggestion(i)}
+                  onMouseDown={(e) => { e.preventDefault(); commitTitle(s); }}
+                  className={"px-3 py-2 cursor-pointer select-none " + (i === activeSuggestion ? "bg-blue-600 text-white" : "hover:bg-gray-100 dark:hover:bg-gray-700")}
+                >
+                  {s}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         <Label className="text-base font-medium">Section Content</Label>
         <Textarea
           ref={textareaRef}

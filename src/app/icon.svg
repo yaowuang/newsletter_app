@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background circle for better small-size contrast -->
+  <circle cx="32" cy="32" r="32" fill="url(#g)"/>
+  <!-- Books stack -->
+  <rect x="12" y="20" width="14" height="28" rx="2" fill="#3B82F6" />
+  <rect x="26" y="16" width="14" height="32" rx="2" fill="#8B5CF6" />
+  <rect x="40" y="24" width="14" height="24" rx="2" fill="#EC4899" />
+  <!-- Book stripes -->
+  <rect x="15" y="26" width="8" height="2" fill="white" opacity="0.85"/>
+  <rect x="29" y="22" width="8" height="2" fill="white" opacity="0.85"/>
+  <rect x="43" y="30" width="8" height="2" fill="white" opacity="0.85"/>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F1F5F9"/>
+    </linearGradient>
+  </defs>
+</svg>

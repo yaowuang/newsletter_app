@@ -1,7 +1,8 @@
 import React from "react";
-import { ImageElement } from "@/lib/store";
+import { ImageElement, useStore } from "@/lib/store";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface ImageInspectorProps {
   image: ImageElement;
@@ -9,8 +10,12 @@ interface ImageInspectorProps {
 }
 
 export const ImageInspector: React.FC<ImageInspectorProps> = ({ image, onUpdateImage }) => {
+  const deleteElement = useStore(s => s.deleteElement);
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button variant="destructive" size="sm" onClick={() => deleteElement(image.id, 'image')} aria-label="Delete image element">Delete Image</Button>
+      </div>
       {/* Position */}
       <div className="rounded-xl bg-gray-50 dark:bg-gray-800 shadow p-4 space-y-4 border border-gray-100 dark:border-gray-800">
         <h3 className="text-md font-semibold">Position</h3>
