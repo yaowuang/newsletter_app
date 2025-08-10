@@ -59,12 +59,84 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
     const end = el.selectionEnd ?? start;
     const next = current.slice(0, start) + token + current.slice(end);
     onUpdateTextBlock(block.id, 'content', next);
-    // restore cursor after React state update
     requestAnimationFrame(() => {
       if (textareaRef.current) {
         const pos = start + token.length;
         textareaRef.current.selectionStart = textareaRef.current.selectionEnd = pos;
         textareaRef.current.focus();
+      }
+    });
+  };
+
+  const applyFormatting = (action: string) => {
+    const current = typeof block.content === 'string' ? block.content : '';
+    const el = textareaRef.current;
+    if (!el) return;
+    const start = el.selectionStart ?? 0;
+    const end = el.selectionEnd ?? start;
+    const selected = current.slice(start, end);
+
+    let replacement = '';
+    let newStart = start;
+    let newEnd = end;
+
+    const wrapOrInsert = (pre: string, post: string, placeholder: string) => {
+      if (selected) {
+        return pre + selected + post;
+      }
+      return pre + placeholder + post;
+    };
+
+    switch(action) {
+      case 'bold':
+        replacement = wrapOrInsert('**', '**', 'bold text');
+        newStart = start + 2;
+        newEnd = start + (selected ? selected.length : 9) + 2; // 'bold text'.length = 9
+        break;
+      case 'italic':
+        replacement = wrapOrInsert('*', '*', 'italic text');
+        newStart = start + 1;
+        newEnd = start + (selected ? selected.length : 11) + 1;
+        break;
+      case 'ul': {
+        const text = selected || 'List item';
+        replacement = text.split('\n').map(l => l ? `- ${l}` : '- ').join('\n');
+        newStart = start + 2;
+        newEnd = start + replacement.length;
+        break; }
+      case 'ol': {
+        const text = selected || 'List item';
+        replacement = text.split('\n').map((l,i) => `${i+1}. ${l || 'List item'}`).join('\n');
+        newStart = start + 3;
+        newEnd = start + replacement.length;
+        break; }
+      case 'link': {
+        const placeholder = selected || 'link text';
+        replacement = `[${placeholder}](https://)`;
+        newStart = start + 1;
+        newEnd = start + 1 + placeholder.length;
+        break; }
+      case 'table': {
+        replacement = '\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Value 1 | Value 2 | Value 3 |\n';
+        newStart = start + 2;
+        newEnd = start + replacement.length;
+        break; }
+      case 'hr': {
+        replacement = '\n---\n';
+        newStart = start + 1;
+        newEnd = newStart + 3;
+        break; }
+      default:
+        return;
+    }
+
+    const next = current.slice(0, start) + replacement + current.slice(end);
+    onUpdateTextBlock(block.id, 'content', next);
+    requestAnimationFrame(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.selectionStart = newStart;
+        textareaRef.current.selectionEnd = Math.min(newEnd, next.length);
       }
     });
   };
@@ -217,6 +289,15 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
           )}
         </div>
         <Label className="text-base font-medium">Section Content</Label>
+        <div className="flex flex-wrap gap-1 mb-1 text-xs">
+          <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('bold')}><strong>B</strong></Button>
+            <Button type="button" size="sm" variant="outline" className="h-7 px-2 italic" onClick={() => applyFormatting('italic')}>I</Button>
+            <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('ul')}>• List</Button>
+            <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('ol')}>1. List</Button>
+            <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('link')}>Link</Button>
+            <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('table')}>Table</Button>
+            <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('hr')}>HR</Button>
+        </div>
         <Textarea
           ref={textareaRef}
           value={typeof block.content === 'string' ? block.content : ''}
