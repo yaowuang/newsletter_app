@@ -104,7 +104,7 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
           </div>
           <div className="flex items-center gap-3">
             <Label className="min-w-[120px]">Title Align</Label>
-            <Select value={(theme.styles.title as any).textAlign || 'center'} onValueChange={v => setThemeTitleAlignment?.(v as any)}>
+            <Select value={theme.styles.title.textAlign || 'center'} onValueChange={v => setThemeTitleAlignment?.(v as 'left' | 'center' | 'right')}>
               <SelectTrigger><SelectValue placeholder="Alignment" /></SelectTrigger>
               <SelectContent>
                 {['left','center','right'].map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}
@@ -138,7 +138,7 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
           </div>
           <div className="flex items-center gap-3">
             <Label className="min-w-[120px]">Date Align</Label>
-            <Select value={(theme.styles.date as any).textAlign || 'center'} onValueChange={v => setThemeDateAlignment?.(v as any)}>
+            <Select value={theme.styles.date.textAlign || 'center'} onValueChange={v => setThemeDateAlignment?.(v as 'left' | 'center' | 'right')}>
               <SelectTrigger><SelectValue placeholder="Alignment" /></SelectTrigger>
               <SelectContent>
                 {['left','center','right'].map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}

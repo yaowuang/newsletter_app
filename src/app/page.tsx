@@ -31,9 +31,6 @@ export const metadata: Metadata = {
   }
 };
 
-// Reusable motion-safe utility classes & tokens (could be moved to a separate file later)
-const fadeClass = 'opacity-0 animate-in fade-in ease-out duration-500 motion-reduce:animate-none motion-reduce:opacity-100';
-
 export default function LandingPage() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-[#0c1220] via-[#101a32] to-[#1b2240] text-slate-100 selection:bg-blue-500/30">
@@ -60,7 +57,6 @@ export default function LandingPage() {
         {/* Structured Data */}
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: JSON.stringify([
               {

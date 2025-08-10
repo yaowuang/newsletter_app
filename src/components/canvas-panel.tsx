@@ -283,6 +283,13 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
             )}
           </Rnd>
         ))}
+        {/* Watermark */}
+        <div
+          className="pointer-events-none select-none absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] tracking-wide text-gray-400 opacity-60"
+          style={{ letterSpacing: '0.1em', fontFamily: theme.styles.title.fontFamily }}
+        >
+          CREATED WITH ELEMENTARYSCHOOLNEWSLETTERS.COM
+        </div>
         </div>
         </div>
       </div>
