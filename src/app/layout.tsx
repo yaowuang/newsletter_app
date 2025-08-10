@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Nunito, Merriweather, Playfair_Display, Raleway, Creepster, Mountains_of_Christmas, Pacifico, Ultra, Roboto_Condensed, Fredoka, Comic_Neue, Bangers, Orbitron, Rye, Special_Elite, Cinzel, Cinzel_Decorative, Oswald, Source_Sans_3, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
-// import { Header } from "@/components/header";
+import Footer from "@/components/footer";
 import { cn } from "@/lib/utils";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"], variable: "--font-poppins" });
@@ -51,8 +51,33 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const schoolSchema = {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": "Anytown Elementary School",
+    "url": "https://www.elementaryschoolnewsletters.com/",
+    "logo": "https://www.elementaryschoolnewsletters.com/public/book-icon.svg",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "123 Education Lane",
+      "addressLocality": "Anytown",
+      "addressRegion": "CA",
+      "postalCode": "12345",
+      "addressCountry": "US"
+    },
+    "telephone": "+1-555-123-4567"
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schoolSchema) }}
+        />
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4218207840308637"
+     crossorigin="anonymous"></script>
+      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
@@ -80,6 +105,7 @@ export default function RootLayout({
         )}
       >
         {children}
+        <Footer />
       </body>
     </html>
   );
