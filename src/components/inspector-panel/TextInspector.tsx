@@ -234,6 +234,17 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
   };
   const titleListId = React.useId();
 
+  // Generated IDs for a11y associations
+  const headingColorId = `heading-color-${block.id}`;
+  const headingBgId = `heading-bg-${block.id}`;
+  const headingFontId = `heading-font-${block.id}`;
+  const contentColorId = `content-color-${block.id}`;
+  const contentBgId = `content-bg-${block.id}`;
+  const contentFontId = `content-font-${block.id}`;
+  const borderColorId = `border-color-${block.id}`;
+  const borderWidthId = `border-width-${block.id}`;
+  const borderRadiusId = `border-radius-${block.id}`;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-end -mb-2">
@@ -241,9 +252,11 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
       </div>
       {/* Title & Content */}
       <div className="rounded-xl bg-white dark:bg-gray-900 shadow p-4 space-y-2 border border-gray-100 dark:border-gray-800">
-        <Label className="text-base font-medium">Section Title</Label>
+        <Label className="text-base font-medium" htmlFor={`section-title-${block.id}`}>Section Title</Label>
         <div className="relative">
           <Input
+            id={`section-title-${block.id}`}
+            name={`sectionTitle-${block.id}`}
             ref={titleInputRef}
             type="text"
             role="combobox"
@@ -288,7 +301,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
             </ul>
           )}
         </div>
-        <Label className="text-base font-medium">Section Content</Label>
+        <Label className="text-base font-medium" htmlFor={`section-content-${block.id}`}>Section Content</Label>
         <div className="flex flex-wrap gap-1 mb-1 text-xs">
           <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('bold')}><strong>B</strong></Button>
             <Button type="button" size="sm" variant="outline" className="h-7 px-2 italic" onClick={() => applyFormatting('italic')}>I</Button>
@@ -299,6 +312,8 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
             <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('hr')}>HR</Button>
         </div>
         <Textarea
+          id={`section-content-${block.id}`}
+          name={`sectionContent-${block.id}`}
           ref={textareaRef}
           value={typeof block.content === 'string' ? block.content : ''}
           onChange={e => onUpdateTextBlock(block.id, 'content', e.target.value)}
@@ -338,19 +353,19 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
         <h3 className="text-md font-semibold mb-2">Heading Styles</h3>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Heading Color</Label>
-            <Input type="color" value={currentStyle.headingColor || theme.styles.section.headingColor || '#000000'} onChange={e => handleStyleChange('headingColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
+            <Label htmlFor={headingColorId} className="min-w-[120px]">Heading Color</Label>
+            <Input id={headingColorId} type="color" value={currentStyle.headingColor || theme.styles.section.headingColor || '#000000'} onChange={e => handleStyleChange('headingColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
             <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.headingColor || theme.styles.section.headingColor || '#000000') === (theme.styles.section.headingColor || '#000000')} onClick={() => handleStyleChange('headingColor', theme.styles.section.headingColor || '#000000')}>↺</Button>
           </div>
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Heading Background</Label>
-            <Input type="color" value={currentStyle.headingBackgroundColor || theme.styles.section.headingBackgroundColor || '#ffffff'} onChange={e => handleStyleChange('headingBackgroundColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
+            <Label htmlFor={headingBgId} className="min-w-[120px]">Heading Background</Label>
+            <Input id={headingBgId} type="color" value={currentStyle.headingBackgroundColor || theme.styles.section.headingBackgroundColor || '#ffffff'} onChange={e => handleStyleChange('headingBackgroundColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
             <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.headingBackgroundColor || theme.styles.section.headingBackgroundColor || '#ffffff') === (theme.styles.section.headingBackgroundColor || '#ffffff')} onClick={() => handleStyleChange('headingBackgroundColor', theme.styles.section.headingBackgroundColor || '#ffffff')}>↺</Button>
           </div>
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Heading Font</Label>
+            <Label htmlFor={headingFontId} className="min-w-[120px]">Heading Font</Label>
             <Select onValueChange={value => handleStyleChange('headingFontFamily', fromLabel(value))} value={toLabel(currentStyle.headingFontFamily || theme.styles.section.headingFontFamily || fonts[0])}>
-              <SelectTrigger><SelectValue placeholder="Select a font" /></SelectTrigger>
+              <SelectTrigger id={headingFontId}><SelectValue placeholder="Select a font" /></SelectTrigger>
               <SelectContent>
                 {fonts.map(font => {
                   const cssVal = FONT_LABEL_TO_VALUE[font] || font;
@@ -372,19 +387,19 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
         <h3 className="text-md font-semibold mb-2">Content Styles</h3>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Content Color</Label>
-            <Input type="color" value={currentStyle.contentColor || theme.styles.section.contentColor || '#000000'} onChange={e => handleStyleChange('contentColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
+            <Label htmlFor={contentColorId} className="min-w-[120px]">Content Color</Label>
+            <Input id={contentColorId} type="color" value={currentStyle.contentColor || theme.styles.section.contentColor || '#000000'} onChange={e => handleStyleChange('contentColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
             <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.contentColor || theme.styles.section.contentColor || '#000000') === (theme.styles.section.contentColor || '#000000')} onClick={() => handleStyleChange('contentColor', theme.styles.section.contentColor || '#000000')}>↺</Button>
           </div>
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Content Background</Label>
-            <Input type="color" value={currentStyle.backgroundColor || theme.styles.section.backgroundColor || '#ffffff'} onChange={e => handleStyleChange('backgroundColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
+            <Label htmlFor={contentBgId} className="min-w-[120px]">Content Background</Label>
+            <Input id={contentBgId} type="color" value={currentStyle.backgroundColor || theme.styles.section.backgroundColor || '#ffffff'} onChange={e => handleStyleChange('backgroundColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
             <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.backgroundColor || theme.styles.section.backgroundColor || '#ffffff') === (theme.styles.section.backgroundColor || '#ffffff')} onClick={() => handleStyleChange('backgroundColor', theme.styles.section.backgroundColor || '#ffffff')}>↺</Button>
           </div>
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Content Font</Label>
+            <Label htmlFor={contentFontId} className="min-w-[120px]">Content Font</Label>
             <Select onValueChange={value => handleStyleChange('fontFamily', fromLabel(value))} value={toLabel(currentStyle.fontFamily || theme.styles.section.contentFontFamily || fonts[0])}>
-              <SelectTrigger><SelectValue placeholder="Select a font" /></SelectTrigger>
+              <SelectTrigger id={contentFontId}><SelectValue placeholder="Select a font" /></SelectTrigger>
               <SelectContent>
                 {fonts.map(font => {
                   const cssVal = FONT_LABEL_TO_VALUE[font] || font;
@@ -406,18 +421,18 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
         <h3 className="text-md font-semibold mb-2">Border Styles</h3>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Border Color</Label>
-            <Input type="color" value={currentStyle.borderColor || theme.styles.section.borderColor || '#000000'} onChange={e => handleStyleChange('borderColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
+            <Label htmlFor={borderColorId} className="min-w-[120px]">Border Color</Label>
+            <Input id={borderColorId} type="color" value={currentStyle.borderColor || theme.styles.section.borderColor || '#000000'} onChange={e => handleStyleChange('borderColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
             <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.borderColor || theme.styles.section.borderColor || '#000000') === (theme.styles.section.borderColor || '#000000')} onClick={() => handleStyleChange('borderColor', theme.styles.section.borderColor || '#000000')}>↺</Button>
           </div>
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Border Width (px)</Label>
-            <Input type="number" value={currentStyle.borderWidth ?? 1} onChange={e => handleStyleChange('borderWidth', parseInt(e.target.value))} className="w-20 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-700" />
+            <Label htmlFor={borderWidthId} className="min-w-[120px]">Border Width (px)</Label>
+            <Input id={borderWidthId} type="number" value={currentStyle.borderWidth ?? 1} onChange={e => handleStyleChange('borderWidth', parseInt(e.target.value))} className="w-20 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-700" />
             <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.borderWidth ?? 1) === 1} onClick={() => handleStyleChange('borderWidth', 1)}>↺</Button>
           </div>
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Border Radius (px)</Label>
-            <Input type="number" value={currentStyle.borderRadius ?? 0} onChange={e => handleStyleChange('borderRadius', parseInt(e.target.value))} className="w-20 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-700" />
+            <Label htmlFor={borderRadiusId} className="min-w-[120px]">Border Radius (px)</Label>
+            <Input id={borderRadiusId} type="number" value={currentStyle.borderRadius ?? 0} onChange={e => handleStyleChange('borderRadius', parseInt(e.target.value))} className="w-20 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-700" />
             <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.borderRadius ?? 0) === 0} onClick={() => handleStyleChange('borderRadius', 0)}>↺</Button>
           </div>
         </div>

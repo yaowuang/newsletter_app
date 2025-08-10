@@ -30,8 +30,19 @@ export const LayoutPicker: React.FC<LayoutPickerProps> = ({ currentLayoutSelecti
   return (
     <div className='space-y-4'>
       <div>
-        <label className='text-sm font-medium'>Number of Sections</label>
-        <div className='flex items-center justify-center gap-2 mt-2'>
+        <label htmlFor='section-count' className='text-sm font-medium'>Number of Sections</label>
+        <input
+          type='number'
+          id='section-count'
+          value={desiredSections}
+          onChange={e => setDesiredSections(Number(e.target.value))}
+          min={1}
+          max={7}
+          style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+          tabIndex={-1}
+          aria-hidden='true'
+        />
+        <div role='group' aria-label='Number of Sections' className='flex items-center justify-center gap-2 mt-2'>
           {[1,2,3,4,5,6,7].map(num => (
             <Button key={num} variant={desiredSections === num ? 'default':'outline'} size='sm' onClick={() => setDesiredSections(num)}>{num}</Button>
           ))}

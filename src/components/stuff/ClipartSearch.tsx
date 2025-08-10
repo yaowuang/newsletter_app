@@ -56,12 +56,14 @@ export const ClipartSearch: React.FC = () => {
   return (
     <div className='space-y-4'>
       <div className='flex gap-2 items-center'>
-        <input type='text' value={query} onChange={e => setQuery(e.target.value)} placeholder='Search (e.g. school, teacher, books)' className='flex-grow px-2 py-1 text-sm border rounded-md bg-transparent' onKeyDown={e => { if (e.key==='Enter') { e.preventDefault(); search(); } }} />
-        <select value={mode} onChange={e => setMode(e.target.value as 'illustration' | 'vector')} className='text-sm border rounded-md px-2 py-1 bg-transparent'>
+        <label htmlFor='clipart-search-query' className='sr-only'>Clipart search query</label>
+        <input id='clipart-search-query' name='clipartSearchQuery' autoComplete='off' type='text' value={query} onChange={e => setQuery(e.target.value)} placeholder='Search (e.g. school, teacher, books)' className='flex-grow px-2 py-1 text-sm border rounded-md bg-transparent' onKeyDown={e => { if (e.key==='Enter') { e.preventDefault(); search(); } }} />
+        <label htmlFor='clipart-search-mode' className='sr-only'>Image type</label>
+        <select id='clipart-search-mode' name='clipartSearchMode' value={mode} onChange={e => setMode(e.target.value as 'illustration' | 'vector')} className='text-sm border rounded-md px-2 py-1 bg-transparent'>
           <option value='illustration'>Illustrations</option>
           <option value='vector'>Vectors</option>
         </select>
-        <Button size='sm' onClick={search} disabled={loading || !query.trim()}>{loading ? '...' : 'Search'}</Button>
+        <Button size='sm' onClick={search} disabled={loading || !query.trim()} aria-label='Search clipart'>{loading ? '...' : 'Search'}</Button>
       </div>
       {!pixabayKey && <p className='text-xs text-amber-600'>Set NEXT_PUBLIC_PIXABAY_KEY to enable search.</p>}
       {error && <p className='text-xs text-red-600'>{error}</p>}

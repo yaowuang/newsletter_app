@@ -11,6 +11,10 @@ interface ImageInspectorProps {
 
 export const ImageInspector: React.FC<ImageInspectorProps> = ({ image, onUpdateImage }) => {
   const deleteElement = useStore(s => s.deleteElement);
+  const posXId = React.useId();
+  const posYId = React.useId();
+  const widthId = React.useId();
+  const heightId = React.useId();
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
@@ -21,12 +25,12 @@ export const ImageInspector: React.FC<ImageInspectorProps> = ({ image, onUpdateI
         <h3 className="text-md font-semibold">Position</h3>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">X</Label>
-            <Input type="number" value={image.x} onChange={e => onUpdateImage(image.id, { x: parseInt(e.target.value) || 0 })} />
+            <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400" htmlFor={posXId}>X</Label>
+            <Input id={posXId} name="imagePosX" type="number" value={image.x} onChange={e => onUpdateImage(image.id, { x: parseInt(e.target.value) || 0 })} />
           </div>
           <div className="space-y-1">
-            <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Y</Label>
-            <Input type="number" value={image.y} onChange={e => onUpdateImage(image.id, { y: parseInt(e.target.value) || 0 })} />
+            <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400" htmlFor={posYId}>Y</Label>
+            <Input id={posYId} name="imagePosY" type="number" value={image.y} onChange={e => onUpdateImage(image.id, { y: parseInt(e.target.value) || 0 })} />
           </div>
         </div>
       </div>
@@ -36,12 +40,12 @@ export const ImageInspector: React.FC<ImageInspectorProps> = ({ image, onUpdateI
         <h3 className="text-md font-semibold">Size</h3>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Width</Label>
-            <Input type="number" value={image.width} onChange={e => onUpdateImage(image.id, { width: parseInt(e.target.value) || 0 })} />
+            <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400" htmlFor={widthId}>Width</Label>
+            <Input id={widthId} name="imageWidth" type="number" value={image.width} onChange={e => onUpdateImage(image.id, { width: parseInt(e.target.value) || 0 })} />
           </div>
           <div className="space-y-1">
-            <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Height</Label>
-            <Input type="number" value={image.height} onChange={e => onUpdateImage(image.id, { height: parseInt(e.target.value) || 0 })} />
+            <Label className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400" htmlFor={heightId}>Height</Label>
+            <Input id={heightId} name="imageHeight" type="number" value={image.height} onChange={e => onUpdateImage(image.id, { height: parseInt(e.target.value) || 0 })} />
           </div>
         </div>
       </div>

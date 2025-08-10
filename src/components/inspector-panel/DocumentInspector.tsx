@@ -66,17 +66,27 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
   const setThemeDateColor = useStore(s => s.setThemeDateColor);
   const setThemeTitleAlignment = useStore(s => s.setThemeTitleAlignment);
   const setThemeDateAlignment = useStore(s => s.setThemeDateAlignment);
+  // ids for form fields
+  const titleInputId = React.useId();
+  const dateInputId = React.useId();
+  // ids for style controls (a11y associations)
+  const titleColorId = React.useId();
+  const titleFontId = React.useId();
+  const titleAlignId = React.useId();
+  const dateColorId = React.useId();
+  const dateFontId = React.useId();
+  const dateAlignId = React.useId();
   return (
     <div className="space-y-6">
       {/* Title & Date Content */}
       <div className="rounded-xl bg-white dark:bg-gray-900 shadow p-4 space-y-4 border border-gray-100 dark:border-gray-800">
         <div className="space-y-2">
-          <Label className="text-base font-medium">Newsletter Title</Label>
-          <Input type="text" value={title} onChange={e => onTitleChange(e.target.value)} className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500" />
+          <Label className="text-base font-medium" htmlFor={titleInputId}>Newsletter Title</Label>
+          <Input id={titleInputId} name="newsletterTitle" type="text" value={title} onChange={e => onTitleChange(e.target.value)} className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500" />
         </div>
         <div className="space-y-2">
-          <Label className="text-base font-medium">Date</Label>
-          <Input type="text" value={date} onChange={e => onDateChange(e.target.value)} className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500" />
+          <Label className="text-base font-medium" htmlFor={dateInputId}>Date</Label>
+          <Input id={dateInputId} name="newsletterDate" type="text" value={date} onChange={e => onDateChange(e.target.value)} className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500" />
         </div>
       </div>
 
@@ -85,13 +95,13 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
         <h3 className="text-md font-semibold mb-2">Title Styles</h3>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Title Color</Label>
-            <Input type="color" value={theme.styles.title.color} onChange={e => setThemeTitleColor?.(e.target.value)} className="w-10 h-10 p-0 border-none" />
+            <Label htmlFor={titleColorId} className="min-w-[120px]">Title Color</Label>
+            <Input id={titleColorId} type="color" value={theme.styles.title.color} onChange={e => setThemeTitleColor?.(e.target.value)} className="w-10 h-10 p-0 border-none" />
           </div>
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Title Font</Label>
+            <Label htmlFor={titleFontId} className="min-w-[120px]">Title Font</Label>
             <Select value={toSelectValue(theme.styles.title.fontFamily)} onValueChange={value => setThemeTitleFont?.(fromSelectValue(value))}>
-              <SelectTrigger><SelectValue placeholder="Select a font" /></SelectTrigger>
+              <SelectTrigger id={titleFontId}><SelectValue placeholder="Select a font" /></SelectTrigger>
               <SelectContent>
                 {fonts.map(font => {
                   const cssVal = LABEL_TO_VAR[font] || font; 
@@ -103,9 +113,9 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
             </Select>
           </div>
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Title Align</Label>
+            <Label htmlFor={titleAlignId} className="min-w-[120px]">Title Align</Label>
             <Select value={theme.styles.title.textAlign || 'center'} onValueChange={v => setThemeTitleAlignment?.(v as 'left' | 'center' | 'right')}>
-              <SelectTrigger><SelectValue placeholder="Alignment" /></SelectTrigger>
+              <SelectTrigger id={titleAlignId}><SelectValue placeholder="Alignment" /></SelectTrigger>
               <SelectContent>
                 {['left','center','right'].map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}
               </SelectContent>
@@ -119,13 +129,13 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
         <h3 className="text-md font-semibold mb-2">Date Styles</h3>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Date Color</Label>
-            <Input type="color" value={theme.styles.date.color} onChange={e => setThemeDateColor?.(e.target.value)} className="w-10 h-10 p-0 border-none" />
+            <Label htmlFor={dateColorId} className="min-w-[120px]">Date Color</Label>
+            <Input id={dateColorId} type="color" value={theme.styles.date.color} onChange={e => setThemeDateColor?.(e.target.value)} className="w-10 h-10 p-0 border-none" />
           </div>
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Date Font</Label>
+            <Label htmlFor={dateFontId} className="min-w-[120px]">Date Font</Label>
             <Select value={toSelectValue(theme.styles.date.fontFamily)} onValueChange={value => setThemeDateFont?.(fromSelectValue(value))}>
-              <SelectTrigger><SelectValue placeholder="Select a font" /></SelectTrigger>
+              <SelectTrigger id={dateFontId}><SelectValue placeholder="Select a font" /></SelectTrigger>
               <SelectContent>
                 {fonts.map(font => {
                   const cssVal = LABEL_TO_VAR[font] || font; 
@@ -137,9 +147,9 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
             </Select>
           </div>
           <div className="flex items-center gap-3">
-            <Label className="min-w-[120px]">Date Align</Label>
+            <Label htmlFor={dateAlignId} className="min-w-[120px]">Date Align</Label>
             <Select value={theme.styles.date.textAlign || 'center'} onValueChange={v => setThemeDateAlignment?.(v as 'left' | 'center' | 'right')}>
-              <SelectTrigger><SelectValue placeholder="Alignment" /></SelectTrigger>
+              <SelectTrigger id={dateAlignId}><SelectValue placeholder="Alignment" /></SelectTrigger>
               <SelectContent>
                 {['left','center','right'].map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}
               </SelectContent>
