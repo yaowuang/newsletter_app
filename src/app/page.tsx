@@ -143,13 +143,17 @@ function Logo() {
 
 function Hero() {
   return (
-    <section className="relative pt-10 pb-10" aria-labelledby="hero-heading">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute left-1/2 top-14 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.18),transparent_60%)] blur-3xl opacity-60" />
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.05),transparent_70%)]" />
+    <section className="relative pt-14 pb-16" aria-labelledby="hero-heading">
+      {/* Decorative background */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-10 -translate-x-1/2 w-[1400px] h-[1400px] rounded-full bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.18),transparent_65%)] blur-3xl opacity-60" />
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.06),transparent_70%)]" />
+        <div className="absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent)] opacity-[0.08] bg-[linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:70px_70px]" />
       </div>
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center">
-        <div className="relative z-10">
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 flex flex-col gap-14">
+        {/* Text Block */}
+        <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 ring-1 ring-white/10 backdrop-blur-sm mb-6 text-[11px] font-medium tracking-wide text-slate-300 shadow-inner shadow-white/5">
             <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 animate-pulse" /> New: PDF & SVG Export
           </div>
@@ -159,29 +163,42 @@ function Hero() {
               <span aria-hidden className="pointer-events-none absolute -inset-1 rounded-lg blur-md opacity-25 bg-gradient-to-r from-blue-500 via-indigo-500 to-fuchsia-500" />
             </span> in minutes
           </h1>
-          <p className="mt-6 text-lg text-slate-300/90 max-w-[44ch] leading-relaxed">A focused dark‑mode <strong className="font-semibold">elementary school newsletter builder</strong> for classrooms. Craft, style & share weekly classroom newsletter updates with ready-made templates—no logins, no clutter.</p>
-          <p className="mt-4 text-sm text-slate-400 max-w-[52ch] leading-relaxed">Create a free classroom newsletter, reuse last week’s layout, and export polished PDFs, PNG or SVG files in seconds. Perfect for teachers needing a simple, accessible school newsletter template.</p>
-          <div className="mt-8 flex flex-wrap gap-4">
+          <p className="mt-6 text-lg text-slate-300/90 max-w-[50ch] mx-auto leading-relaxed">A focused dark‑mode <strong className="font-semibold">elementary school newsletter builder</strong> for classrooms. Craft, style & share weekly updates with ready-made templates—no logins, no clutter.</p>
+          <p className="mt-4 text-sm text-slate-400 max-w-[60ch] mx-auto leading-relaxed">Create a free classroom newsletter, reuse last week’s layout, and export polished PDFs, PNG or SVG files in seconds. Perfect for teachers needing a simple, accessible school newsletter template.</p>
+          <div className="mt-9 flex flex-wrap justify-center gap-4">
             <Link href="/builder" className="group inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-sm font-semibold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 shadow-[0_8px_30px_-6px_rgba(59,130,246,0.55)] hover:shadow-[0_8px_34px_-4px_rgba(99,102,241,0.55)] transition">
               Start Free <span className="text-base translate-x-0 group-hover:translate-x-0.5 transition">→</span>
             </Link>
             <a href="#features" className="inline-flex items-center rounded-xl px-7 py-3.5 text-sm font-medium bg-white/7 ring-1 ring-white/15 hover:bg-white/10 transition">See Features</a>
           </div>
-          <ul className="mt-6 flex flex-wrap gap-5 text-[11px] uppercase tracking-wider text-slate-500">
+          <ul className="mt-6 flex flex-wrap justify-center gap-5 text-[11px] uppercase tracking-wider text-slate-500">
             {['No Login','Instant Export','Accessible','Free Forever'].map(t => <li key={t}>{t}</li>)}
           </ul>
         </div>
-        <div className="relative">
-          {/* Separate the clipped container (for rounded corners) from the floating callouts so they are no longer cut off */}
-          <div className="group relative aspect-[4/3] rounded-3xl bg-gradient-to-br from-slate-800/70 via-slate-900/70 to-slate-800/40 ring-1 ring-white/10 shadow-2xl backdrop-blur-xl overflow-hidden">
-            <Image src="/builder-screenshot.png" alt="Elementary school newsletter builder interface showing drag-and-drop sections, theme styling options and export formats." fill priority sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover object-top rounded-3xl" />
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-tr from-blue-500/10 via-transparent to-fuchsia-500/10 transition" />
+
+        {/* Wide Screenshot Showcase */}
+        <div className="relative group">
+          {/* Frame & glow */}
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-fuchsia-500/20 blur-xl opacity-40 group-hover:opacity-55 transition" aria-hidden />
+          <div className="relative rounded-3xl ring-1 ring-white/12 bg-gradient-to-br from-slate-800/70 via-slate-900/70 to-slate-800/40 shadow-2xl overflow-hidden backdrop-blur-xl">
+            {/* Use intrinsic wide ratio; adjust numbers to your new asset */}
+            <div className="relative w-full aspect-[21/9] md:aspect-[18/7] lg:aspect-[16/6]">
+              <Image
+                src="/builder-screenshot.png"
+                alt="Elementary school newsletter builder interface with drag-and-drop sections, theme styling panel and export options."
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 1280px"
+                className="object-cover object-top"
+              />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-tr from-blue-500/10 via-transparent to-fuchsia-500/10 transition" />
+            </div>
           </div>
-          {/* Callouts moved outside the overflow-hidden element so they are fully visible */}
-          <div className="absolute -top-6 -left-6 bg-slate-900/95 text-slate-100 rounded-xl border border-white/15 shadow-lg p-3 text-[10px] max-w-[170px] rotate-[-3deg]">
+          {/* Callouts repositioned for wide asset */}
+          <div className="hidden md:block absolute -top-6 left-6 bg-slate-900/95 text-slate-100 rounded-xl border border-white/15 shadow-lg px-4 py-3 text-[11px] max-w-[200px] -rotate-2">
             Drag sections & change themes.
           </div>
-          <div className="absolute -bottom-6 -right-4 bg-slate-900/95 text-slate-100 rounded-xl border border-white/15 shadow-lg p-3 text-[10px] max-w-[190px] rotate-2">
+          <div className="hidden md:block absolute -bottom-6 right-8 bg-slate-900/95 text-slate-100 rounded-xl border border-white/15 shadow-lg px-4 py-3 text-[11px] max-w-[210px] rotate-2">
             Export PNG / SVG / PDF instantly.
           </div>
         </div>

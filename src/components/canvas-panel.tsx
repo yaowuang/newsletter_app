@@ -175,8 +175,8 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
     width: '100%',
     height: '100%',
   };
-  const titleStyle: CSSProperties = { gridArea: 'title', fontFamily: theme.styles.title.fontFamily, color: theme.styles.title.color };
-  const dateStyle: CSSProperties = { gridArea: 'date', fontFamily: theme.styles.date.fontFamily, color: theme.styles.date.color };
+  const titleStyle: CSSProperties = { gridArea: 'title', fontFamily: theme.styles.title.fontFamily, color: theme.styles.title.color, textAlign: theme.styles.title.textAlign || 'center' };
+  const dateStyle: CSSProperties = { gridArea: 'date', fontFamily: theme.styles.date.fontFamily, color: theme.styles.date.color, textAlign: theme.styles.date.textAlign || 'center' };
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.25, 2));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.25, 0.25));
@@ -226,8 +226,8 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
           }}
         >
         <div id="newsletter-canvas" className="w-full h-full p-8" style={pageStyle}>
-        <h1 style={titleStyle} className="text-4xl font-bold text-center">{title}</h1>
-        <p style={dateStyle} className="text-center text-muted-foreground">{date}</p>
+        <h1 style={titleStyle} className="text-4xl font-bold" >{title}</h1>
+        <p style={dateStyle} className="text-muted-foreground" >{date}</p>
         
         {textBlocks.map((block, index) => {
           const gridArea = `sec${index + 1}`;

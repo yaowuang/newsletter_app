@@ -132,6 +132,8 @@ interface AppState {
   setThemeDateFont?: (font: string) => void;
   setThemeTitleColor?: (color: string) => void;
   setThemeDateColor?: (color: string) => void;
+  setThemeTitleAlignment?: (align: 'left' | 'center' | 'right') => void; // new
+  setThemeDateAlignment?: (align: 'left' | 'center' | 'right') => void; // new
   setLayout: (layout: LayoutSelection) => void;
   setSectionCount: (count: number) => void;
   loadSnapshot: (snapshot: EditorSnapshot) => void;
@@ -208,6 +210,8 @@ export const useStore = create<AppState>()(
     setThemeDateFont: (font: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, date: { ...state.theme.styles.date, fontFamily: font } } } })),
     setThemeTitleColor: (color: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...state.theme.styles.title, color } } } })),
     setThemeDateColor: (color: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, date: { ...state.theme.styles.date, color } } } })),
+    setThemeTitleAlignment: (align) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...state.theme.styles.title, textAlign: align } } } })),
+    setThemeDateAlignment: (align) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, date: { ...state.theme.styles.date, textAlign: align } } } })),
 
     setLayout: (layout) => set({ layout }),
 

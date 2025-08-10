@@ -3,6 +3,7 @@ import { Poppins, Nunito, Merriweather, Playfair_Display, Raleway, Creepster, Mo
 import "./globals.css";
 import Footer from "@/components/footer";
 import { cn } from "@/lib/utils";
+import Script from "next/script";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"], variable: "--font-poppins" });
 const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
@@ -28,6 +29,23 @@ const cinzelDecorative = Cinzel_Decorative({ subsets:["latin"], weight:["400","7
 const oswald = Oswald({ subsets:["latin"], weight:["400","600"], variable:"--font-oswald" });
 const sourceSans3 = Source_Sans_3({ subsets:["latin"], weight:["400","600"], variable:"--font-source-sans3" });
 
+// Moved outside component to ensure stable reference between server & client
+const schoolSchema = {
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Anytown Elementary School",
+  "url": "https://www.elementaryschoolnewsletters.com/",
+  "logo": "https://www.elementaryschoolnewsletters.com/public/book-icon.svg",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "123 Education Lane",
+    "addressLocality": "Anytown",
+    "addressRegion": "CA",
+    "postalCode": "12345",
+    "addressCountry": "US"
+  },
+  "telephone": "+1-555-123-4567"
+};
 
 export const metadata: Metadata = {
   title: "Elementary School Newsletters | Builder & Templates",
@@ -51,32 +69,20 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const schoolSchema = {
-    "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    "name": "Anytown Elementary School",
-    "url": "https://www.elementaryschoolnewsletters.com/",
-    "logo": "https://www.elementaryschoolnewsletters.com/public/book-icon.svg",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "123 Education Lane",
-      "addressLocality": "Anytown",
-      "addressRegion": "CA",
-      "postalCode": "12345",
-      "addressCountry": "US"
-    },
-    "telephone": "+1-555-123-4567"
-  };
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schoolSchema) }}
-        />
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4218207840308637"
-     crossOrigin="anonymous"></script>
+        {/* Use next/script for deterministic script handling to avoid hydration mismatches */}
+        <Script id="school-schema" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(schoolSchema) }} />
+        {process.env.NODE_ENV === 'production' && (
+          <Script
+            id="adsense"
+            async
+            strategy="afterInteractive"
+            crossOrigin="anonymous"
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4218207840308637"
+          />
+        )}
       </head>
       <body
         className={cn(
@@ -87,21 +93,21 @@ export default function RootLayout({
           playfairDisplay.variable,
           raleway.variable,
           creepster.variable,
-          mountainsOfChristmas.variable,
-          pacifico.variable,
-          ultra.variable,
-          robotoCondensed.variable,
-          fredoka.variable,
-          comicNeue.variable,
-          shareTechMono.variable,
-          bangers.variable,
-          orbitron.variable,
-          rye.variable,
-          specialElite.variable,
-          cinzel.variable,
-          cinzelDecorative.variable,
-          oswald.variable,
-          sourceSans3.variable
+            mountainsOfChristmas.variable,
+            pacifico.variable,
+            ultra.variable,
+            robotoCondensed.variable,
+            fredoka.variable,
+            comicNeue.variable,
+            shareTechMono.variable,
+            bangers.variable,
+            orbitron.variable,
+            rye.variable,
+            specialElite.variable,
+            cinzel.variable,
+            cinzelDecorative.variable,
+            oswald.variable,
+            sourceSans3.variable
         )}
       >
         {children}

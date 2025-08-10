@@ -9,10 +9,12 @@ export type Theme = {
     title: {
       fontFamily: CSSProperties['fontFamily'];
       color: CSSProperties['color'];
+      textAlign?: CSSProperties['textAlign']; // added
     };
     date: {
       fontFamily: CSSProperties['fontFamily'];
       color: CSSProperties['color'];
+      textAlign?: CSSProperties['textAlign']; // added
     };
     section: {
       headingColor?: CSSProperties['color'];

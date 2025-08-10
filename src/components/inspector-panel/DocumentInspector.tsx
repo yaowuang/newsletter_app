@@ -64,6 +64,8 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
   const setThemeDateFont = useStore(s => s.setThemeDateFont);
   const setThemeTitleColor = useStore(s => s.setThemeTitleColor);
   const setThemeDateColor = useStore(s => s.setThemeDateColor);
+  const setThemeTitleAlignment = useStore(s => s.setThemeTitleAlignment);
+  const setThemeDateAlignment = useStore(s => s.setThemeDateAlignment);
   return (
     <div className="space-y-6">
       {/* Title & Date Content */}
@@ -100,6 +102,15 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
               </SelectContent>
             </Select>
           </div>
+          <div className="flex items-center gap-3">
+            <Label className="min-w-[120px]">Title Align</Label>
+            <Select value={(theme.styles.title as any).textAlign || 'center'} onValueChange={v => setThemeTitleAlignment?.(v as any)}>
+              <SelectTrigger><SelectValue placeholder="Alignment" /></SelectTrigger>
+              <SelectContent>
+                {['left','center','right'].map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
@@ -122,6 +133,15 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
                     <SelectItem key={font} value={font} style={{ fontFamily: cssVal }}>{font}</SelectItem>
                   );
                 })}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-3">
+            <Label className="min-w-[120px]">Date Align</Label>
+            <Select value={(theme.styles.date as any).textAlign || 'center'} onValueChange={v => setThemeDateAlignment?.(v as any)}>
+              <SelectTrigger><SelectValue placeholder="Alignment" /></SelectTrigger>
+              <SelectContent>
+                {['left','center','right'].map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
