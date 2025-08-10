@@ -44,6 +44,7 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
   const tableHeaderBg = style.headingBackgroundColor || themeStyle.headingBackgroundColor || '#f5f5f5';
   const tableHeaderColor = style.headingColor || themeStyle.headingColor || 'inherit';
   const tableCellBg = style.backgroundColor || themeStyle.backgroundColor || 'transparent';
+  const linkColor = style.headingBackgroundColor || themeStyle.headingBackgroundColor; // new: link color based on section title background
 
   return (
     <>
@@ -119,6 +120,15 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
                   fontSize: '0.75rem',
                   lineHeight: 1.25,
                   backgroundColor: tableCellBg,
+                }}
+              />
+            ),
+            a: ({ ...props}) => (
+              <a
+                {...props}
+                style={{
+                  color: linkColor,
+                  textDecoration: 'underline',
                 }}
               />
             ),
