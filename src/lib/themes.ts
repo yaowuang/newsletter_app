@@ -24,6 +24,8 @@ export type Theme = {
       contentFontFamily?: CSSProperties['fontFamily'];
       backgroundColor?: CSSProperties['backgroundColor'];
       borderColor?: CSSProperties['borderColor'];
+      // borderRadius now numeric px value for consistency with SectionStyle
+      borderRadius?: number;
     }
   }
 };
@@ -43,6 +45,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Nunito',
         backgroundColor: '#FFFFFF',
         borderColor: '#E5E7EB',
+        borderRadius: 12, // 0.75rem
       }
     }
   },
@@ -60,6 +63,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Lato',
         backgroundColor: '#FFFFFF',
         borderColor: '#BAE6FD',
+        borderRadius: 16, // 1rem
       }
     }
   },
@@ -77,6 +81,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Nunito',
         backgroundColor: '#FFFFFF',
         borderColor: '#BBF7D0',
+        borderRadius: 16,
       }
     }
   },
@@ -94,6 +99,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Lato',
         backgroundColor: '#FFEDD5',
         borderColor: '#FED7AA',
+        borderRadius: 16,
       }
     }
   },
@@ -111,6 +117,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Merriweather',
         backgroundColor: '#2a2a2a',
         borderColor: '#FF7518',
+        borderRadius: 8, // 0.5rem
       }
     }
   },
@@ -128,6 +135,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Playfair Display',
         backgroundColor: '#FFFFFF',
         borderColor: '#B22222',
+        borderRadius: 16,
       }
     }
   },
@@ -145,6 +153,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Raleway',
         backgroundColor: '#FFFFFF',
         borderColor: '#FFC0CB',
+        borderRadius: 16,
       }
     }
   },
@@ -162,6 +171,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Roboto Condensed',
         backgroundColor: '#FFFFFF',
         borderColor: '#B22234',
+        borderRadius: 8,
       }
     }
   },
@@ -179,6 +189,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Comic Neue',
         backgroundColor: '#FFFFFF',
         borderColor: '#E4D9F7',
+        borderRadius: 16,
       }
     }
   },
@@ -196,6 +207,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Orbitron',
         backgroundColor: '#1A1F2B',
         borderColor: '#39FF14',
+        borderRadius: 12,
       }
     }
   },
@@ -213,6 +225,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Comic Neue',
         backgroundColor: '#FFFFFF',
         borderColor: '#FFCDD2',
+        borderRadius: 16,
       }
     }
   },
@@ -230,6 +243,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'var(--font-share-tech-mono)',
         backgroundColor: '#161B22',
         borderColor: '#2CB67D',
+        borderRadius: 12,
       }
     }
   },
@@ -247,6 +261,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Special Elite',
         backgroundColor: '#FFFDF9',
         borderColor: '#D9BA94',
+        borderRadius: 8,
       }
     }
   },
@@ -264,6 +279,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Cinzel',
         backgroundColor: '#141417',
         borderColor: '#FFD700',
+        borderRadius: 12,
       }
     }
   },
@@ -281,6 +297,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'var(--font-source-sans3)',
         backgroundColor: '#FFFFFF',
         borderColor: '#D1D5DB',
+        borderRadius: 12,
       }
     }
   },
@@ -298,6 +315,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Merriweather',
         backgroundColor: '#FFFFFF',
         borderColor: '#0F8A0F',
+        borderRadius: 16,
       }
     }
   },
@@ -315,6 +333,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Lora',
         backgroundColor: '#FFFFFF',
         borderColor: '#F4C28A',
+        borderRadius: 12,
       }
     }
   },
@@ -332,6 +351,7 @@ export const allThemes: Theme[] = [
         contentFontFamily: 'Nunito',
         backgroundColor: '#FFFFFF',
         borderColor: '#34D399',
+        borderRadius: 16,
       }
     }
   }

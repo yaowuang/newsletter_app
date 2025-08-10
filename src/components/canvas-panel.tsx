@@ -247,7 +247,7 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
           const sectionContainerStyle: CSSProperties = {
             gridArea,
             borderWidth: userStyle.borderWidth ? `${userStyle.borderWidth}px` : '1px',
-            borderRadius: userStyle.borderRadius ? `${userStyle.borderRadius}px` : '0px',
+            borderRadius: userStyle.borderRadius != null ? `${userStyle.borderRadius}px` : (themeStyle.borderRadius != null ? `${themeStyle.borderRadius}px` : '0px'),
             borderColor: userStyle.borderColor || (selectedElement?.id === block.id ? 'blue' : themeStyle.borderColor),
             borderStyle: 'solid',
             overflow: 'hidden',

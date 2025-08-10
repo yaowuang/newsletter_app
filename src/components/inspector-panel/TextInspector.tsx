@@ -355,7 +355,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
           <div className="flex items-center gap-3">
             <Label htmlFor={headingColorId} className="min-w-[120px]">Heading Color</Label>
             <Input id={headingColorId} type="color" value={currentStyle.headingColor || theme.styles.section.headingColor || '#000000'} onChange={e => handleStyleChange('headingColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
-            <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.headingColor || theme.styles.section.headingColor || '#000000') === (theme.styles.section.headingColor || '#000000')} onClick={() => handleStyleChange('headingColor', theme.styles.section.headingColor || '#000000')}>↺</Button>
+            <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.headingColor || theme.styles.section.headingColor || '#000000') === (theme.styles.section.borderColor || '#000000')} onClick={() => handleStyleChange('headingColor', theme.styles.section.headingColor || '#000000')}>↺</Button>
           </div>
           <div className="flex items-center gap-3">
             <Label htmlFor={headingBgId} className="min-w-[120px]">Heading Background</Label>
@@ -432,8 +432,8 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
           </div>
           <div className="flex items-center gap-3">
             <Label htmlFor={borderRadiusId} className="min-w-[120px]">Border Radius (px)</Label>
-            <Input id={borderRadiusId} type="number" value={currentStyle.borderRadius ?? 0} onChange={e => handleStyleChange('borderRadius', parseInt(e.target.value))} className="w-20 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-700" />
-            <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.borderRadius ?? 0) === 0} onClick={() => handleStyleChange('borderRadius', 0)}>↺</Button>
+            <Input id={borderRadiusId} type="number" value={currentStyle.borderRadius ?? (theme.styles.section.borderRadius ?? 0)} onChange={e => handleStyleChange('borderRadius', parseInt(e.target.value))} className="w-20 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-700" />
+            <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.borderRadius ?? theme.styles.section.borderRadius ?? 0) === (theme.styles.section.borderRadius ?? 0)} onClick={() => handleStyleChange('borderRadius', theme.styles.section.borderRadius ?? 0)}>↺</Button>
           </div>
         </div>
       </div>
