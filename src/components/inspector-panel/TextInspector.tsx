@@ -14,11 +14,13 @@ import {
 } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { FONT_LABEL_TO_VALUE, FONT_VALUE_TO_LABEL } from "../inspector-panel";
+import FormattingToolbar, { FormattingAction } from '@/components/inspector-panel/FormattingToolbar';
+import EmojiIconToolbar from '@/components/inspector-panel/EmojiIconToolbar';
+import SectionTitleInput from '@/components/inspector-panel/SectionTitleInput';
+import { FontSelect, toLabel as fontToLabel, fromLabel as fontFromLabel } from '@/components/inspector-panel/FontSelect';
 
 interface TextInspectorProps {
   block: TextBlock;
-  fonts: string[];
   theme: Theme;
   currentStyle: Partial<SectionStyle>;
   onUpdateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
@@ -27,7 +29,6 @@ interface TextInspectorProps {
 
 export const TextInspector: React.FC<TextInspectorProps> = ({
   block,
-  fonts,
   theme,
   currentStyle,
   onUpdateTextBlock,
@@ -44,11 +45,8 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
   }, []);
 
   // Convert stored css variable to label for select value
-  const toLabel = (val: string | undefined) => {
-    if (!val) return fonts[0];
-    return FONT_VALUE_TO_LABEL[val] || val;
-  };
-  const fromLabel = (label: string) => FONT_LABEL_TO_VALUE[label] || label;
+  const toLabel = (val: string | undefined) => fontToLabel(val);
+  const fromLabel = (label: string) => fontFromLabel(label);
 
   // Emoji & icon helpers
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
@@ -286,64 +284,17 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
       {/* Title & Content */}
       <div className="rounded-xl bg-white dark:bg-gray-900 shadow p-4 space-y-2 border border-gray-100 dark:border-gray-800">
         <Label className="text-base font-medium" htmlFor={`section-title-${block.id}`}>Section Title</Label>
-        <div className="relative">
-          <Input
-            id={`section-title-${block.id}`}
-            name={`sectionTitle-${block.id}`}
-            ref={titleInputRef}
-            type="text"
-            role="combobox"
-            aria-autocomplete="list"
-            aria-expanded={openTitleSuggestions && filteredTitleSuggestions.length > 0}
-            aria-controls={titleListId}
-            aria-activedescendant={activeSuggestion >= 0 ? `${titleListId}-item-${activeSuggestion}` : undefined}
-            placeholder="Start typing e.g. Principal's Message"
-            value={titleInput}
-            onChange={e => {
-              const v = e.target.value;
-              setTitleInput(v);
-              onUpdateTextBlock(block.id, 'title', v);
-              setOpenTitleSuggestions(true);
-              setActiveSuggestion(-1);
-            }}
-            onKeyDown={handleTitleKeyDown}
-            onFocus={() => setOpenTitleSuggestions(true)}
-            onBlur={handleTitleBlur}
-            className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
-          />
-          {openTitleSuggestions && filteredTitleSuggestions.length > 0 && (
-            <ul
-              id={titleListId}
-              ref={suggestionsRef}
-              role="listbox"
-              className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg text-sm focus:outline-none"
-            >
-              {filteredTitleSuggestions.map((s, i) => (
-                <li
-                  id={`${titleListId}-item-${i}`}
-                  key={s}
-                  role="option"
-                  aria-selected={i === activeSuggestion}
-                  onMouseEnter={() => setActiveSuggestion(i)}
-                  onMouseDown={(e) => { e.preventDefault(); commitTitle(s); }}
-                  className={"px-3 py-2 cursor-pointer select-none " + (i === activeSuggestion ? "bg-blue-600 text-white" : "hover:bg-gray-100 dark:hover:bg-gray-700")}
-                >
-                  {s}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        <SectionTitleInput
+          blockId={block.id}
+          value={titleInput}
+          suggestions={filteredTitleSuggestions}
+          onChange={(v) => {
+            setTitleInput(v); onUpdateTextBlock(block.id, 'title', v);
+          }}
+          onCommit={commitTitle}
+        />
         <Label className="text-base font-medium" htmlFor={`section-content-${block.id}`}>Section Content</Label>
-        <div className="flex flex-wrap gap-1 mb-1 text-xs">
-          <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('bold')}><strong>B</strong></Button>
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2 italic" onClick={() => applyFormatting('italic')}>I</Button>
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('ul')}>• List</Button>
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('ol')}>1. List</Button>
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('link')}>Link</Button>
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('table')}>Table</Button>
-            <Button type="button" size="sm" variant="outline" className="h-7 px-2" onClick={() => applyFormatting('hr')}>HR</Button>
-        </div>
+        <FormattingToolbar onAction={(a: FormattingAction) => applyFormatting(a)} />
         <Textarea
           id={`section-content-${block.id}`}
           name={`sectionContent-${block.id}`}
@@ -353,32 +304,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
           className="h-32 text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
         />
         {/* Emoji & Icon helper toolbar */}
-        <div className="flex items-center gap-2 pt-1 flex-wrap">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button type="button" variant="outline" size="sm">Emoji 😊</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="max-h-56 w-56 overflow-y-auto grid grid-cols-6 gap-1 p-2">
-              {emojiList.map(e => (
-                <DropdownMenuItem key={e} className="justify-center px-0" onSelect={(ev) => { ev.preventDefault(); insertToken(e); }}>
-                  {e}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button type="button" variant="outline" size="sm">Icons ⭐</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="max-h-56 w-56 overflow-y-auto grid grid-cols-6 gap-1 p-2">
-              {iconList.map(e => (
-                <DropdownMenuItem key={e} className="justify-center px-0" onSelect={(ev) => { ev.preventDefault(); insertToken(e); }}>
-                  {e}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <EmojiIconToolbar onInsert={insertToken} />
       </div>
 
       {/* Heading Styles */}
@@ -397,20 +323,8 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
           </div>
           <div className="flex items-center gap-3">
             <Label htmlFor={headingFontId} className="min-w-[120px]">Heading Font</Label>
-            <Select onValueChange={value => handleStyleChange('headingFontFamily', fromLabel(value))} value={toLabel(currentStyle.headingFontFamily || theme.styles.section.headingFontFamily || fonts[0])}>
-              <SelectTrigger id={headingFontId}><SelectValue placeholder="Select a font" /></SelectTrigger>
-              <SelectContent>
-                {fonts.slice().sort((a,b)=>a.localeCompare(b)).map(font => {
-                  const cssVal = FONT_LABEL_TO_VALUE[font] || font;
-                  return (
-                    <SelectItem key={font} value={font} style={{ fontFamily: cssVal }}>
-                      {font}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-            <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={toLabel(currentStyle.headingFontFamily || theme.styles.section.headingFontFamily || fonts[0]) === toLabel(theme.styles.section.headingFontFamily || fonts[0])} onClick={() => handleStyleChange('headingFontFamily', theme.styles.section.headingFontFamily || fonts[0])}>↺</Button>
+            <FontSelect id={headingFontId} value={currentStyle.headingFontFamily || theme.styles.section.headingFontFamily} onChange={val => handleStyleChange('headingFontFamily', val)} />
+            <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.headingFontFamily || theme.styles.section.headingFontFamily) === theme.styles.section.headingFontFamily} onClick={() => handleStyleChange('headingFontFamily', theme.styles.section.headingFontFamily || '')}>↺</Button>
           </div>
         </div>
       </div>
@@ -431,20 +345,8 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
           </div>
           <div className="flex items-center gap-3">
             <Label htmlFor={contentFontId} className="min-w-[120px]">Content Font</Label>
-            <Select onValueChange={value => handleStyleChange('fontFamily', fromLabel(value))} value={toLabel(currentStyle.fontFamily || theme.styles.section.contentFontFamily || fonts[0])}>
-              <SelectTrigger id={contentFontId}><SelectValue placeholder="Select a font" /></SelectTrigger>
-              <SelectContent>
-                {fonts.slice().sort((a,b)=>a.localeCompare(b)).map(font => {
-                  const cssVal = FONT_LABEL_TO_VALUE[font] || font;
-                  return (
-                    <SelectItem key={font} value={font} style={{ fontFamily: cssVal }}>
-                      {font}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-            <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={toLabel(currentStyle.fontFamily ?? theme.styles.section.contentFontFamily ?? fonts[0]) === toLabel(theme.styles.section.contentFontFamily ?? fonts[0])} onClick={() => handleStyleChange('fontFamily', theme.styles.section.contentFontFamily ?? fonts[0])}>↺</Button>
+            <FontSelect id={contentFontId} value={currentStyle.fontFamily || theme.styles.section.contentFontFamily} onChange={val => handleStyleChange('fontFamily', val)} />
+            <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.fontFamily ?? theme.styles.section.contentFontFamily) === theme.styles.section.contentFontFamily} onClick={() => handleStyleChange('fontFamily', theme.styles.section.contentFontFamily || '')}>↺</Button>
           </div>
         </div>
       </div>

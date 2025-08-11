@@ -20,45 +20,6 @@ interface InspectorPanelProps {
   onDateChange: (date: string) => void;
 }
 
-const fonts = [
-  "Inter",
-  "Roboto",
-  "Montserrat",
-  "Poppins",
-  "Nunito",
-  "Lato",
-  "Raleway",
-  "Oswald",
-  "Merriweather",
-  "Playfair Display",
-  "Alegreya SC",
-  "Lora",
-  "Pacifico",
-  "Ultra",
-  "Roboto Condensed",
-  "Fredoka",
-  "Comic Neue",
-  "Mountains of Christmas",
-  "Creepster",
-  "Share Tech Mono",
-  "Bangers",
-  "Orbitron",
-  "Rye",
-  "Special Elite",
-  "Cinzel",
-  "Cinzel Decorative",
-  "Source Sans 3",
-  "Irish Grover"
-];
-
-// Provide mapping for variable-based fonts that differ from label
-export const FONT_LABEL_TO_VALUE: Record<string,string> = {
-  "Share Tech Mono": "var(--font-share-tech-mono)",
-  "Mountains of Christmas": "var(--font-mountains-of-christmas)",
-  "Source Sans 3": "var(--font-source-sans3)"
-};
-export const FONT_VALUE_TO_LABEL: Record<string,string> = Object.fromEntries(Object.entries(FONT_LABEL_TO_VALUE).map(([k,v]) => [v,k]));
-
 export function InspectorPanel({ 
   selectedElement, 
   onUpdateTextBlock,
@@ -74,9 +35,6 @@ export function InspectorPanel({
   const textBlocks = useStore(state => state.textBlocks);
   const currentStyle = selectedElement ? sectionStyles[selectedElement.id] || {} : {};
 
-  // Ensure updates to text block are merged into state
-  // Ensure updates to text block are merged into state
-  // No longer needed: TextInspector now calls onUpdateTextBlock directly with (id, property, value)
   // Render content using refactored components
   const getInspectorContent = () => {
     if (!selectedElement) {
@@ -90,11 +48,9 @@ export function InspectorPanel({
     }
     switch (selectedElement.type) {
       case 'text': {
-        // Find the latest block from state to avoid stale props
         const block = textBlocks.find(b => b.id === selectedElement.id) as TextBlock;
         return <TextInspector 
           block={block}
-          fonts={fonts}
           theme={theme}
           currentStyle={currentStyle}
           onUpdateTextBlock={onUpdateTextBlock}
