@@ -4,6 +4,7 @@ import { Metadata } from 'next';
 
 // Optimized metadata for your homepage
 export const metadata: Metadata = {
+  metadataBase: new URL('https://elementaryschoolnewsletters.com'),
   title: 'Elementary School Newsletter Builder | Free Classroom Newsletter Templates',
   description: 'Create engaging elementary school newsletters in minutes. Drag-and-drop sections, kid-friendly themes, instant PDF / PNG / SVG export. Free, no login.',
   keywords: ['elementary school newsletter','classroom newsletter builder','newsletter templates for teachers','school newsletter export PDF','free school newsletter tool'],
@@ -12,11 +13,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: 'https://elementaryschoolnewsletters.com/',
+    siteName: 'Elementary School Newsletter Builder',
+    locale: 'en_US',
     title: 'Elementary School Newsletter Builder – Create Classroom Newsletters Fast',
     description: 'Free drag-and-drop builder for engaging elementary school newsletters. Themes, emojis, instant exports.',
     images: [
       {
-        url: 'https://elementaryschoolnewsletters.com/book-icon.png',
+        url: 'https://elementaryschoolnewsletters.com/builder-screenshot.png',
         width: 1200,
         height: 630,
         alt: 'Elementary school newsletter builder interface'
@@ -27,7 +30,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Elementary School Newsletter Builder',
     description: 'Build & export engaging classroom newsletters in minutes – free, no login.',
-    images: ['https://elementaryschoolnewsletters.com/book-icon.png']
+    images: ['https://elementaryschoolnewsletters.com/builder-screenshot.png']
   }
 };
 

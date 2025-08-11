@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@components/ui/dialog";
 import { FONT_LABEL_TO_VALUE, FONT_VALUE_TO_LABEL } from "../inspector-panel";
 
 interface TextInspectorProps {
@@ -400,7 +400,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
             <Select onValueChange={value => handleStyleChange('headingFontFamily', fromLabel(value))} value={toLabel(currentStyle.headingFontFamily || theme.styles.section.headingFontFamily || fonts[0])}>
               <SelectTrigger id={headingFontId}><SelectValue placeholder="Select a font" /></SelectTrigger>
               <SelectContent>
-                {fonts.map(font => {
+                {fonts.slice().sort((a,b)=>a.localeCompare(b)).map(font => {
                   const cssVal = FONT_LABEL_TO_VALUE[font] || font;
                   return (
                     <SelectItem key={font} value={font} style={{ fontFamily: cssVal }}>
@@ -434,7 +434,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
             <Select onValueChange={value => handleStyleChange('fontFamily', fromLabel(value))} value={toLabel(currentStyle.fontFamily || theme.styles.section.contentFontFamily || fonts[0])}>
               <SelectTrigger id={contentFontId}><SelectValue placeholder="Select a font" /></SelectTrigger>
               <SelectContent>
-                {fonts.map(font => {
+                {fonts.slice().sort((a,b)=>a.localeCompare(b)).map(font => {
                   const cssVal = FONT_LABEL_TO_VALUE[font] || font;
                   return (
                     <SelectItem key={font} value={font} style={{ fontFamily: cssVal }}>

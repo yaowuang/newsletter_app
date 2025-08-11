@@ -6,36 +6,36 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useStore } from "@/lib/store";
 import ImageSourceDialog from '@/components/common/ImageSourceDialog';
 
-// Complete set of fonts used across themes (plus a few common UI fonts)
+// Complete set of fonts used across themes (plus a few common UI fonts) - alphabetized
 const fonts = [
-  "Inter",
-  "Roboto",
-  "Montserrat",
-  "Poppins",
-  "Nunito",
-  "Lato",
-  "Raleway",
-  "Oswald",
-  "Merriweather",
-  "Playfair Display",
   "Alegreya SC",
-  "Lora",
-  "Pacifico",
-  "Ultra",
-  "Roboto Condensed",
-  "Fredoka",
-  "Comic Neue",
-  "Mountains of Christmas",
-  "Creepster",
-  "Share Tech Mono",
   "Bangers",
-  "Orbitron",
-  "Rye",
-  "Special Elite",
   "Cinzel",
   "Cinzel Decorative",
+  "Comic Neue",
+  "Creepster",
+  "Fredoka",
+  "Inter",
+  "Irish Grover",
+  "Lato",
+  "Lora",
+  "Merriweather",
+  "Montserrat",
+  "Mountains of Christmas",
+  "Nunito",
+  "Orbitron",
+  "Oswald",
+  "Pacifico",
+  "Playfair Display",
+  "Poppins",
+  "Raleway",
+  "Roboto",
+  "Roboto Condensed",
+  "Rye",
+  "Share Tech Mono",
   "Source Sans 3",
-  "Irish Grover"
+  "Special Elite",
+  "Ultra"
 ];
 
 // Mapping between human-readable labels and CSS variable values
