@@ -132,6 +132,39 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
                 }}
               />
             ),
+            // Narrow list styles
+            ul: ({ ...props}) => (
+              <ul
+                {...props}
+                style={{
+                  marginTop: '0.25rem',
+                  marginBottom: '0.25rem',
+                  paddingLeft: '1rem', // narrower than default prose (~1.5em)
+                  listStyleType: 'disc',
+                }}
+              />
+            ),
+            ol: ({ ...props}) => (
+              <ol
+                {...props}
+                style={{
+                  marginTop: '0.25rem',
+                  marginBottom: '0.25rem',
+                  paddingLeft: '1rem',
+                  listStyleType: 'decimal',
+                }}
+              />
+            ),
+            li: ({ ...props}) => (
+              <li
+                {...props}
+                style={{
+                  marginTop: '0.125rem',
+                  marginBottom: '0.125rem',
+                  paddingLeft: '0.15rem', // slight to align bullet text
+                }}
+              />
+            ),
           }}
         >
           {typeof block.content === 'string' ? block.content : ''}
