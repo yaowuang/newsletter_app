@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import FormattingToolbar, { FormattingAction } from '@/components/inspector-panel/FormattingToolbar';
-import EmojiIconToolbar from '@/components/inspector-panel/EmojiIconToolbar';
+import EmojiToolbar from '@/components/inspector-panel/EmojiIconToolbar';
 import SectionTitleInput from '@/components/inspector-panel/SectionTitleInput';
 import { FontSelect } from '@/components/inspector-panel/FontSelect';
 
@@ -163,7 +163,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
           className="h-32 text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
         />
         {/* Emoji & Icon helper toolbar */}
-        <EmojiIconToolbar onInsert={insertToken} />
+        <EmojiToolbar onInsert={insertToken} />
       </div>
 
       {/* Heading Styles */}
