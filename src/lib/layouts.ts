@@ -121,9 +121,9 @@ export const newsletterLayouts: Layout[] = [
       'sec4 sec5'
     ]),
     variants: [
-      { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 2fr 1fr 1fr' },
-      { name: 'Wide Left', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 2fr 1fr 1fr' },
-      { name: 'Wide Right', gridTemplateColumns: '1fr 2fr', gridTemplateRows: 'auto auto 2fr 1fr 1fr' },
+      { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 4fr 3fr 3fr' },
+      { name: 'Wide Left', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 4fr 3fr 3fr' },
+      { name: 'Wide Right', gridTemplateColumns: '1fr 2fr', gridTemplateRows: 'auto auto 4fr 3fr 3fr' },
     ]
   },
 
