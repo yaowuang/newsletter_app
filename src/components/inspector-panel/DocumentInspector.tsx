@@ -5,7 +5,6 @@ import TitleDateSection, { DateMode } from './document/TitleDateSection';
 import TitleStylesSection from './document/TitleStylesSection';
 import DateStylesSection from './document/DateStylesSection';
 import PageBackgroundSection from './document/PageBackgroundSection';
-import { FONT_OPTIONS, FONT_LABEL_TO_VALUE, FONT_VALUE_TO_LABEL, toLabel as fontToLabel, fromLabel as fontFromLabel } from '@/components/inspector-panel/FontSelect';
 
 interface DocumentInspectorProps { title: string; date: string; theme: Theme; onTitleChange: (title: string) => void; onDateChange: (date: string) => void; }
 
@@ -53,20 +52,13 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
     setDateMode(inferModeFromDate(date));
   }, [date, userModeLocked]);
 
-  // If in week mode but date is a plain single date, convert to a business week range
-  React.useEffect(() => {
-    if (dateMode === 'week' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      onDateChange(computeBusinessWeekRange(date));
-    }
-  }, [dateMode, date]);
-
-  const formatISO = (d: Date) => {
+  const formatISO = React.useCallback((d: Date) => {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
     const da = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${da}`;
-  };
-  const computeBusinessWeekRange = (iso: string) => {
+  }, []);
+  const computeBusinessWeekRange = React.useCallback((iso: string) => {
     const [y, m, d] = iso.split('-').map(Number);
     const base = new Date(y, m - 1, d);
     if (isNaN(base.getTime())) return iso;
@@ -77,7 +69,14 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
     const friday = new Date(monday);
     friday.setDate(monday.getDate() + 4);
     return `${formatISO(monday)} to ${formatISO(friday)}`;
-  };
+  }, [formatISO]);
+
+  // If in week mode but date is a plain single date, convert to a business week range
+  React.useEffect(() => {
+    if (dateMode === 'week' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      onDateChange(computeBusinessWeekRange(date));
+    }
+  }, [dateMode, date, computeBusinessWeekRange, onDateChange]);
 
   const handleDateModeChange = (m: DateMode) => {
     setUserModeLocked(true); // user explicitly set mode

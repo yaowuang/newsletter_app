@@ -3,10 +3,11 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ImageSourceDialog from '@/components/common/ImageSourceDialog';
+import { Theme } from '@/lib/themes';
 
 interface PageBackgroundSectionProps {
   ids: { color: string; size: string; position: string; repeat: string };
-  themeStyles: any; // could type with Theme['styles']['page']
+  themeStyles: Theme['styles']['page'];
   setBgColor?: (v: string) => void;
   setBgImage?: (v: string | null) => void;
   setBgSize?: (v: string | null) => void;

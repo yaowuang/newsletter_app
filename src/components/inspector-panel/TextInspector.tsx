@@ -5,19 +5,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import FormattingToolbar, { FormattingAction } from '@/components/inspector-panel/FormattingToolbar';
 import EmojiIconToolbar from '@/components/inspector-panel/EmojiIconToolbar';
 import SectionTitleInput from '@/components/inspector-panel/SectionTitleInput';
-import { FontSelect, toLabel as fontToLabel, fromLabel as fontFromLabel } from '@/components/inspector-panel/FontSelect';
+import { FontSelect } from '@/components/inspector-panel/FontSelect';
 
 interface TextInspectorProps {
   block: TextBlock;
@@ -39,19 +30,8 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
     onStyleChange(block.id, { [property]: value });
   };
 
-  // Helper to generate a simple hardcoded Mon-Fri events table (used when title suggests dates)
-  const generateWeekTable = React.useCallback(() => {
-    return `| Date | Event |\n| ---- | ----- |\n| Mon |  |\n| Tue |  |\n| Wed |  |\n| Thu |  |\n| Fri |  |`;
-  }, []);
-
-  // Convert stored css variable to label for select value
-  const toLabel = (val: string | undefined) => fontToLabel(val);
-  const fromLabel = (label: string) => fontFromLabel(label);
-
   // Emoji & icon helpers
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-  const emojiList = ['😀','😁','😂','🤣','😊','😍','🤔','😎','😭','😡','👍','👎','🙏','🎉','✨','🔥','💡','✅','❌','⚠️'];
-  const iconList = ['⭐','📌','📎','📝','📣','🔔','🧪','🛠️','📊','📅','🚀','💼','💻','🧠','🔒','🧾'];
   const insertToken = (token: string) => {
     const current = typeof block.content === 'string' ? block.content : '';
     const el = textareaRef.current;
@@ -145,112 +125,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
     });
   };
 
-  // Common elementary newsletter section title suggestions
-  const titleSuggestions = React.useMemo(() => [
-    "Announcements",
-    "Art & Music",
-    "Birthday Celebrations",
-    "Class Highlights",
-    "Community News",
-    "Counselor's Corner",
-    "Field Trips",
-    "Homework",
-    "Important Dates",
-    "Looking Ahead",
-    "Lunch Menu",
-    "Math Corner",
-    "Quote of the Week",
-    "Physical Education",
-    "Principal's Message",
-    "PTA News",
-    "Reading Corner",
-    "Reminders",
-    "Safety Reminders",
-    "Science Spotlight",
-    "Student of the Week",
-    "Technology Tips",
-    "Upcoming Events",
-    "Volunteer Opportunities",
-  ], []);
-
-  // Enhanced autocomplete state for Section Title
-  const [titleInput, setTitleInput] = React.useState(block.title || "");
-  const [openTitleSuggestions, setOpenTitleSuggestions] = React.useState(false);
-  const [activeSuggestion, setActiveSuggestion] = React.useState<number>(-1);
-  const suggestionsRef = React.useRef<HTMLUListElement | null>(null);
-  const titleInputRef = React.useRef<HTMLInputElement | null>(null);
-  const [showCalendarPrompt, setShowCalendarPrompt] = React.useState(false);
-  const targetedTitles = React.useRef(new Set(["Upcoming Events","Important Dates","Dates"]));
-
-  // Sync internal state when external block changes
-  React.useEffect(() => {
-    setTitleInput(block.title || "");
-  }, [block.id, block.title]);
-
-  const filteredTitleSuggestions = React.useMemo(() => {
-    const q = titleInput.trim().toLowerCase();
-    return titleSuggestions
-      .filter(s => s.toLowerCase().includes(q) && s !== titleInput)
-      .slice(0, 8);
-  }, [titleInput, titleSuggestions]);
-
-  const commitTitle = (value: string) => {
-    setTitleInput(value);
-    onUpdateTextBlock(block.id, 'title', value);
-    const existingContentRaw = (typeof block.content === 'string' ? block.content : '');
-    const existingContent = existingContentRaw.trim();
-    const isPlaceholder = existingContent === '' || existingContent === '- Your content here' || existingContent === 'Your content here';
-    if (targetedTitles.current.has(value)) {
-      if (isPlaceholder) {
-        onUpdateTextBlock(block.id, 'content', generateWeekTable());
-      } else if (!existingContent.includes('| Date | Event |')) { // avoid prompting if already a calendar table
-        setShowCalendarPrompt(true);
-      }
-    }
-    setOpenTitleSuggestions(false);
-    setActiveSuggestion(-1);
-  };
-
-  const handleTitleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
-    if (!openTitleSuggestions && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
-      setOpenTitleSuggestions(true);
-      return;
-    }
-    if (openTitleSuggestions) {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setActiveSuggestion(i => {
-          const next = i + 1;
-          return next >= filteredTitleSuggestions.length ? 0 : next;
-        });
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setActiveSuggestion(i => {
-          const next = i - 1;
-            return next < 0 ? filteredTitleSuggestions.length - 1 : next;
-        });
-      } else if (e.key === 'Enter' || e.key === 'Tab') {
-        if (filteredTitleSuggestions.length && activeSuggestion >= 0) {
-          e.preventDefault();
-          commitTitle(filteredTitleSuggestions[activeSuggestion]);
-        }
-      } else if (e.key === 'Escape') {
-        setOpenTitleSuggestions(false);
-        setActiveSuggestion(-1);
-      }
-    }
-  };
-
-  const handleTitleBlur: React.FocusEventHandler<HTMLInputElement> = () => {
-    // Delay closing so click can register
-    setTimeout(() => {
-      setOpenTitleSuggestions(false);
-      setActiveSuggestion(-1);
-    }, 120);
-  };
-  const titleListId = React.useId();
-
-  // Generated IDs for a11y associations
+ // Generated IDs for a11y associations
   const headingColorId = `heading-color-${block.id}`;
   const headingBgId = `heading-bg-${block.id}`;
   const headingFontId = `heading-font-${block.id}`;
@@ -263,21 +138,6 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Calendar Replace Prompt */}
-      <Dialog open={showCalendarPrompt} onOpenChange={setShowCalendarPrompt}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Replace content with calendar?</DialogTitle>
-            <DialogDescription>
-              You changed the title to a dates / events section. Do you want to replace the current content with a weekly calendar template?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-2">
-            <Button type="button" variant="outline" onClick={() => setShowCalendarPrompt(false)}>Keep Content</Button>
-            <Button type="button" onClick={() => { onUpdateTextBlock(block.id, 'content', generateWeekTable()); setShowCalendarPrompt(false); }}>Replace with Calendar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
       <div className="flex justify-end -mb-2">
         <Button type="button" size="sm" variant="destructive" onClick={() => deleteElement(block.id, 'text')} aria-label="Delete section">Delete Section</Button>
       </div>
@@ -286,12 +146,11 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
         <Label className="text-base font-medium" htmlFor={`section-title-${block.id}`}>Section Title</Label>
         <SectionTitleInput
           blockId={block.id}
-          value={titleInput}
-          suggestions={filteredTitleSuggestions}
-          onChange={(v) => {
-            setTitleInput(v); onUpdateTextBlock(block.id, 'title', v);
-          }}
-          onCommit={commitTitle}
+          value={block.title || ''}
+          onChange={(v) => onUpdateTextBlock(block.id, 'title', v)}
+          onCommit={(v) => onUpdateTextBlock(block.id, 'title', v)}
+          onUpdateContent={onUpdateTextBlock}
+          currentContent={typeof block.content === 'string' ? block.content : ''}
         />
         <Label className="text-base font-medium" htmlFor={`section-content-${block.id}`}>Section Content</Label>
         <FormattingToolbar onAction={(a: FormattingAction) => applyFormatting(a)} />
