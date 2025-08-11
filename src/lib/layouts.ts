@@ -175,20 +175,6 @@ export const newsletterLayouts: Layout[] = [
 
   // Thematic / Elementary / Events / Pop Culture (new)
   {
-    id: 'storybook-frames', name: 'Storybook Frames', sections: 5, category: 'Elementary', notes: 'Framed feature on top with two rows of paired stories.',
-    gridTemplateAreas: areas([
-      'title title',
-      'date date',
-      'sec1 sec1',
-      'sec2 sec3',
-      'sec4 sec5'
-    ]),
-    variants: [
-      { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1.2fr 1fr 1fr' },
-      { name: 'Wide Feature', gridTemplateColumns: '1.2fr 0.8fr', gridTemplateRows: 'auto auto 1.4fr 1fr 1fr' },
-    ]
-  },
-  {
     id: 'event-program', name: 'Event Program', sections: 6, category: 'Events', notes: 'Agenda style: intro + 5 segments.',
     gridTemplateAreas: areas([
       'title title title',
