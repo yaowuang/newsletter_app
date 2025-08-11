@@ -30,6 +30,7 @@ async function decodeSnapshot(file: File): Promise<EditorSnapshot> {
 
 export function Header() {
   const storeTitle = useStore(state => state.title);
+  const storeDate = useStore(state => state.date);
   // Removed stateForSnapshot subscription to avoid creating new object each render.
   const loadSnapshot = useStore(state => state.loadSnapshot);
 
@@ -47,12 +48,56 @@ export function Header() {
     };
   };
 
+  // Format date for filename based on the date format
+  const formatDateForFilename = (dateStr: string) => {
+    if (!dateStr) return '';
+    
+    // Check if it's a month format (YYYY-MM)
+    if (/^\d{4}-\d{2}$/.test(dateStr)) {
+      const [year, month] = dateStr.split('-');
+      const monthNames = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      return `${monthNames[parseInt(month) - 1]}-${year}`;
+    }
+    
+    // Check if it's a business week range (e.g., "2025-08-04 to 2025-08-08")
+    if (dateStr.includes(' to ')) {
+      const mondayDate = dateStr.split(' to ')[0];
+      // Monday should be in YYYY-MM-DD format, convert to YYYYMMDD
+      if (/^\d{4}-\d{2}-\d{2}$/.test(mondayDate)) {
+        return mondayDate.replace(/-/g, '');
+      }
+    }
+    
+    // Check if it's a single date in YYYY-MM-DD format
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      return dateStr.replace(/-/g, '');
+    }
+    
+    // Try to parse other date formats as fallback
+    const date = new Date(dateStr);
+    if (!isNaN(date.getTime())) {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      return `${year}${month}${day}`;
+    }
+    
+    return '';
+  };
+
   const handleDownload = async (format: 'enl' | 'png' | 'svg' | 'pdf') => {
     try {
+      const snapshot = buildSnapshot();
+      const dateFormatted = formatDateForFilename(storeDate);
+      const titlePart = (snapshot.title || 'newsletter').replace(/\s+/g, '-');
+      const safeTitle = dateFormatted ? `${titlePart}-${dateFormatted}` : titlePart;
+
       if (format === 'enl') {
-        const snapshot = buildSnapshot();
         const blob = encodeSnapshot(snapshot);
-        saveAs(blob, `${(snapshot.title || 'newsletter').replace(/\s+/g,'-')}.enl`);
+        saveAs(blob, `${safeTitle}.enl`);
         return;
       }
       const inner = document.getElementById('newsletter-canvas');
@@ -62,8 +107,6 @@ export function Header() {
 
       const selectedBorders = captureTarget.querySelectorAll('.border-blue-500');
       selectedBorders.forEach(el => el.classList.remove('border-blue-500', 'border-2'));
-
-      const safeTitle = (storeTitle || 'newsletter').replace(/\s+/g,'-');
 
       if (format === 'png') {
         const dataUrl = await toPng(captureTarget, { cacheBust: true, pixelRatio: 3 });
