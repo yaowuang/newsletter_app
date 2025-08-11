@@ -42,21 +42,24 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
     if (/\d{4}-\d{2}-\d{2}.*(to|–).*/.test(d)) return 'week';
     return 'single';
   };
-  const initialInferred = inferModeFromDate(date);
-  const [dateMode, setDateMode] = React.useState<DateMode>(initialInferred === 'single' ? 'week' : initialInferred);
+
+  // Track if user explicitly chose a mode (so we don't auto override)
+  const [userModeLocked, setUserModeLocked] = React.useState(false);
+  const [dateMode, setDateMode] = React.useState<DateMode>(() => inferModeFromDate(date));
+
+  // Auto-adjust mode only if user hasn't explicitly chosen one yet
   React.useEffect(() => {
-    const inf = inferModeFromDate(date);
-    setDateMode(prev => {
-      if (inf === 'single' && (prev === 'week' || prev === 'month')) return prev; // keep user-selected mode
-      if (inf === 'single') return 'week';
-      return inf;
-    });
-  }, [date]);
+    if (userModeLocked) return;
+    setDateMode(inferModeFromDate(date));
+  }, [date, userModeLocked]);
+
+  // If in week mode but date is a plain single date, convert to a business week range
   React.useEffect(() => {
     if (dateMode === 'week' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
       onDateChange(computeBusinessWeekRange(date));
     }
   }, [dateMode, date]);
+
   const formatISO = (d: Date) => {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -76,6 +79,11 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
     return `${formatISO(monday)} to ${formatISO(friday)}`;
   };
 
+  const handleDateModeChange = (m: DateMode) => {
+    setUserModeLocked(true); // user explicitly set mode
+    setDateMode(m);
+  };
+
   return (
     <div className="space-y-6">
       <TitleDateSection
@@ -84,7 +92,7 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
         dateMode={dateMode}
         onTitleChange={onTitleChange}
         onDateChange={onDateChange}
-        onDateModeChange={setDateMode}
+        onDateModeChange={handleDateModeChange}
         computeBusinessWeekRange={computeBusinessWeekRange}
         toDateInputValue={toDateInputValue}
         formatISO={formatISO}
