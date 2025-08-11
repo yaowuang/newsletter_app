@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { FONT_LABEL_TO_VALUE, FONT_VALUE_TO_LABEL } from "../inspector-panel";
 
 interface TextInspectorProps {
@@ -36,6 +37,11 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
   const handleStyleChange = (property: keyof SectionStyle, value: string | number) => {
     onStyleChange(block.id, { [property]: value });
   };
+
+  // Helper to generate a simple hardcoded Mon-Fri events table (used when title suggests dates)
+  const generateWeekTable = React.useCallback(() => {
+    return `| Date | Event |\n| ---- | ----- |\n| Mon |  |\n| Tue |  |\n| Wed |  |\n| Thu |  |\n| Fri |  |`;
+  }, []);
 
   // Convert stored css variable to label for select value
   const toLabel = (val: string | undefined) => {
@@ -175,6 +181,8 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
   const [activeSuggestion, setActiveSuggestion] = React.useState<number>(-1);
   const suggestionsRef = React.useRef<HTMLUListElement | null>(null);
   const titleInputRef = React.useRef<HTMLInputElement | null>(null);
+  const [showCalendarPrompt, setShowCalendarPrompt] = React.useState(false);
+  const targetedTitles = React.useRef(new Set(["Upcoming Events","Important Dates","Dates"]));
 
   // Sync internal state when external block changes
   React.useEffect(() => {
@@ -191,6 +199,16 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
   const commitTitle = (value: string) => {
     setTitleInput(value);
     onUpdateTextBlock(block.id, 'title', value);
+    const existingContentRaw = (typeof block.content === 'string' ? block.content : '');
+    const existingContent = existingContentRaw.trim();
+    const isPlaceholder = existingContent === '' || existingContent === '- Your content here' || existingContent === 'Your content here';
+    if (targetedTitles.current.has(value)) {
+      if (isPlaceholder) {
+        onUpdateTextBlock(block.id, 'content', generateWeekTable());
+      } else if (!existingContent.includes('| Date | Event |')) { // avoid prompting if already a calendar table
+        setShowCalendarPrompt(true);
+      }
+    }
     setOpenTitleSuggestions(false);
     setActiveSuggestion(-1);
   };
@@ -247,6 +265,21 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Calendar Replace Prompt */}
+      <Dialog open={showCalendarPrompt} onOpenChange={setShowCalendarPrompt}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Replace content with calendar?</DialogTitle>
+            <DialogDescription>
+              You changed the title to a dates / events section. Do you want to replace the current content with a weekly calendar template?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button type="button" variant="outline" onClick={() => setShowCalendarPrompt(false)}>Keep Content</Button>
+            <Button type="button" onClick={() => { onUpdateTextBlock(block.id, 'content', generateWeekTable()); setShowCalendarPrompt(false); }}>Replace with Calendar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <div className="flex justify-end -mb-2">
         <Button type="button" size="sm" variant="destructive" onClick={() => deleteElement(block.id, 'text')} aria-label="Delete section">Delete Section</Button>
       </div>
@@ -389,7 +422,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({
           <div className="flex items-center gap-3">
             <Label htmlFor={contentColorId} className="min-w-[120px]">Content Color</Label>
             <Input id={contentColorId} type="color" value={currentStyle.contentColor || theme.styles.section.contentColor || '#000000'} onChange={e => handleStyleChange('contentColor', e.target.value)} className="w-10 h-10 p-0 border-none" />
-            <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.contentColor || theme.styles.section.contentColor || '#000000') === (theme.styles.section.contentColor || '#000000')} onClick={() => handleStyleChange('contentColor', theme.styles.section.contentColor || '#000000')}>↺</Button>
+            <Button type="button" size="icon" variant="ghost" className="rounded-full" disabled={(currentStyle.contentColor || theme.styles.section.contentColor || '#000000') === (theme.styles.section.borderColor || '#000000')} onClick={() => handleStyleChange('contentColor', theme.styles.section.contentColor || '#000000')}>↺</Button>
           </div>
           <div className="flex items-center gap-3">
             <Label htmlFor={contentBgId} className="min-w-[120px]">Content Background</Label>
