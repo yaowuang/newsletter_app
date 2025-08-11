@@ -114,6 +114,79 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
   React.useEffect(() => {
     if (!currentRepeat || repeatOptions.includes(currentRepeat)) setEditingCustomRepeat(false);
   }, [currentRepeat]);
+
+  // Helper: attempt to convert arbitrary date string to yyyy-MM-dd for date input
+  const toDateInputValue = React.useCallback((val: string): string => {
+    if (!val) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val;
+    // if range "start to end" return start
+    const rangeMatch = val.match(/(\d{4}-\d{2}-\d{2}).+(\d{4}-\d{2}-\d{2})/);
+    if (rangeMatch) return rangeMatch[1];
+    const parsed = new Date(val);
+    if (isNaN(parsed.getTime())) return '';
+    const y = parsed.getFullYear();
+    const m = String(parsed.getMonth() + 1).padStart(2, '0');
+    const d = String(parsed.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }, []);
+
+  // Date mode: single day, business week (Mon-Fri), or month only
+  const inferModeFromDate = (d: string): 'single' | 'week' | 'month' => {
+    if (/^\d{4}-\d{2}$/.test(d)) return 'month';
+    if (/\d{4}-\d{2}-\d{2}.*(to|–).*/.test(d)) return 'week';
+    return 'single';
+  };
+  const initialInferred = inferModeFromDate(date);
+  const [dateMode, setDateMode] = React.useState<'single' | 'week' | 'month'>(initialInferred === 'single' ? 'week' : initialInferred);
+
+  // When external date prop changes (e.g., undo), re-infer (respect explicit month/week; keep default preference for week over single)
+  React.useEffect(() => {
+    const inf = inferModeFromDate(date);
+    setDateMode(prev => {
+      if (inf === 'single' && (prev === 'week' || prev === 'month')) return prev; // keep user-selected mode
+      if (inf === 'single') return 'week'; // default preference
+      return inf;
+    });
+  }, [date]);
+
+  // Auto-convert single ISO date to week range when in week mode
+  React.useEffect(() => {
+    if (dateMode === 'week' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      onDateChange(computeBusinessWeekRange(date));
+    }
+  }, [dateMode, date]);
+
+  const formatISO = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const da = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${da}`;
+  };
+  const computeBusinessWeekRange = (iso: string) => {
+    const [y, m, d] = iso.split('-').map(Number);
+    const base = new Date(y, m - 1, d);
+    if (isNaN(base.getTime())) return iso;
+    const day = base.getDay(); // 0 Sun .. 6 Sat
+    const offsetToMonday = (day + 6) % 7; // Sunday->6, Monday->0
+    const monday = new Date(base);
+    monday.setDate(base.getDate() - offsetToMonday);
+    const friday = new Date(monday);
+    friday.setDate(monday.getDate() + 4);
+    return `${formatISO(monday)} to ${formatISO(friday)}`;
+  };
+
+  const handleDateChange = (newIso: string) => {
+    if (dateMode === 'single') {
+      onDateChange(newIso);
+    } else if (dateMode === 'week') {
+      onDateChange(computeBusinessWeekRange(newIso));
+    } else { // month
+      // newIso here expected YYYY-MM
+      onDateChange(newIso);
+    }
+  };
+
+  const dateInputValue = toDateInputValue(date);
   return (
     <div className="space-y-6">
       {/* Title & Date Content */}
@@ -123,8 +196,47 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
           <Input id={titleInputId} name="newsletterTitle" type="text" value={title} onChange={e => onTitleChange(e.target.value)} className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500" />
         </div>
         <div className="space-y-2">
-          <Label className="text-base font-medium" htmlFor={dateInputId}>Date</Label>
-          <Input id={dateInputId} name="newsletterDate" type="text" value={date} onChange={e => onDateChange(e.target.value)} className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500" />
+          <div className="flex items-center justify-between">
+            <Label className="text-base font-medium" htmlFor={dateInputId}>Date</Label>
+            <Select value={dateMode} onValueChange={(v: 'single' | 'week' | 'month') => {
+              // derive a base YYYY-MM or YYYY-MM-DD from current values
+              const currentDayISO = toDateInputValue(date) || formatISO(new Date());
+              const currentMonth = currentDayISO.slice(0,7); // YYYY-MM
+              if (v === 'month') {
+                // switch to month mode storing YYYY-MM
+                onDateChange(currentMonth);
+              } else if (dateMode === 'month' && v === 'single') {
+                // expand month to first day
+                onDateChange(`${currentMonth}-01`);
+              } else if (dateMode === 'month' && v === 'week') {
+                // use first day of month to compute week
+                onDateChange(computeBusinessWeekRange(`${currentMonth}-01`));
+              } else if (v === 'week' && dateMode === 'single') {
+                // convert existing single day to week range
+                onDateChange(computeBusinessWeekRange(currentDayISO));
+              } else if (v === 'single' && dateMode === 'week') {
+                // collapse week to first date
+                onDateChange(currentDayISO);
+              }
+              setDateMode(v);
+            }}>
+              <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="single">Single Date</SelectItem>
+                <SelectItem value="week">Business Week</SelectItem>
+                <SelectItem value="month">Month Only</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {dateMode !== 'month' && (
+            <Input id={dateInputId} name="newsletterDate" type="date" value={dateMode === 'week' ? (dateInputValue || '') : (dateInputValue)} onChange={e => handleDateChange(e.target.value)} className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500" />
+          )}
+          {dateMode === 'month' && (
+            <Input id={dateInputId} name="newsletterMonth" type="month" value={/^\d{4}-\d{2}$/.test(date) ? date : (dateInputValue ? dateInputValue.slice(0,7) : '')} onChange={e => handleDateChange(e.target.value)} className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500" />
+          )}
+          {dateMode === 'week' && dateInputValue && (
+            <p className="text-xs text-gray-500 dark:text-gray-400">Week: {computeBusinessWeekRange(dateInputValue)}</p>
+          )}
         </div>
       </div>
       {/* Title Styles */}

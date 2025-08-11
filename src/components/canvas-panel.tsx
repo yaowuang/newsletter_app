@@ -179,6 +179,38 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
   const { base, variant } = layoutSelection;
   const { swapTextBlocks } = useStore.getState();
 
+  // Helper to format date or ISO range into human-readable format
+  const formatDisplayDate = (raw: string): string => {
+    if (!raw) return '';
+    // Month-only (YYYY-MM)
+    if (/^\d{4}-\d{2}$/.test(raw)) {
+      const [y,m] = raw.split('-').map(Number);
+      const d = new Date(y, m-1, 1);
+      return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(d);
+    }
+    // If already looks like a long month name, assume formatted
+    if (/January|February|March|April|May|June|July|August|September|October|November|December/.test(raw)) return raw;
+    const fmt = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    const isoSingle = /^\d{4}-\d{2}-\d{2}$/;
+    const isoRange = /^(\d{4}-\d{2}-\d{2})\s*(?:to|–|-)\s*(\d{4}-\d{2}-\d{2})$/; // supports separators
+    if (isoSingle.test(raw)) {
+      const d = new Date(raw);
+      if (!isNaN(d.getTime())) return fmt.format(d);
+      return raw;
+    }
+    const rangeMatch = raw.match(isoRange);
+    if (rangeMatch) {
+      const start = new Date(rangeMatch[1]);
+      const end = new Date(rangeMatch[2]);
+      if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+        return `${fmt.format(start)} - ${fmt.format(end)}`;
+      }
+      return raw;
+    }
+    return raw; // fallback
+  };
+  const displayDate = formatDisplayDate(date);
+
   // Delete selected element on Delete or Backspace key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -286,7 +318,7 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
           />
         )}
         <h1 style={titleStyle} className="text-4xl font-bold relative z-10" >{title}</h1>
-        <p style={dateStyle} className="text-muted-foreground relative z-10" >{date}</p>
+        <p style={dateStyle} className="text-muted-foreground relative z-10" >{displayDate}</p>
         
         {textBlocks.map((block, index) => {
           const gridArea = `sec${index + 1}`;
