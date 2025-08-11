@@ -134,6 +134,12 @@ interface AppState {
   setThemeDateColor?: (color: string) => void;
   setThemeTitleAlignment?: (align: 'left' | 'center' | 'right') => void; // new
   setThemeDateAlignment?: (align: 'left' | 'center' | 'right') => void; // new
+  setThemePageBackgroundColor?: (color: string) => void; // added
+  setThemePageBackgroundImage?: (image: string | null) => void; // added (null to clear)
+  setThemePageBackgroundSize?: (size: string | null) => void; // new
+  setThemePageBackgroundPosition?: (position: string | null) => void; // new
+  setThemePageBackgroundRepeat?: (repeat: string | null) => void; // new
+  setThemePageBackgroundImageOpacity?: (opacity: number) => void; // added
   setLayout: (layout: LayoutSelection) => void;
   setSectionCount: (count: number) => void;
   loadSnapshot: (snapshot: EditorSnapshot) => void;
@@ -212,6 +218,12 @@ export const useStore = create<AppState>()(
     setThemeDateColor: (color: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, date: { ...state.theme.styles.date, color } } } })),
     setThemeTitleAlignment: (align) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...state.theme.styles.title, textAlign: align } } } })),
     setThemeDateAlignment: (align) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, date: { ...state.theme.styles.date, textAlign: align } } } })),
+    setThemePageBackgroundColor: (color) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundColor: color } } } })),
+    setThemePageBackgroundImage: (image) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundImage: image || undefined } } } })),
+    setThemePageBackgroundSize: (size) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundSize: size || undefined } } } })),
+    setThemePageBackgroundPosition: (position) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundPosition: position || undefined } } } })),
+    setThemePageBackgroundRepeat: (repeat) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundRepeat: repeat || undefined } } } })),
+    setThemePageBackgroundImageOpacity: (opacity) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundImageOpacity: Math.min(1, Math.max(0, opacity)) } } } })),
 
     setLayout: (layout) => set({ layout }),
 

@@ -181,6 +181,7 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
     gridTemplateRows: variant.gridTemplateRows,
     gap: '24px',
     backgroundColor: theme.styles.page.backgroundColor,
+    // remove direct backgroundImage so we can control its opacity separately
     position: 'relative',
     width: '100%',
     height: '100%',
@@ -236,8 +237,23 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
           }}
         >
         <div id="newsletter-canvas" className="w-full h-full p-8" style={pageStyle}>
-        <h1 style={titleStyle} className="text-4xl font-bold" >{title}</h1>
-        <p style={dateStyle} className="text-muted-foreground" >{date}</p>
+        {theme.styles.page.backgroundImage && (
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{
+              backgroundImage: theme.styles.page.backgroundImage,
+              backgroundSize: theme.styles.page.backgroundSize || 'cover',
+              backgroundPosition: theme.styles.page.backgroundPosition || 'center',
+              backgroundRepeat: theme.styles.page.backgroundRepeat || 'no-repeat',
+              opacity: theme.styles.page.backgroundImageOpacity ?? 1,
+              pointerEvents: 'none',
+              zIndex: 0,
+            }}
+          />
+        )}
+        <h1 style={titleStyle} className="text-4xl font-bold relative z-10" >{title}</h1>
+        <p style={dateStyle} className="text-muted-foreground relative z-10" >{date}</p>
         
         {textBlocks.map((block, index) => {
           const gridArea = `sec${index + 1}`;
@@ -256,7 +272,7 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
             backgroundColor: userStyle.backgroundColor || themeStyle.backgroundColor,
           };
           return (
-            <div key={block.id} style={sectionContainerStyle} onClick={(e) => { e.stopPropagation(); onSelectElement(block.id, 'text'); }} className={cn("cursor-pointer", { "border-2 border-blue-500": selectedElement?.id === block.id })}>
+            <div key={block.id} style={sectionContainerStyle} onClick={(e) => { e.stopPropagation(); onSelectElement(block.id, 'text'); }} className={cn("cursor-pointer relative z-10", { "border-2 border-blue-500": selectedElement?.id === block.id })}>
               <TextBlockComponent block={block} style={userStyle} themeStyle={themeStyle} />
             </div>
           );
@@ -268,6 +284,7 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
             size={{ width: image.width, height: image.height }}
             position={{ x: image.x, y: image.y }}
             scale={zoom}
+            style={{ zIndex: 10 }}
             onMouseDown={(e) => { e.stopPropagation(); onSelectElement(image.id, 'image'); }}
             onDragStart={(e) => { e.stopPropagation(); /* avoid state changes here to prevent jump */ }}
             onDragStop={(e, d) => { onUpdateImage(image.id, { x: d.x, y: d.y }); }}
@@ -295,7 +312,7 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
         ))}
         {/* Watermark */}
         <div
-          className="pointer-events-none select-none absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] tracking-wide text-gray-400 opacity-60"
+          className="pointer-events-none select-none absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] tracking-wide text-gray-400 opacity-60 z-10"
           style={{ letterSpacing: '0.1em', fontFamily: theme.styles.title.fontFamily }}
         >
           CREATED WITH ELEMENTARYSCHOOLNEWSLETTERS.COM

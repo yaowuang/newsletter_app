@@ -5,6 +5,11 @@ export type Theme = {
   styles: {
     page: {
       backgroundColor: CSSProperties['backgroundColor'];
+      backgroundImage?: CSSProperties['backgroundImage'];
+      backgroundSize?: CSSProperties['backgroundSize'];
+      backgroundPosition?: CSSProperties['backgroundPosition'];
+      backgroundRepeat?: CSSProperties['backgroundRepeat'];
+      backgroundImageOpacity?: number; // 0..1 added
     };
     title: {
       fontFamily: CSSProperties['fontFamily'];
@@ -124,7 +129,8 @@ export const allThemes: Theme[] = [
   {
     name: 'Winter Holiday',
     styles: {
-      page: { backgroundColor: '#EBF4FA' },
+      // Slightly darkened from #EBF4FA to improve contrast with white snowflakes
+      page: { backgroundColor: '#D6E7F2', backgroundImage: 'url(/snowflakes.svg)', backgroundSize: '300px 300px', backgroundRepeat: 'repeat', backgroundPosition: 'top left' },
       title: { fontFamily: 'var(--font-mountains-of-christmas)', color: '#0047AB' },
       date: { fontFamily: 'Playfair Display', color: '#B22222' },
       section: {
@@ -142,7 +148,7 @@ export const allThemes: Theme[] = [
   {
     name: 'Valentine\'s Day',
     styles: {
-      page: { backgroundColor: '#FFF0F5' },
+      page: { backgroundColor: '#FFF0F5', backgroundImage: 'url(/hearts.svg)', backgroundSize: '200px 200px', backgroundRepeat: 'repeat', backgroundPosition: 'top left', backgroundImageOpacity: 0.1 },
       title: { fontFamily: 'Pacifico', color: '#D90166' },
       date: { fontFamily: 'Raleway', color: '#FF69B4' },
       section: {
@@ -160,7 +166,14 @@ export const allThemes: Theme[] = [
   {
     name: 'Patriotic',
     styles: {
-      page: { backgroundColor: '#F0F4F8' },
+      page: {
+        backgroundColor: '#F0F4F8',
+        backgroundImage: 'url(/United_States_flag_waving_icon.svg)',
+        backgroundSize: 'contain',
+        backgroundPosition: 'top',
+        backgroundRepeat: 'no-repeat',
+        backgroundImageOpacity: 0.25,
+      },
       title: { fontFamily: 'Ultra', color: '#0D2244' },
       date: { fontFamily: 'Roboto Condensed', color: '#B22234' },
       section: {
@@ -214,7 +227,13 @@ export const allThemes: Theme[] = [
   {
     name: 'Comic Boom',
     styles: {
-      page: { backgroundColor: '#FFF8E1' },
+      page: { backgroundColor: '#FFF8E1',
+        backgroundImage: 'url(/halftone.svg)',
+        backgroundSize: 'contain',
+        backgroundPosition: 'left',
+        backgroundRepeat: 'repeat',
+        backgroundImageOpacity: 0.1,
+      },
       title: { fontFamily: 'Bangers', color: '#D81B60' },
       date: { fontFamily: 'Comic Neue', color: '#3949AB' },
       section: {
@@ -232,7 +251,7 @@ export const allThemes: Theme[] = [
   {
     name: 'Galaxy Mission',
     styles: {
-      page: { backgroundColor: '#05060A' },
+      page: { backgroundColor: '#05060A', backgroundImage: 'url(/starfield.svg)', backgroundSize: '400px 400px', backgroundRepeat: 'repeat', backgroundPosition: 'top left' },
       title: { fontFamily: 'Orbitron', color: '#7F5AF0' },
       date: { fontFamily: 'var(--font-share-tech-mono)', color: '#2CB67D' },
       section: {
@@ -250,7 +269,7 @@ export const allThemes: Theme[] = [
   {
     name: 'Western',
     styles: {
-      page: { backgroundColor: '#FCF7EE' },
+      page: { backgroundColor: '#FCF7EE', backgroundImage: 'url(/western.jpg)', backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundImageOpacity: 0.5 },
       title: { fontFamily: 'Rye', color: '#5C3B18' },
       date: { fontFamily: 'Special Elite', color: '#A36833' },
       section: {
@@ -304,7 +323,7 @@ export const allThemes: Theme[] = [
   {
     name: 'Christmas',
     styles: {
-      page: { backgroundColor: '#FDF8F8' },
+      page: { backgroundColor: '#C8B292', backgroundImage: 'url(/snowflakes.svg)', backgroundSize: '300px 300px', backgroundRepeat: 'repeat', backgroundPosition: 'top left' },
       title: { fontFamily: 'var(--font-mountains-of-christmas)', color: '#B3001B' },
       date: { fontFamily: 'Playfair Display', color: '#0F8A0F' },
       section: {
@@ -340,7 +359,15 @@ export const allThemes: Theme[] = [
   {
     name: "St. Patrick's Day",
     styles: {
-      page: { backgroundColor: '#F0FFF4' },
+      page: {
+        backgroundColor: '#F0FFF4',
+        // Two-layer staggered ("diamond") tiling: second layer offset to create diagonal pattern
+        backgroundImage: 'url(/clover.svg)',
+        backgroundSize: '100px 100px',
+        backgroundPosition: 'center', 
+        backgroundRepeat: 'repeat',
+        backgroundImageOpacity: 0.1,
+      },
       title: { fontFamily: 'Irish Grover', color: '#065F46' },
       date: { fontFamily: 'Nunito', color: '#059669' },
       section: {

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7410 3900" aria-label="United States Flag" role="img">
+  <rect width="7410" height="3900" fill="#b22234"/>
+  <g fill="#fff">
+    <rect width="7410" height="300" y="300"/>
+    <rect width="7410" height="300" y="900"/>
+    <rect width="7410" height="300" y="1500"/>
+    <rect width="7410" height="300" y="2100"/>
+    <rect width="7410" height="300" y="2700"/>
+    <rect width="7410" height="300" y="3300"/>
+  </g>
+  <rect width="2964" height="2100" fill="#3c3b6e"/>
+  <g fill="#fff">
+    <g id="s">
+      <g id="s5">
+        <g id="s4">
+          <g id="s3">
+            <g id="s2">
+              <g id="s1">
+                <polygon points="247,90  323,390  56,150  438,150  171,390"/>
+              </g>
+              <use xlink:href="#s1" x="247"/>
+            </g>
+            <use xlink:href="#s2" x="247"/>
+          </g>
+          <use xlink:href="#s3" x="247"/>
+        </g>
+        <use xlink:href="#s4" x="247"/>
+      </g>
+      <use xlink:href="#s5" x="247"/>
+    </g>
+    <use xlink:href="#s" x="494"/>
+    <use xlink:href="#s" x="988"/>
+    <use xlink:href="#s" x="1482"/>
+    <use xlink:href="#s" x="1976"/>
+    <use xlink:href="#s" x="2470"/>
+    <use xlink:href="#s" y="420"/>
+    <use xlink:href="#s" x="494" y="420"/>
+    <use xlink:href="#s" x="988" y="420"/>
+    <use xlink:href="#s" x="1482" y="420"/>
+    <use xlink:href="#s" x="1976" y="420"/>
+    <use xlink:href="#s" x="2470" y="420"/>
+    <use xlink:href="#s" y="840"/>
+    <use xlink:href="#s" x="494" y="840"/>
+    <use xlink:href="#s" x="988" y="840"/>
+    <use xlink:href="#s" x="1482" y="840"/>
+    <use xlink:href="#s" x="1976" y="840"/>
+    <use xlink:href="#s" x="2470" y="840"/>
+    <use xlink:href="#s" y="1260"/>
+    <use xlink:href="#s" x="494" y="1260"/>
+    <use xlink:href="#s" x="988" y="1260"/>
+    <use xlink:href="#s" x="1482" y="1260"/>
+    <use xlink:href="#s" x="1976" y="1260"/>
+    <use xlink:href="#s" x="2470" y="1260"/>
+    <use xlink:href="#s" y="1680"/>
+    <use xlink:href="#s" x="494" y="1680"/>
+    <use xlink:href="#s" x="988" y="1680"/>
+    <use xlink:href="#s" x="1482" y="1680"/>
+    <use xlink:href="#s" x="1976" y="1680"/>
+    <use xlink:href="#s" x="2470" y="1680"/>
+  </g>
+</svg>
