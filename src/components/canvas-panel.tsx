@@ -466,7 +466,7 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
               {selectedElement?.id === line.id && selectedElement?.type === 'horizontalLine' && !line.locked && (
                 <div style={{ position:'absolute', right:-6, top:'50%', transform:'translateY(-50%)', width:12, height:12, background:'#fff', border:'1px solid #999', borderRadius:2, pointerEvents:'none' }} />
               )}
-              {line.locked && (
+              {selectedElement?.id === line.id && selectedElement?.type === 'horizontalLine' && line.locked && (
                 <span style={{ position: 'absolute', top: 2, right: 2, background: '#fff', borderRadius: '50%', padding: 2, zIndex: 30, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }} title="Locked">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </span>
@@ -531,8 +531,8 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
                   <p className="text-xs text-gray-600">Upload Image</p>
                 </div>
               )}
-              {/* Lock icon overlay */}
-              {image.locked && (
+              {/* Lock icon overlay - only show when selected */}
+              {selectedElement?.id === image.id && selectedElement?.type === 'image' && image.locked && (
                 <span style={{ position: 'absolute', top: 4, right: 4, background: '#fff', borderRadius: '50%', padding: 2, zIndex: 30, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }} title="Locked">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </span>
