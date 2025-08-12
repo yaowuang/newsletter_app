@@ -24,6 +24,7 @@ export const useStore = create<AppState>()(
     sectionStyles: {},
     theme: allThemes[0],
     layout: { base: initialLayout, variant: initialLayout.variants[0] },
+    denseMode: false,
 
     setTitle: (title) => set({ title }),
     setDate: (date) => set({ date }),
@@ -272,6 +273,7 @@ export const useStore = create<AppState>()(
           sectionStyles: snapshot.sectionStyles ?? get().sectionStyles,
           theme: snapshot.theme ?? get().theme,
           layout: snapshot.layout ?? get().layout,
+          denseMode: snapshot.denseMode ?? get().denseMode,
           selectedElement: null,
         });
       } catch (e) {
@@ -287,6 +289,7 @@ export const useStore = create<AppState>()(
         [newBlocks[i1], newBlocks[i2]] = [newBlocks[i2], newBlocks[i1]];
         return { textBlocks: newBlocks };
       });
-    }
+    },
+    setDenseMode: (denseMode) => set({ denseMode })
   })
 );

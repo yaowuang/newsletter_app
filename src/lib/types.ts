@@ -75,6 +75,7 @@ export type EditorSnapshot = {
   sectionStyles: SectionStyles;
   theme: Theme;
   layout: LayoutSelection;
+  denseMode: boolean;
 };
 
 export interface AppState {
@@ -87,6 +88,7 @@ export interface AppState {
   sectionStyles: SectionStyles;
   theme: Theme;
   layout: LayoutSelection;
+  denseMode: boolean;
   
   setTitle: (title: string) => void;
   setDate: (date: string) => void;
@@ -117,4 +119,5 @@ export interface AppState {
   setSectionCount: (count: number) => void;
   loadSnapshot: (snapshot: EditorSnapshot) => void;
   swapTextBlocks: (id1: string, id2: string) => void;
+  setDenseMode: (denseMode: boolean) => void;
 }

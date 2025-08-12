@@ -5,11 +5,16 @@ import TitleDateSection, { DateMode } from './document/TitleDateSection';
 import TitleStylesSection from './document/TitleStylesSection';
 import DateStylesSection from './document/DateStylesSection';
 import PageBackgroundSection from './document/PageBackgroundSection';
+import DenseModeSection from './document/DenseModeSection';
 
 interface DocumentInspectorProps { title: string; date: string; theme: Theme; onTitleChange: (title: string) => void; onDateChange: (date: string) => void; }
 
 export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, date, theme, onTitleChange, onDateChange }) => {
+  // store getters
+  const denseMode = useStore(s => s.denseMode);
+  
   // store setters
+  const setDenseMode = useStore(s => s.setDenseMode);
   const setThemeTitleFont = useStore(s => s.setThemeTitleFont);
   const setThemeDateFont = useStore(s => s.setThemeDateFont);
   const setThemeTitleColor = useStore(s => s.setThemeTitleColor);
@@ -95,6 +100,10 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
         computeBusinessWeekRange={computeBusinessWeekRange}
         toDateInputValue={toDateInputValue}
         formatISO={formatISO}
+      />
+      <DenseModeSection
+        denseMode={denseMode}
+        onDenseModeChange={setDenseMode}
       />
       <TitleStylesSection
         // fonts now sourced internally via FontSelect

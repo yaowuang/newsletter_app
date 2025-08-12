@@ -26,12 +26,12 @@ interface CanvasPanelProps {
   onUpdateImage: (id: string, newProps: Partial<ImageElement>) => void;
 }
 
-const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, style: SectionStyles[string], themeStyle: Theme['styles']['section'] }) => {
+const TextBlockComponent = ({ block, style, themeStyle, denseMode }: { block: TextBlock, style: SectionStyles[string], themeStyle: Theme['styles']['section'], denseMode: boolean }) => {
   const headingStyle: CSSProperties = {
     color: style.headingColor || themeStyle.headingColor,
     backgroundColor: style.headingBackgroundColor || themeStyle.headingBackgroundColor,
     fontFamily: style.headingFontFamily || themeStyle.headingFontFamily,
-    padding: '0.5rem 1rem',
+    padding: denseMode ? '0.25rem 0.75rem' : '0.5rem 1rem',
     borderBottom: '1px solid',
     borderBottomColor: style.borderColor || themeStyle.borderColor,
   };
@@ -39,9 +39,10 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
     color: style.contentColor || themeStyle.contentColor,
     backgroundColor: style.backgroundColor || themeStyle.backgroundColor,
     fontFamily: style.fontFamily || style.contentFontFamily || themeStyle.contentFontFamily,
-    padding: '0.5rem 1rem',
+    padding: denseMode ? '0.25rem 0.75rem' : '0.5rem 1rem',
     flexGrow: 1,
     overflowY: 'auto',
+    lineHeight: denseMode ? '1.3' : '1.5',
   };
   const borderColor = style.borderColor || themeStyle.borderColor || '#ccc';
   const tableHeaderBg = style.headingBackgroundColor || themeStyle.headingBackgroundColor || '#f5f5f5';
@@ -140,8 +141,8 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
               <ul
                 {...props}
                 style={{
-                  marginTop: '0.25rem',
-                  marginBottom: '0.25rem',
+                  marginTop: denseMode ? '0.125rem' : '0.25rem',
+                  marginBottom: denseMode ? '0.125rem' : '0.25rem',
                   paddingLeft: '1rem', // narrower than default prose (~1.5em)
                   listStyleType: 'disc',
                 }}
@@ -151,8 +152,8 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
               <ol
                 {...props}
                 style={{
-                  marginTop: '0.25rem',
-                  marginBottom: '0.25rem',
+                  marginTop: denseMode ? '0.125rem' : '0.25rem',
+                  marginBottom: denseMode ? '0.125rem' : '0.25rem',
                   paddingLeft: '1rem',
                   listStyleType: 'decimal',
                 }}
@@ -162,9 +163,18 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
               <li
                 {...props}
                 style={{
-                  marginTop: '0.125rem',
-                  marginBottom: '0.125rem',
+                  marginTop: denseMode ? '0.05rem' : '0.125rem',
+                  marginBottom: denseMode ? '0.05rem' : '0.125rem',
                   paddingLeft: '0.15rem', // slight to align bullet text
+                }}
+              />
+            ),
+            p: ({ ...props}) => (
+              <p
+                {...props}
+                style={{
+                  marginTop: denseMode ? '0.25rem' : '0.5rem',
+                  marginBottom: denseMode ? '0.25rem' : '0.5rem',
                 }}
               />
             ),
@@ -180,6 +190,7 @@ const TextBlockComponent = ({ block, style, themeStyle }: { block: TextBlock, st
 export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, onSelectElement, selectedElement, sectionStyles, theme, onUpdateImage }: CanvasPanelProps) {
   const horizontalLines = useStore(state => state.horizontalLines);
   const updateHorizontalLine = useStore(state => state.updateHorizontalLine);
+  const denseMode = useStore(state => state.denseMode);
   const [zoom, setZoom] = useState(1);
   const { base, variant } = layoutSelection;
   const { swapTextBlocks } = useStore.getState();
@@ -493,7 +504,7 @@ export function CanvasPanel({ title, date, textBlocks, images, layoutSelection, 
           };
           return (
             <div key={block.id} style={sectionContainerStyle} onClick={(e) => { e.stopPropagation(); onSelectElement(block.id, 'text'); }} className={cn("cursor-pointer relative z-10", { [UI_CONSTANTS.selection]: selectedElement?.id === block.id })}>
-              <TextBlockComponent block={block} style={userStyle} themeStyle={themeStyle} />
+              <TextBlockComponent block={block} style={userStyle} themeStyle={themeStyle} denseMode={denseMode} />
             </div>
           );
         })}
