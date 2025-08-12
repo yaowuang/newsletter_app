@@ -180,6 +180,16 @@ export function TextBlock({ block, style, themeStyle, denseMode }: TextBlockProp
                 }}
               />
             ),
+            hr: ({ ...props}) => (
+              <hr
+                {...props}
+                style={{
+                  borderTop: `1px solid ${borderColor}`,
+                  margin: denseMode ? '0.5rem 0' : '1rem 0',
+                  width: '100%',
+                }}
+              />
+            ),
           }}
         >
           {typeof block.content === 'string' ? block.content : ''}
