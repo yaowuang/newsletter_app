@@ -10,6 +10,7 @@ interface SectionTitleInputProps {
   onCommit: (val: string) => void;
   onUpdateContent: (blockId: string, property: 'content', value: string) => void;
   currentContent: string;
+  disabled?: boolean;
 }
 
 export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({ 
@@ -18,7 +19,8 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
   onChange, 
   onCommit, 
   onUpdateContent, 
-  currentContent 
+  currentContent,
+  disabled
 }) => {
   const [open, setOpen] = React.useState(false);
   const [active, setActive] = React.useState(-1);
@@ -158,6 +160,7 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
         onKeyDown={handleKeyDown}
         onFocus={() => setOpen(true)}
         onBlur={handleBlur}
+        disabled={disabled}
         className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
       />
       {open && filteredSuggestions.length > 0 && (

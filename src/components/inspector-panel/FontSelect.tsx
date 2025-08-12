@@ -53,13 +53,14 @@ interface FontSelectProps {
   onChange?: (newValue: string) => void;
   placeholder?: string;
   triggerClassName?: string;
+  disabled?: boolean;
 }
 
-export const FontSelect: React.FC<FontSelectProps> = ({ id, value, onChange, placeholder = 'Select a font', triggerClassName }) => {
+export const FontSelect: React.FC<FontSelectProps> = ({ id, value, onChange, placeholder = 'Select a font', triggerClassName, disabled }) => {
   const labelValue = toLabel(value);
   return (
-    <Select value={labelValue} onValueChange={(lbl) => onChange?.(fromLabel(lbl))}>
-      <SelectTrigger id={id} className={triggerClassName}>
+    <Select value={labelValue} onValueChange={(lbl) => { if (!disabled) onChange?.(fromLabel(lbl)); }}>
+      <SelectTrigger id={id} className={triggerClassName} aria-disabled={disabled} disabled={disabled}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

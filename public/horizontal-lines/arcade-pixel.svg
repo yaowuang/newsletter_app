@@ -1,0 +1,6 @@
+<svg data-line-id="arcade-pixel" width="72" height="48" viewBox="0 0 72 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Arcade-themed pixel blocks using cyan and neon green from Arcade theme -->
+  <rect x="6" y="18" width="12" height="12" fill="#08F7FE"/>
+  <rect x="30" y="18" width="12" height="12" fill="#39FF14"/>
+  <rect x="54" y="18" width="12" height="12" fill="#08F7FE"/>
+</svg>

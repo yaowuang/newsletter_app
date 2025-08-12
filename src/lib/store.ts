@@ -1,150 +1,14 @@
 import { create } from 'zustand';
 import { nanoid } from 'nanoid';
+import { horizontalLineLibrary, resolveThemedLine } from './horizontalLines';
 import { allLayouts, Layout, LayoutVariant } from '@/lib/layouts';
 import { allThemes, Theme } from '@/lib/themes';
+import { buildInitialBlocks, createUserTextBlock, defaultSectionTemplates } from './initialData';
+import { AppState, TextBlock, ImageElement, HorizontalLineElement } from './types';
 
 
-// Default templates for up to 7 sections
-const defaultSectionTemplates: { title: string; content: string }[] = [
-  { title: 'Announcements', content: `- Welcome back to a new week!
-- Assembly on Wednesday at 10am.
-- Field trip forms due Friday.` },
-  { title: 'Homework', content: `- Math: Workbook p. 52 (#1-10)
-- Reading: 20 minutes from your library book
-- Science: Finish lab sheet` },
-  { title: 'Upcoming Events', content: `| Date | Event |
-| ---- | ----- |
-| Thu  | Art Showcase |
-| Fri  | School Play Rehearsal |
-| Mon  | Quiz: Fractions |` },
-  { title: 'Class Highlights', content: `**This Week:**
+// Note: Default section templates & initial block builders have been moved to initialData.ts
 
-- Great teamwork during group science experiments.
-- Creative story starters shared on Tuesday.
-- Improved quiet reading focus — keep it up!` },
-  { title: 'Student Shoutouts', content: `- 🎉 Alex for helping a classmate.
-- 🌟 Priya for outstanding math problem solving.
-- 💡 Jordan for a creative art project idea.` },
-  { title: 'Reminders', content: `- Bring a water bottle daily.
-- Return library books by Thursday.
-- Wear sneakers for PE tomorrow.` },
-  { title: 'Looking Ahead', content: `Next week we begin our **ecosystems** unit.
-Start thinking about an animal you’d like to research!` },
-];
-
-// Deterministic slug function for stable IDs (avoids hydration mismatch)
-const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-
-// Build initial blocks with STABLE IDs (no nanoid) so server & client match
-const buildInitialBlocks = () => {
-  const seen: Record<string, number> = {};
-  return defaultSectionTemplates.map((t, i) => {
-    let base = slugify(t.title) || `section-${i + 1}`;
-    if (seen[base]) {
-      seen[base] += 1;
-      base = `${base}-${seen[base]}`;
-    } else {
-      seen[base] = 1;
-    }
-    return {
-      id: base, // stable deterministic id
-      type: 'text' as const,
-      title: t.title,
-      content: t.content,
-    };
-  });
-};
-
-export type TextBlock = {
-  id: string;
-  type: 'text';
-  title: string;
-  content: string;
-};
-
-export type ImageElement = {
-  id: string;
-  type: 'image';
-  src: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
-
-export type SelectableElement = (TextBlock | ImageElement) & { type: 'text' | 'image' };
-
-export type LayoutSelection = {
-  base: Layout;
-  variant: LayoutVariant;
-};
-
-export type SectionStyle = {
-  backgroundColor?: string;
-  textColor?: string;
-  contentColor?: string;
-  fontFamily?: string;
-  contentFontFamily?: string;
-  headingColor?: string;
-  headingBackgroundColor?: string;
-  headingFontFamily?: string;
-  borderColor?: string;
-  borderWidth?: number;
-  borderRadius?: number;
-};
-
-export type SectionStyles = {
-  [blockId: string]: SectionStyle;
-};
-
-export type EditorSnapshot = {
-  version: number;
-  title: string;
-  date: string;
-  textBlocks: TextBlock[];
-  images: ImageElement[];
-  sectionStyles: SectionStyles;
-  theme: Theme;
-  layout: LayoutSelection;
-};
-
-interface AppState {
-  title: string;
-  date: string;
-  textBlocks: TextBlock[];
-  images: ImageElement[];
-  selectedElement: { id: string; type: 'text' | 'image' } | null;
-  sectionStyles: SectionStyles;
-  theme: Theme;
-  layout: LayoutSelection;
-  
-  setTitle: (title: string) => void;
-  setDate: (date: string) => void;
-  addTextBlock: () => void;
-  addImage: () => void;
-  updateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
-  updateImage: (id: string, newProps: Partial<ImageElement>) => void;
-  selectElement: (id: string | null, type?: 'text' | 'image') => void;
-  deleteElement: (id: string, type: 'text' | 'image') => void;
-  updateStyle: (blockId: string, newStyles: Partial<SectionStyle>) => void;
-  setTheme: (theme: Theme) => void;
-  setThemeTitleFont?: (font: string) => void;
-  setThemeDateFont?: (font: string) => void;
-  setThemeTitleColor?: (color: string) => void;
-  setThemeDateColor?: (color: string) => void;
-  setThemeTitleAlignment?: (align: 'left' | 'center' | 'right') => void; // new
-  setThemeDateAlignment?: (align: 'left' | 'center' | 'right') => void; // new
-  setThemePageBackgroundColor?: (color: string) => void; // added
-  setThemePageBackgroundImage?: (image: string | null) => void; // added (null to clear)
-  setThemePageBackgroundSize?: (size: string | null) => void; // new
-  setThemePageBackgroundPosition?: (position: string | null) => void; // new
-  setThemePageBackgroundRepeat?: (repeat: string | null) => void; // new
-  setThemePageBackgroundImageOpacity?: (opacity: number) => void; // added
-  setLayout: (layout: LayoutSelection) => void;
-  setSectionCount: (count: number) => void;
-  loadSnapshot: (snapshot: EditorSnapshot) => void;
-  swapTextBlocks: (id1: string, id2: string) => void;
-}
 
 const initialBlocks = buildInitialBlocks();
 const initialLayout = allLayouts.find(l => l.sections === initialBlocks.length)!;
@@ -153,9 +17,10 @@ export const useStore = create<AppState>()(
   (set, get) => ({
     title: 'Newsletter Title',
     date: 'August 6, 2025',
-    textBlocks: initialBlocks,
-    images: [],
-    selectedElement: null,
+  textBlocks: initialBlocks,
+  horizontalLines: [],
+  images: [],
+  selectedElement: null,
     sectionStyles: {},
     theme: allThemes[0],
     layout: { base: initialLayout, variant: initialLayout.variants[0] },
@@ -163,17 +28,43 @@ export const useStore = create<AppState>()(
     setTitle: (title) => set({ title }),
     setDate: (date) => set({ date }),
 
-    addTextBlock: () => {
-      const count = get().textBlocks.length;
-      const template = defaultSectionTemplates[count];
-      const newBlock: TextBlock = {
-        id: nanoid(), // acceptable for user-added blocks after hydration
-        type: 'text',
-        title: template ? template.title : `Section ${count + 1}`,
-        content: template ? template.content : '- Your content here'
-      };
-      set(state => ({ textBlocks: [...state.textBlocks, newBlock] }));
-    },
+  addTextBlock: () => {
+    const count = get().textBlocks.length;
+    const newBlock = createUserTextBlock(count);
+    set(state => ({ textBlocks: [...state.textBlocks, newBlock] }));
+  },
+
+  addHorizontalLine: (props = {}) => {
+    const state = get();
+    // Get the default color for classic-solid if no color is provided
+    const defaultLibItem = horizontalLineLibrary.find(item => item.id === 'classic-solid');
+    const defaultColor = props.color || defaultLibItem?.defaultColor || state.theme.styles.section.borderColor || '#888';
+    
+    const newLine: HorizontalLineElement = {
+      id: nanoid(),
+      type: 'horizontalLine',
+      x: 40,
+      y: 140,
+      width: 400, // use numeric width for draggable/resizable line
+      height: 24, // default height for SVG scaling
+      color: defaultColor,
+      thickness: 2,
+      style: 'solid',
+      ...props,
+    };
+    set(state => ({ horizontalLines: [...state.horizontalLines, newLine] }));
+  },
+
+  updateHorizontalLine: (id: string, newProps: Partial<HorizontalLineElement>) => {
+    set(state => ({
+      horizontalLines: state.horizontalLines.map(line => {
+  if (line.id !== id) return line;
+  // Allow autoGenerated decorative lines to be repositioned even if locked (layout-driven)
+  if (line.locked && !line.autoGenerated && !('locked' in newProps)) return line; // do not mutate if locked unless unlocking
+        return { ...line, ...newProps };
+      })
+    }));
+  },
 
     addImage: () => {
       const newImage: ImageElement = { id: nanoid(), type: 'image', src: '', x: 50, y: 50, width: 200, height: 150 };
@@ -181,15 +72,19 @@ export const useStore = create<AppState>()(
     },
 
     updateTextBlock: (id, property, value) => {
-      set(state => ({ 
-        textBlocks: state.textBlocks.map(b => 
-          b.id === id ? { ...b, [property]: value } : b
-        ) 
+      set(state => ({
+        textBlocks: state.textBlocks.map(b => (b.id === id && !b.locked)
+          ? { ...b, [property]: value } as TextBlock
+          : b)
       }));
     },
 
     updateImage: (id, newProps) => {
-      set(state => ({ images: state.images.map(img => img.id === id ? { ...img, ...newProps } : img) }));
+      set(state => ({ images: state.images.map(img => {
+        if (img.id !== id) return img;
+        if (img.locked && !('locked' in newProps)) return img;
+        return { ...img, ...newProps };
+      }) }));
     },
 
     selectElement: (id, type) => {
@@ -198,20 +93,90 @@ export const useStore = create<AppState>()(
     },
 
     deleteElement: (id, type) => {
-      set(state => ({
-        textBlocks: type === 'text' ? state.textBlocks.filter(b => b.id !== id) : state.textBlocks,
-        images: type === 'image' ? state.images.filter(i => i.id !== id) : state.images,
-        selectedElement: null,
-      }));
+      set(state => {
+        if (type === 'image' && state.images.find(i => i.id === id && i.locked)) return { ...state };
+        if (type === 'text' && state.textBlocks.find(b => b.id === id && b.locked)) return { ...state };
+        if (type === 'horizontalLine' && state.horizontalLines.find(l => l.id === id && l.locked)) return { ...state };
+        return {
+          textBlocks: type === 'text' ? state.textBlocks.filter(b => b.id !== id) : state.textBlocks,
+          images: type === 'image' ? state.images.filter(i => i.id !== id) : state.images,
+          horizontalLines: type === 'horizontalLine' ? state.horizontalLines.filter(l => l.id !== id) : state.horizontalLines,
+          selectedElement: null,
+        };
+      });
+    },
+
+    setElementLocked: (id, type, locked) => {
+      const updater = <T extends { id: string }>(arr: T[]) => arr.map(el => el.id === id ? { ...el, locked } : el);
+      if (type === 'text') set(state => ({ textBlocks: updater(state.textBlocks) }));
+      else if (type === 'image') set(state => ({ images: updater(state.images) }));
+      else if (type === 'horizontalLine') set(state => ({ horizontalLines: updater(state.horizontalLines) }));
     },
 
     updateStyle: (blockId, newStyles) => {
       set(state => ({
-        sectionStyles: { ...state.sectionStyles, [blockId]: { ...(state.sectionStyles[blockId] || {}), ...newStyles } }
+        sectionStyles: (() => {
+          const blk = state.textBlocks.find(b => b.id === blockId);
+          if (blk?.locked) return state.sectionStyles; // ignore when locked
+          return { ...state.sectionStyles, [blockId]: { ...(state.sectionStyles[blockId] || {}), ...newStyles } };
+        })()
       }));
     },
 
-    setTheme: (theme) => set({ theme, sectionStyles: {} }),
+  setTheme: (theme) => {
+      const state = get();
+      const newBorderColor = theme.styles.section.borderColor || '#888';
+      const oldBorderColor = state.theme.styles.section.borderColor || '#888';
+      
+      // Update existing non-SVG horizontal lines to use the new theme's border color
+      // Only update lines that are currently using the old theme's default color
+      const updatedHorizontalLines = state.horizontalLines.map(line => {
+        // Only update non-SVG lines (solid, dashed, dotted, shadow)
+        if (line.style !== 'clipart') {
+          // Find the corresponding library item
+          const libItem = horizontalLineLibrary.find(item => 
+            (line.style === 'solid' && item.id === 'classic-solid') ||
+            (line.style === 'dashed' && item.id === 'classic-dashed') ||
+            (line.style === 'dotted' && item.id === 'classic-dotted') ||
+            (line.style === 'shadow' && item.id === 'shadow')
+          );
+          
+          // If the library item doesn't have a default color (meaning it should use theme color)
+          // and the current line color matches the old theme's border color, update it to new theme color
+          if (libItem && !libItem.defaultColor && line.color === oldBorderColor) {
+            return { ...line, color: newBorderColor };
+          }
+        }
+        return line;
+      });
+      
+      // Refresh auto-generated themed lines
+  const refreshed: HorizontalLineElement[] = updatedHorizontalLines.map(line => {
+        if (line.autoGenerated && line.decorationKey) {
+          const deco = state.layout.variant.decorations?.find(d => `${state.layout.base.id}:${state.layout.variant.name}:${d.position}:${d.sectionIndex ?? ''}` === line.decorationKey);
+          if (deco && deco.lineId === 'themed') {
+            const themed = resolveThemedLine(theme.name);
+            const style: HorizontalLineElement['style'] = themed.type === 'svg'
+              ? 'clipart'
+              : themed.id.includes('dashed') ? 'dashed'
+              : themed.id.includes('dotted') ? 'dotted'
+              : themed.id === 'shadow' ? 'shadow' : 'solid';
+            return {
+              ...line,
+              style,
+              clipartSrc: themed.type === 'svg' ? themed.preview : undefined,
+              color: themed.defaultColor || newBorderColor
+            };
+          }
+        }
+        return line;
+      });
+      set({ 
+        theme, 
+        sectionStyles: {},
+        horizontalLines: refreshed
+      });
+    },
     setThemeTitleFont: (font: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...state.theme.styles.title, fontFamily: font } } } })),
     setThemeDateFont: (font: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, date: { ...state.theme.styles.date, fontFamily: font } } } })),
     setThemeTitleColor: (color: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...state.theme.styles.title, color } } } })),
@@ -225,24 +190,71 @@ export const useStore = create<AppState>()(
     setThemePageBackgroundRepeat: (repeat) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundRepeat: repeat || undefined } } } })),
     setThemePageBackgroundImageOpacity: (opacity) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundImageOpacity: Math.min(1, Math.max(0, opacity)) } } } })),
 
-    setLayout: (layout) => set({ layout }),
+    setLayout: (layout) => {
+      set(state => {
+        const { base, variant } = layout;
+        const theme = state.theme;
+        const decorations = variant.decorations || [];
+        const newAutoLines = decorations.map(dec => {
+          const key = `${base.id}:${variant.name}:${dec.position}:${dec.sectionIndex ?? ''}`;
+          const existing: HorizontalLineElement | undefined = state.horizontalLines.find(l => l.autoGenerated && l.decorationKey === key);
+          const libItem = dec.lineId === 'themed' ? resolveThemedLine(theme.name) : horizontalLineLibrary.find(l => l.id === dec.lineId);
+          const color = libItem?.defaultColor || theme.styles.section.borderColor || '#888';
+          // Initial coarse placement; will be refined in canvas via DOM measurements
+          let y = 125; // after title
+          if (dec.position === 'afterTitle') y = 125;
+          else if (dec.position === 'afterDate') y = 165;
+          else if (dec.position === 'beforeSections') y = 200;
+          else if (dec.position === 'afterSections') y = 920;
+          else if (dec.position === 'afterSection' && typeof dec.sectionIndex === 'number') {
+            y = 220 + dec.sectionIndex * 110;
+          }
+          const x = 40;
+          const width = 400;
+          let baseLine: HorizontalLineElement;
+          if (existing) {
+            baseLine = existing;
+          } else {
+            baseLine = {
+              id: nanoid(),
+              type: 'horizontalLine',
+              x, y,
+              width,
+              height: libItem?.type === 'svg' ? 24 : undefined,
+              color,
+              thickness: 2,
+              style: libItem ? (libItem.type === 'svg' ? 'clipart' : libItem.id.includes('dashed') ? 'dashed' : libItem.id.includes('dotted') ? 'dotted' : libItem.id === 'shadow' ? 'shadow' : 'solid') : 'solid',
+              clipartSrc: libItem?.type === 'svg' ? libItem.preview : undefined,
+              autoGenerated: true,
+              decorationKey: key,
+              locked: true,
+            };
+          }
+          return { ...baseLine, x, y, color };
+        });
+        const keptManual = state.horizontalLines.filter(l => !l.autoGenerated);
+        // Apply layout-provided alignment to theme styles (non-destructive for unspecified fields)
+        const updatedTheme: Theme = {
+          ...theme,
+          styles: {
+            ...theme.styles,
+            title: { ...theme.styles.title, textAlign: variant.titleAlign || theme.styles.title.textAlign },
+            date: { ...theme.styles.date, textAlign: variant.dateAlign || theme.styles.date.textAlign }
+          }
+        };
+        return { layout, horizontalLines: [...keptManual, ...newAutoLines], theme: updatedTheme };
+      });
+    },
 
     setSectionCount: (count) => {
       const currentBlocks = get().textBlocks;
-      const diff = count - currentBlocks.length;
-      if (diff > 0) {
-        const startIndex = currentBlocks.length;
-        const newBlocks = Array.from({ length: diff }, (_, i) => {
-          const template = defaultSectionTemplates[startIndex + i];
-            return { 
-              id: nanoid(), 
-              type: 'text' as const, 
-              title: template ? template.title : `Section ${startIndex + i + 1}`, 
-              content: template ? template.content : '- Your content here' 
-            };
-        });
+      if (count === currentBlocks.length) return;
+      if (count > currentBlocks.length) {
+        const newBlocks = Array.from({ length: count - currentBlocks.length }, (_, i) =>
+          createUserTextBlock(currentBlocks.length + i)
+        );
         set({ textBlocks: [...currentBlocks, ...newBlocks] });
-      } else if (diff < 0) {
+      } else {
         set({ textBlocks: currentBlocks.slice(0, count) });
       }
       get().selectElement(null);

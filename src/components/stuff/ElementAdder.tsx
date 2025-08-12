@@ -6,10 +6,11 @@ import { useStore } from '@/lib/store';
 
 interface ElementAdderProps {
   onAddTextBlock: () => void;
-  onAddImage: () => void; // retained if needed elsewhere
+  onAddHorizontalLine: () => void;
 }
 
-export const ElementAdder: React.FC<ElementAdderProps> = ({ onAddTextBlock }) => {
+export const ElementAdder: React.FC<ElementAdderProps> = ({ onAddTextBlock, onAddHorizontalLine }) => {
+  // Remove direct store usage for horizontal line
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const addImageStore = useStore(state => state.addImage);
@@ -58,6 +59,7 @@ export const ElementAdder: React.FC<ElementAdderProps> = ({ onAddTextBlock }) =>
   return (
     <div className='grid grid-cols-2 gap-2 mb-4'>
       <Button variant='outline' onClick={onAddTextBlock}><PlusSquare className='h-4 w-4 mr-2' /> Section</Button>
+      <Button variant='outline' onClick={onAddHorizontalLine}><span style={{display:'inline-block',transform:'rotate(90deg)'}}><PlusSquare className='h-4 w-4 mr-2' /></span> Horizontal Line</Button>
       <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
         <DialogTrigger asChild>
           <Button variant='outline'><ImagePlus className='h-4 w-4 mr-2' /> Image</Button>

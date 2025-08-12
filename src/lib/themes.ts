@@ -33,6 +33,8 @@ export type Theme = {
       borderRadius?: number;
     }
   }
+  // Optional list of preferred horizontal line style ids in order of priority
+  preferredLineIds?: string[];
 };
 
 export const allThemes: Theme[] = [
@@ -52,7 +54,8 @@ export const allThemes: Theme[] = [
         borderColor: '#E5E7EB',
         borderRadius: 12, // 0.75rem
       }
-    }
+    },
+    preferredLineIds: ['classic-solid','classic-dashed','classic-dotted']
   },
   {
     name: 'Ocean Blue',
@@ -70,7 +73,8 @@ export const allThemes: Theme[] = [
         borderColor: '#BAE6FD',
         borderRadius: 16, // 1rem
       }
-    }
+    },
+    preferredLineIds: ['wavy','classic-solid']
   },
   {
     name: 'Forest Green',
@@ -88,7 +92,8 @@ export const allThemes: Theme[] = [
         borderColor: '#BBF7D0',
         borderRadius: 16,
       }
-    }
+    },
+    preferredLineIds: ['classic-solid','classic-dashed']
   },
   {
     name: 'Sunset',
@@ -106,7 +111,8 @@ export const allThemes: Theme[] = [
         borderColor: '#FED7AA',
         borderRadius: 16,
       }
-    }
+    },
+    preferredLineIds: ['classic-dotted','classic-solid']
   },
   {
     name: 'Halloween',

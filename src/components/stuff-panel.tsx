@@ -3,7 +3,7 @@ import { LayoutPicker } from '@/components/stuff/LayoutPicker';
 import { ThemePicker } from '@/components/stuff/ThemePicker';
 import { ElementAdder } from '@/components/stuff/ElementAdder';
 import { ClipartSearch } from '@/components/stuff/ClipartSearch';
-import { LayoutSelection } from '@/lib/store';
+import { LayoutSelection } from '@/lib/types';
 import { Theme } from '@/lib/themes';
 
 interface StuffPanelProps {
@@ -12,12 +12,12 @@ interface StuffPanelProps {
   currentTheme: Theme;
   onThemeChange: (theme: Theme) => void;
   onAddTextBlock: () => void;
-  onAddImage: () => void;
+  onAddHorizontalLine: () => void;
   onSetSectionCount: (count: number) => void;
   sectionCount: number;
 }
 
-export function StuffPanel({ currentLayoutSelection, onLayoutChange, currentTheme, onThemeChange, onAddTextBlock, onAddImage, onSetSectionCount, sectionCount }: StuffPanelProps) {
+export function StuffPanel({ currentLayoutSelection, onLayoutChange, currentTheme, onThemeChange, onAddTextBlock, onAddHorizontalLine, onSetSectionCount, sectionCount }: StuffPanelProps) {
   return (
     <div className="flex h-full flex-col p-4">
       <Tabs defaultValue="layouts" className="flex-grow flex flex-col">
@@ -41,7 +41,7 @@ export function StuffPanel({ currentLayoutSelection, onLayoutChange, currentThem
           </div>
         </TabsContent>
         <TabsContent value="elements" className="mt-4">
-          <ElementAdder onAddTextBlock={onAddTextBlock} onAddImage={onAddImage} />
+          <ElementAdder onAddTextBlock={onAddTextBlock} onAddHorizontalLine={onAddHorizontalLine} />
         </TabsContent>
         <TabsContent value="clipart" className="mt-4 space-y-4">
           <ClipartSearch />

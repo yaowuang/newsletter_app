@@ -9,7 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toPng, toSvg } from 'html-to-image';
-import { useStore, EditorSnapshot } from "@/lib/store";
+import { useStore } from "@/lib/store";
+import type { EditorSnapshot } from "@/lib/types";
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 
@@ -29,7 +30,7 @@ async function decodeSnapshot(file: File): Promise<EditorSnapshot> {
 }
 
 export function Header() {
-  const storeTitle = useStore(state => state.title);
+  // Removed unused storeTitle subscription to avoid unnecessary re-renders
   const storeDate = useStore(state => state.date);
   // Removed stateForSnapshot subscription to avoid creating new object each render.
   const loadSnapshot = useStore(state => state.loadSnapshot);

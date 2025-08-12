@@ -1,13 +1,14 @@
 "use client";
 
-import { TextBlock, ImageElement, SectionStyle } from "@/lib/store";
+import type { TextBlock, ImageElement, SectionStyle } from "@/lib/types";
+import { HorizontalLineInspector } from './inspector-panel/HorizontalLineInspector';
 // Refactored components
 import { TextInspector } from "./inspector-panel/TextInspector";
 import { ImageInspector } from "./inspector-panel/ImageInspector";
 import { DocumentInspector } from "./inspector-panel/DocumentInspector";
 import { useStore } from "@/lib/store";
 
-type SelectableElement = TextBlock | ImageElement;
+type SelectableElement = TextBlock | ImageElement | { id: string; type: 'horizontalLine' };
 
 interface InspectorPanelProps {
   selectedElement?: SelectableElement;
@@ -46,25 +47,24 @@ export function InspectorPanel({
         onDateChange={onDateChange}
       />;
     }
-    switch (selectedElement.type) {
-      case 'text': {
-        const block = textBlocks.find(b => b.id === selectedElement.id) as TextBlock;
-        return <TextInspector 
-          block={block}
-          theme={theme}
-          currentStyle={currentStyle}
-          onUpdateTextBlock={onUpdateTextBlock}
-          onStyleChange={onStyleChange}
-        />;
-      }
-      case 'image':
-        return <ImageInspector 
-          image={selectedElement as ImageElement}
-          onUpdateImage={onUpdateImage}
-        />;
-      default:
-        return <div><p>Select an element to inspect.</p></div>;
+    if (selectedElement.type === 'text') {
+      const block = textBlocks.find(b => b.id === selectedElement.id) as TextBlock;
+      return <TextInspector 
+        block={block}
+        theme={theme}
+        currentStyle={currentStyle}
+        onUpdateTextBlock={onUpdateTextBlock}
+        onStyleChange={onStyleChange}
+      />;
+    } else if (selectedElement.type === 'image') {
+      return <ImageInspector 
+        image={selectedElement as ImageElement}
+        onUpdateImage={onUpdateImage}
+      />;
+    } else if (selectedElement.type === 'horizontalLine') {
+      return <HorizontalLineInspector elementId={selectedElement.id} />;
     }
+    return <div><p>Select an element to inspect.</p></div>;
   }
 
   return (

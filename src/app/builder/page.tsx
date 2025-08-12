@@ -14,9 +14,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 export default function BuilderPage() {
+  // Fix selectElement type to accept 'horizontalLine'
+  const handleSelectElement = (id: string | null, type?: 'text' | 'image' | 'horizontalLine') => {
+    if (typeof selectElement === 'function') {
+      selectElement(id, type);
+    }
+  };
   const {
     title, date, textBlocks, images, layout, theme, selectedElement, sectionStyles,
-    setTitle, setDate, setLayout, setTheme, addTextBlock, addImage,
+    setTitle, setDate, setLayout, setTheme, addTextBlock, addImage, addHorizontalLine,
     updateTextBlock, updateImage, selectElement, updateStyle, setSectionCount,
     deleteElement,
   } = useStore();
@@ -29,7 +35,7 @@ export default function BuilderPage() {
   useEffect(() => {
     const handleDeleteElement = (e: CustomEvent) => {
       const detail = e.detail;
-      if (detail && detail.id && (detail.type === 'text' || detail.type === 'image')) {
+      if (detail && detail.id && (detail.type === 'text' || detail.type === 'image' || detail.type === 'horizontalLine')) {
         deleteElement(detail.id, detail.type);
       }
     };
@@ -47,8 +53,12 @@ export default function BuilderPage() {
     if (!selectedElement) return undefined;
     if (selectedElement.type === 'text') {
       return textBlocks.find(b => b.id === selectedElement.id);
+    } else if (selectedElement.type === 'image') {
+      return images.find(i => i.id === selectedElement.id);
+    } else if (selectedElement.type === 'horizontalLine') {
+      return { id: selectedElement.id, type: 'horizontalLine' as const };
     }
-    return images.find(i => i.id === selectedElement.id);
+    return undefined;
   }, [textBlocks, images, selectedElement]);
 
   return (
@@ -80,7 +90,7 @@ export default function BuilderPage() {
                   currentTheme={theme}
                   onThemeChange={setTheme}
                   onAddTextBlock={addTextBlock}
-                  onAddImage={addImage}
+                  onAddHorizontalLine={addHorizontalLine}
                   onSetSectionCount={setSectionCount}
                   sectionCount={textBlocks.length}
                 />
@@ -100,7 +110,7 @@ export default function BuilderPage() {
               textBlocks={textBlocks}
               images={images}
               layoutSelection={layout}
-              onSelectElement={selectElement}
+              onSelectElement={handleSelectElement}
               selectedElement={selectedElement}
               sectionStyles={sectionStyles}
               theme={theme}
