@@ -77,7 +77,7 @@ export function NewsletterHeader({
     gridArea: 'title',
     fontFamily: theme.styles.title.fontFamily,
     color: theme.styles.title.color,
-    textAlign: variant.titleAlign || theme.styles.title.textAlign || 'center',
+    textAlign: theme.styles.title.textAlign || 'center',
     marginBottom: denseMode ? '12px' : '0px',
   };
   
@@ -85,7 +85,7 @@ export function NewsletterHeader({
     gridArea: 'date',
     fontFamily: theme.styles.date.fontFamily,
     color: theme.styles.date.color,
-    textAlign: variant.dateAlign || theme.styles.date.textAlign || 'center',
+    textAlign: theme.styles.date.textAlign || 'center',
     marginBottom: denseMode ? '12px' : '0px',
   };
 

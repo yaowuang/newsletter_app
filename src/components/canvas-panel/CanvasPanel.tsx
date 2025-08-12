@@ -3,6 +3,7 @@ import { useStore } from '@/lib/store';
 import type { LayoutSelection, TextBlock, ImageElement, SectionStyles } from '@/lib/types';
 import type { Theme } from '@/lib/themes';
 import { CSSProperties } from 'react';
+import { updateHorizontalLinePositions } from './utils/positionUtils';
 
 // Component imports
 import { ZoomControlsComponent } from './ZoomControls';
@@ -12,6 +13,7 @@ import { SectionsContainer } from './SectionsContainer';
 import { HorizontalLinesLayer } from './HorizontalLinesLayer';
 import { ImagesLayer } from './ImagesLayer';
 import { Watermark } from './Watermark';
+import { LayoutDebugger, useLayoutDebug } from './LayoutDebugger';
 
 interface CanvasPanelProps {
   title: string;
@@ -47,6 +49,9 @@ export function CanvasPanel({
   theme,
   onUpdateImage,
 }: CanvasPanelProps) {
+  // Debug hook to help troubleshoot layout issues
+  useLayoutDebug();
+  
   // Store dependencies
   const horizontalLines = useStore(state => state.horizontalLines);
   const updateHorizontalLine = useStore(state => state.updateHorizontalLine);
@@ -105,6 +110,19 @@ export function CanvasPanel({
     window.addEventListener('swap-text-blocks', handleSwapEvent as EventListener);
     return () => window.removeEventListener('swap-text-blocks', handleSwapEvent as EventListener);
   }, [swapTextBlocks]);
+
+  // Update horizontal line positions based on layout (not DOM measurements)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      updateHorizontalLinePositions(
+        horizontalLines,
+        layoutSelection,
+        updateHorizontalLine
+      );
+    }, 50); // Small delay to ensure state is updated
+
+    return () => clearTimeout(timer);
+  }, [layoutSelection.base.id, layoutSelection.variant.name, horizontalLines, updateHorizontalLine]);
 
   // Layout and styling
   const { base, variant } = layoutSelection;
@@ -181,6 +199,7 @@ export function CanvasPanel({
               denseMode={denseMode}
               selectedElement={selectedElement}
               onSelectElement={onSelectElement}
+              layoutSelection={layoutSelection}
             />
 
             {/* Images Layer */}
@@ -197,6 +216,9 @@ export function CanvasPanel({
           </div>
         </div>
       </div>
+      
+      {/* Debug overlay - remove in production */}
+      <LayoutDebugger />
     </div>
   );
 }

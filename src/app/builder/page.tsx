@@ -3,7 +3,7 @@
 import { CanvasPanel } from "@/components/canvas-panel";
 import { Header } from "@/components/header";
 import { InspectorPanel } from "@/components/inspector-panel";
-import { StuffPanel } from "@/components/stuff-panel";
+import { StuffPanel } from "@/components/stuff";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -22,8 +22,7 @@ export default function BuilderPage() {
   };
   const {
     title, date, textBlocks, images, layout, theme, selectedElement, sectionStyles,
-    setTitle, setDate, setLayout, setTheme, addTextBlock, addImage, addHorizontalLine,
-    updateTextBlock, updateImage, selectElement, updateStyle, setSectionCount,
+    setTitle, setDate, updateTextBlock, updateImage, selectElement, updateStyle,
     deleteElement,
   } = useStore();
 
@@ -84,16 +83,7 @@ export default function BuilderPage() {
                 <Button size="sm" variant="ghost" onClick={() => setShowLeft(false)} aria-label="Hide tools panel">Hide</Button>
               </div>
               <div className="flex-1 min-h-0 overflow-y-auto">
-                <StuffPanel
-                  currentLayoutSelection={layout}
-                  onLayoutChange={setLayout}
-                  currentTheme={theme}
-                  onThemeChange={setTheme}
-                  onAddTextBlock={addTextBlock}
-                  onAddHorizontalLine={addHorizontalLine}
-                  onSetSectionCount={setSectionCount}
-                  sectionCount={textBlocks.length}
-                />
+                <StuffPanel defaultTab="layouts" />
               </div>
             </ResizablePanel>
             <ResizableHandle withHandle />

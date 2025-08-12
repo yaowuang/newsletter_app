@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { UI_CONSTANTS } from '@/lib/ui-constants';
 import { TextBlock as TextBlockComponent } from './TextBlock';
-import type { TextBlock, SectionStyles } from '@/lib/types';
+import type { TextBlock, SectionStyles, LayoutSelection } from '@/lib/types';
 import type { Theme } from '@/lib/themes';
 import { CSSProperties } from 'react';
 
@@ -13,6 +13,7 @@ interface SectionsContainerProps {
   denseMode: boolean;
   selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' } | null;
   onSelectElement: (id: string, type: 'text') => void;
+  layoutSelection: LayoutSelection; // Add this to know how many sections the layout supports
 }
 
 /**
@@ -26,10 +27,15 @@ export function SectionsContainer({
   denseMode,
   selectedElement,
   onSelectElement,
+  layoutSelection,
 }: SectionsContainerProps) {
+  // Only render sections that the current layout can accommodate
+  const maxSections = layoutSelection.base.sections;
+  const visibleTextBlocks = textBlocks.slice(0, maxSections);
+  
   return (
     <div style={{ display: 'contents' }}>
-      {textBlocks.map((block, index) => {
+      {visibleTextBlocks.map((block, index) => {
         const gridArea = `sec${index + 1}`;
         if (!gridArea) return null;
         
