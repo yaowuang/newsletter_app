@@ -109,6 +109,10 @@ export function Header() {
       const selectedBorders = captureTarget.querySelectorAll('.border-blue-500');
       selectedBorders.forEach(el => el.classList.remove('border-blue-500', 'border-2'));
 
+      // Hide lock icons during capture
+      const lockIcons = captureTarget.querySelectorAll('[title="Locked"]');
+      lockIcons.forEach(el => (el as HTMLElement).style.display = 'none');
+
       if (format === 'png') {
         const dataUrl = await toPng(captureTarget, { cacheBust: true, pixelRatio: 3 });
         const link = document.createElement('a');
@@ -140,7 +144,9 @@ export function Header() {
         pdf.save(`${safeTitle}.pdf`);
       }
 
+      // Restore selection borders and lock icons
       selectedBorders.forEach(el => el.classList.add('border-blue-500', 'border-2'));
+      lockIcons.forEach(el => (el as HTMLElement).style.display = '');
     } catch (e) {
       console.error('Download failed', e);
     }
