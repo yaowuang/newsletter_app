@@ -13,7 +13,6 @@ import { SectionsContainer } from './SectionsContainer';
 import { HorizontalLinesLayer } from './HorizontalLinesLayer';
 import { ImagesLayer } from './ImagesLayer';
 import { Watermark } from './Watermark';
-import { LayoutDebugger, useLayoutDebug } from './LayoutDebugger';
 
 interface CanvasPanelProps {
   title: string;
@@ -50,7 +49,6 @@ export function CanvasPanel({
   onUpdateImage,
 }: CanvasPanelProps) {
   // Debug hook to help troubleshoot layout issues
-  useLayoutDebug();
   
   // Store dependencies
   const horizontalLines = useStore(state => state.horizontalLines);
@@ -216,9 +214,8 @@ export function CanvasPanel({
           </div>
         </div>
       </div>
-      
-      {/* Debug overlay - remove in production */}
-      <LayoutDebugger />
     </div>
   );
 }
+
+export default CanvasPanel;
