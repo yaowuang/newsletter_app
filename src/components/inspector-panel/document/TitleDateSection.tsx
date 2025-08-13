@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import InspectorSection from '@/components/ui/InspectorSection';
 import FormGroup from '@/components/ui/FormGroup';
+import EmojiToolbar from '@/components/inspector-panel/EmojiIconToolbar';
 
 export type DateMode = 'single' | 'week' | 'month';
 
@@ -29,10 +30,32 @@ export const TitleDateSection: React.FC<TitleDateSectionProps> = ({ title, date,
     else onDateChange(newIso);
   };
 
+  const titleInputRef = React.useRef<HTMLInputElement | null>(null);
+
   return (
     <InspectorSection title="Title & Date">
       <FormGroup label="Newsletter Title" id={titleInputId}>
-        <Input id={titleInputId} name="newsletterTitle" type="text" value={title} onChange={e => onTitleChange(e.target.value)} />
+        <div className="flex flex-col gap-1">
+          <Input ref={titleInputRef} id={titleInputId} name="newsletterTitle" type="text" value={title} onChange={e => onTitleChange(e.target.value)} />
+          <EmojiToolbar onInsert={(emoji) => {
+            const el = titleInputRef.current;
+            const cur = title || '';
+            if (!el) {
+              onTitleChange(cur + emoji); return;
+            }
+            const start = el.selectionStart ?? cur.length;
+            const end = el.selectionEnd ?? start;
+            const next = cur.slice(0, start) + emoji + cur.slice(end);
+            onTitleChange(next);
+            requestAnimationFrame(() => {
+              if (titleInputRef.current) {
+                const pos = start + emoji.length;
+                titleInputRef.current.selectionStart = titleInputRef.current.selectionEnd = pos;
+                titleInputRef.current.focus();
+              }
+            });
+          }} />
+        </div>
       </FormGroup>
       <FormGroup label="Date Mode" id={dateInputId} inline>
         <Select value={dateMode} onValueChange={(v: DateMode) => {

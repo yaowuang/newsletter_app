@@ -2,6 +2,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import EmojiToolbar from '@/components/inspector-panel/EmojiIconToolbar';
 
 interface SectionTitleInputProps {
   blockId: string;
@@ -35,11 +36,13 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
   }, []);
 
   // Enhanced commit function that handles calendar replacement
+  const stripLeadingEmojis = (val: string) => val.replace(/^[\p{Extended_Pictographic}\u200d\ufe0f\s]+/gu, '').trim();
   const commitTitle = (value: string) => {
     onCommit(value);
+    const baseValue = stripLeadingEmojis(value);
     const existingContent = currentContent.trim();
     const isPlaceholder = existingContent === '' || existingContent === '- Your content here' || existingContent === 'Your content here';
-    if (targetedTitles.current.has(value)) {
+    if (targetedTitles.current.has(baseValue)) {
       if (isPlaceholder) {
         onUpdateContent(blockId, 'content', generateWeekTable());
       } else if (!existingContent.includes('| Date | Event |')) { // avoid prompting if already a calendar table
@@ -49,39 +52,40 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
   };
 
   // Common elementary newsletter section title suggestions
-  const titleSuggestions = React.useMemo(() => [
-    "Announcements",
-    "Art & Music",
-    "Birthday Celebrations",
-    "Class Highlights",
-    "Community News",
-    "Counselor's Corner",
-    "Field Trips",
-    "Homework",
-    "Important Dates",
-    "Looking Ahead",
-    "Lunch Menu",
-    "Math Corner",
-    "Quote of the Week",
-    "Physical Education",
-    "Principal's Message",
-    "PTA News",
-    "Reading Corner",
-    "Reminders",
-    "Safety Reminders",
-    "Science Spotlight",
-    "Student of the Week",
-    "Technology Tips",
-    "Upcoming Events",
-    "Volunteer Opportunities",
+  interface Suggestion { title: string; emoji: string; }
+  const titleSuggestions = React.useMemo<Suggestion[]>(() => [
+    { title: "Announcements", emoji: "📣" },
+    { title: "Art & Music", emoji: "🎨" },
+    { title: "Birthday Celebrations", emoji: "🎂" },
+    { title: "Class Highlights", emoji: "✨" },
+    { title: "Community News", emoji: "📰" },
+    { title: "Counselor's Corner", emoji: "💬" },
+    { title: "Field Trips", emoji: "🚌" },
+    { title: "Homework", emoji: "✏️" },
+    { title: "Important Dates", emoji: "📅" },
+    { title: "Looking Ahead", emoji: "🔮" },
+    { title: "Lunch Menu", emoji: "🍽️" },
+    { title: "Math Corner", emoji: "➗" },
+    { title: "Quote of the Week", emoji: "❝" },
+    { title: "Physical Education", emoji: "🏃" },
+    { title: "Principal's Message", emoji: "🧑‍🏫" },
+    { title: "PTA News", emoji: "🏫" },
+    { title: "Reading Corner", emoji: "📚" },
+    { title: "Reminders", emoji: "✅" },
+    { title: "Safety Reminders", emoji: "⚠️" },
+    { title: "Science Spotlight", emoji: "🔬" },
+    { title: "Student of the Week", emoji: "⭐" },
+    { title: "Technology Tips", emoji: "💻" },
+    { title: "Upcoming Events", emoji: "📆" },
+    { title: "Volunteer Opportunities", emoji: "🤝" },
   ], []);
 
   // Filter suggestions based on input
   const filteredSuggestions = React.useMemo(() => {
-    const q = value.trim().toLowerCase();
-    if (!q) return [];
+    const q = stripLeadingEmojis(value).toLowerCase();
+    if (!q) return [] as Suggestion[];
     return titleSuggestions
-      .filter(s => s.toLowerCase().includes(q) && s !== value)
+      .filter(s => s.title.toLowerCase().includes(q) && stripLeadingEmojis(value) !== s.title)
       .slice(0, 8);
   }, [value, titleSuggestions]);
 
@@ -96,7 +100,9 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
 
   const commitAtIndex = (index: number) => {
     if (index >= 0 && index < filteredSuggestions.length) {
-      commitTitle(filteredSuggestions[index]);
+      const s = filteredSuggestions[index];
+      const withEmoji = `${s.emoji} ${s.title}`;
+      commitTitle(withEmoji);
       setOpen(false);
       setActive(-1);
     }
@@ -129,7 +135,8 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
   const handleBlur: React.FocusEventHandler<HTMLInputElement> = () => { setTimeout(() => { setOpen(false); setActive(-1); }, 120); };
 
   return (
-    <div className="relative">
+    <div className="flex flex-col gap-1">
+      <div className="relative">
       {/* Calendar Replace Prompt */}
       <Dialog open={showCalendarPrompt} onOpenChange={setShowCalendarPrompt}>
         <DialogContent>
@@ -145,45 +152,67 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Input
-        id={`section-title-${blockId}`}
-        ref={inputRef}
-        type="text"
-        role="combobox"
-        aria-autocomplete="list"
-        aria-expanded={open && filteredSuggestions.length > 0}
-        aria-controls={listId}
-        aria-activedescendant={active >= 0 ? `${listId}-item-${active}` : undefined}
-        placeholder="Start typing e.g. Principal's Message"
-        value={value}
-        onChange={e => { onChange(e.target.value); setOpen(true); /* reset active so effect will set to 0 */ setActive(-1); }}
-        onKeyDown={handleKeyDown}
-        onFocus={() => setOpen(true)}
-        onBlur={handleBlur}
-        disabled={disabled}
-        className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
-      />
+        <Input
+          id={`section-title-${blockId}`}
+          ref={inputRef}
+          type="text"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={open && filteredSuggestions.length > 0}
+          aria-controls={listId}
+          aria-activedescendant={active >= 0 ? `${listId}-item-${active}` : undefined}
+          placeholder="Start typing e.g. Principal's Message"
+          value={value}
+          onChange={e => { onChange(e.target.value); setOpen(true); /* reset active so effect will set to 0 */ setActive(-1); }}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setOpen(true)}
+          onBlur={handleBlur}
+          disabled={disabled}
+          className="text-base px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
+        />
       {open && filteredSuggestions.length > 0 && (
         <ul
           id={listId}
           role="listbox"
           className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg text-sm focus:outline-none"
         >
-          {filteredSuggestions.map((s: string, i: number) => (
+      {filteredSuggestions.map((s: Suggestion, i: number) => (
             <li
               id={`${listId}-item-${i}`}
-              key={s}
+        key={s.title}
               role="option"
               aria-selected={i === active}
               onMouseEnter={() => setActive(i)}
               onMouseDown={(e) => { e.preventDefault(); commitAtIndex(i); }}
               className={"px-3 py-2 cursor-pointer select-none " + (i === active ? "bg-blue-600 text-white" : "hover:bg-gray-100 dark:hover:bg-gray-700")}
             >
-              {s}
+        <span className="mr-1" aria-hidden>{s.emoji}</span>{s.title}
             </li>
           ))}
         </ul>
       )}
+      </div>
+      {/* Emoji toolbar for inserting into the section title */}
+      <EmojiToolbar onInsert={(emoji) => {
+        const el = inputRef.current;
+        const cur = value || '';
+        if (!el) {
+          const next = cur + emoji;
+          onChange(next); onCommit(next); return;
+        }
+        const start = el.selectionStart ?? cur.length;
+        const end = el.selectionEnd ?? start;
+        const next = cur.slice(0, start) + emoji + cur.slice(end);
+        onChange(next);
+        onCommit(next);
+        requestAnimationFrame(() => {
+          if (inputRef.current) {
+            const pos = start + emoji.length;
+            inputRef.current.selectionStart = inputRef.current.selectionEnd = pos;
+            inputRef.current.focus();
+          }
+        });
+      }} />
     </div>
   );
 };

@@ -141,3 +141,6 @@
   /* Ensure text effects work properly by preventing background conflicts */
   background-color: transparent !important;
 }
+
+/* Pastel rotate per-character static styling (no animation) */
+.pastel-rotate-char { display: inline-block; }

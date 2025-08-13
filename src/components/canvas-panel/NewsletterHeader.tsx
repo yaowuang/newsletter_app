@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Theme } from '@/lib/themes';
 import { CSSProperties } from 'react';
+import { PastelRotateText } from '@/components/common/PastelRotateText';
 
 interface NewsletterHeaderProps {
   title: string;
@@ -111,10 +112,12 @@ export function NewsletterHeader({
     ? "text-4xl font-bold relative z-10 newsletter-title-effect"
     : "text-4xl font-bold relative z-10";
 
+  const isPastelRotate = theme.styles.title.textEffectId === 'pastel-rotate';
+  const renderedTitle = isPastelRotate ? <PastelRotateText text={title} /> : title;
   return (
     <>
       <h1 style={titleStyle} className={titleClasses}>
-        {title}
+        {renderedTitle}
       </h1>
       <p style={dateStyle} className="text-muted-foreground relative z-10">
         {displayDate}

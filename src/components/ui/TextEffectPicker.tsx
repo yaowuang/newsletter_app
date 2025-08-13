@@ -1,4 +1,5 @@
 import React from 'react';
+import { PastelRotateText } from '@/components/common/PastelRotateText';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { textEffects, getTextEffectById, type TextEffect } from '@/lib/textEffects';
 
@@ -77,15 +78,15 @@ const TextEffectPreview: React.FC<TextEffectPreviewProps> = ({ effectId, showSam
   const effect = getTextEffectById(effectId);
   if (!effect) return <span>Unknown Effect</span>;
 
+  const isPastel = effect.id === 'pastel-rotate';
+  const pastelPalette = ['#F8B4D9','#B5E4FA','#FDE1A9','#C7F9CC','#E5D9FA','#FFE5EC'];
+
   return (
     <div className="flex items-center gap-2">
       {showSample && (
-        <span
-          className="text-sm font-bold"
-          style={effect.styles}
-        >
-          Aa
-        </span>
+          isPastel ? <PastelRotateText text="Pastel" className="text-sm font-bold inline-flex gap-px" /> : (
+            <span className="text-sm font-bold" style={effect.styles}>Aa</span>
+          )
       )}
       <span>{effect.name}</span>
     </div>

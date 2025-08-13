@@ -89,12 +89,30 @@ export function Header() {
     return '';
   };
 
+  // Sanitize the newsletter title for use as a filename: remove emojis / pictographs,
+  // strip accents, keep alphanumerics, collapse to dashes, lowercase.
+  const sanitizeTitleForFilename = (raw: string | undefined | null): string => {
+    if (!raw) return 'newsletter';
+    let t = raw.normalize('NFKD');
+    // Remove combining marks from accents
+    t = t.replace(/\p{M}+/gu, '');
+    // Attempt to remove extended pictographic (emoji) characters
+    try { t = t.replace(/\p{Extended_Pictographic}/gu, ''); } catch { /* property may not be supported */ }
+    // Fallback: remove surrogate pairs (most emojis)
+    t = t.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '');
+    // Remove any remaining symbols except basic ascii letters/numbers
+    t = t.replace(/[^a-zA-Z0-9]+/g, '-');
+    t = t.replace(/^-+|-+$/g, '');
+    t = t.toLowerCase();
+    return t || 'newsletter';
+  };
+
   const handleDownload = async (format: 'enl' | 'png' | 'svg' | 'pdf') => {
     try {
       const snapshot = buildSnapshot();
-      const dateFormatted = formatDateForFilename(storeDate);
-      const titlePart = (snapshot.title || 'newsletter').replace(/\s+/g, '-');
-      const safeTitle = dateFormatted ? `${titlePart}-${dateFormatted}` : titlePart;
+  const dateFormatted = formatDateForFilename(storeDate);
+  const titlePart = sanitizeTitleForFilename(snapshot.title);
+  const safeTitle = dateFormatted ? `${titlePart}-${dateFormatted}` : titlePart;
 
       if (format === 'enl') {
         const blob = encodeSnapshot(snapshot);

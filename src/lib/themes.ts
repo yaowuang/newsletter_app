@@ -55,36 +55,39 @@ export const allThemes: Theme[] = [
     name: 'Default',
     styles: {
       page: { 
-        backgroundColor: '#FEF7E6', // Warm cream background that's easy on the eyes
-        backgroundImage: "url(creamy.jpg)",
-        backgroundSize: 'cover', 
-        backgroundRepeat: 'no-repeat', 
-        backgroundPosition: 'top left',
-        backgroundImageOpacity: 1 // SVG already has transparency built in
+  // Restored original light creamy background
+  backgroundColor: '#FEF7E6', // Warm cream background that's easy on the eyes
+  backgroundImage: 'url(creamy.jpg)',
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'top left',
+  backgroundImageOpacity: 1 // image already has transparency if any
       },
       title: { 
-        fontFamily: 'Fredoka', // Playful, kid-friendly font 
-        color: 'transparent', // Make text transparent to show gradient
-        backgroundImage: 'linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4, #FFEAA7, #DDA0DD, #FF8A80)',
-        WebkitBackgroundClip: 'text',
-        backgroundClip: 'text',
-        textAlign: 'center',
-        textEffectId: 'rainbow' // Track which effect is applied
+  // Use gradient text effect for document title (color/text effect)
+  fontFamily: 'var(--font-schoolbell)',
+  color: 'transparent',
+  backgroundImage: 'linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4, #FFEAA7, #DDA0DD, #FF8A80)',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  textAlign: 'center',
+  textEffectId: 'pastel-rotate'
       },
       date: { 
-        fontFamily: 'Comic Neue', // Fun, readable comic-style font
-        color: '#F59E0B', // Sunny orange for warmth
-        textAlign: 'center'
+  fontFamily: 'var(--font-schoolbell)',
+  color: '#B88746', // subtle warm wood accent for date
+  textAlign: 'center'
       },
       section: {
-        headingColor: '#FFFFFF',
-        headingBackgroundColor: '#10B981', // Vibrant emerald green
-        headingFontFamily: 'Fredoka',
-        contentColor: '#1F2937', // Dark gray for excellent readability
-        contentFontFamily: 'Comic Neue',
-        backgroundColor: '#FFFFFF',
-        borderColor: '#A7F3D0', // Light mint green border
-        borderRadius: 18, // More rounded for a friendlier look
+  // Wood themed section container & colored headings
+  headingColor: '#1F3D2E', // dark chalkboard green for strong contrast
+  headingBackgroundColor: '#C8A978', // match wood border color
+  headingFontFamily: 'var(--font-schoolbell)',
+  contentColor: '#FFFFFF', // white chalk text for contrast on chalkboard
+  contentFontFamily: 'var(--font-schoolbell)',
+  backgroundColor: '#1f3d2e', // chalkboard background for content areas
+  borderColor: '#C8A978', // wood border
+  borderRadius: 18, // friendly rounding restored
       }
     },
     preferredLineIds: ['stars','hearts','classic-solid','wavy']

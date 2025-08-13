@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Nunito, Merriweather, Playfair_Display, Raleway, Creepster, Mountains_of_Christmas, Pacifico, Ultra, Roboto_Condensed, Fredoka, Comic_Neue, Bangers, Orbitron, Rye, Special_Elite, Cinzel, Cinzel_Decorative, Oswald, Source_Sans_3, Share_Tech_Mono, Comfortaa, Righteous, Kalam } from "next/font/google";
+import { Poppins, Nunito, Merriweather, Playfair_Display, Raleway, Creepster, Mountains_of_Christmas, Pacifico, Ultra, Roboto_Condensed, Fredoka, Comic_Neue, Bangers, Orbitron, Rye, Special_Elite, Cinzel, Cinzel_Decorative, Oswald, Source_Sans_3, Share_Tech_Mono, Comfortaa, Righteous, Kalam, Schoolbell } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/footer";
 import { cn } from "@/lib/utils";
@@ -33,6 +33,8 @@ const sourceSans3 = Source_Sans_3({ subsets:["latin"], weight:["400","600"], var
 const comfortaa = Comfortaa({ subsets: ["latin"], weight: ["400", "600", "700"], variable: "--font-comfortaa" });
 const righteous = Righteous({ subsets: ["latin"], weight: "400", variable: "--font-righteous" });
 const kalam = Kalam({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-kalam" });
+// Chalkboard style handwritten font
+const schoolbell = Schoolbell({ subsets: ["latin"], weight: "400", variable: "--font-schoolbell" });
 
 // Moved outside component to ensure stable reference between server & client
 const schoolSchema = {
@@ -119,6 +121,7 @@ export default function RootLayout({
             comfortaa.variable,
             righteous.variable,
             kalam.variable
+            , schoolbell.variable
         )}
       >
         {children}

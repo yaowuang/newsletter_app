@@ -33,6 +33,16 @@ export const textEffects: TextEffect[] = [
     }
   },
   {
+    id: 'pastel-rotate',
+    name: 'Pastel Rotate',
+    description: 'Each character cycles through soft pastel colors',
+    category: 'special',
+    styles: {
+      // Base color acts as fallback; actual per-char colors applied in component when this effect id is detected
+      color: '#ffffff'
+    }
+  },
+  {
     id: 'sunset',
     name: 'Sunset',
     description: 'Warm sunset gradient',

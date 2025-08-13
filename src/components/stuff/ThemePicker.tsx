@@ -1,4 +1,5 @@
 import React from 'react';
+import { PastelRotateText } from '@/components/common/PastelRotateText';
 import { Theme, allThemes } from '@/lib/themes';
 import { ThemePickerProps } from './interfaces/picker-interfaces';
 import { cn } from '@/lib/utils';
@@ -149,37 +150,40 @@ const ThemePreviewLabel: React.FC<{
   title: Theme['styles']['title'];
 }> = ({ theme, title }) => {
   // Handle rainbow gradient styles
-  const labelStyle: React.CSSProperties = {
+  const isPastelRotate = title.textEffectId === 'pastel-rotate';
+  const pastelPalette = ['#F8B4D9','#B5E4FA','#FDE1A9','#C7F9CC','#E5D9FA','#FFE5EC'];
+  const baseStyle: React.CSSProperties = {
     position: 'absolute',
     bottom: 4,
     left: 4,
     right: 4,
     fontFamily: title.fontFamily,
-    color: title.color,
     fontSize: 12,
     lineHeight: '12px',
     textAlign: title.textAlign || 'center',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    textShadow: title.textShadow || '0 0 2px rgba(0,0,0,0.4)', // Use effect shadow or default
     pointerEvents: 'none',
-    // Support text effect properties
-    backgroundImage: title.backgroundImage,
-    backgroundColor: title.backgroundColor,
-    backgroundSize: title.backgroundSize,
-    WebkitBackgroundClip: title.WebkitBackgroundClip,
-    backgroundClip: title.backgroundClip,
-    filter: title.filter,
-    transform: title.transform,
   };
 
-  return (
-    <span
-      style={labelStyle}
-      aria-hidden="true"
-    >
-      {theme.name}
-    </span>
+  if (!isPastelRotate) {
+    Object.assign(baseStyle, {
+      color: title.color,
+      textShadow: title.textShadow || '0 0 2px rgba(0,0,0,0.4)',
+      backgroundImage: title.backgroundImage,
+      backgroundColor: title.backgroundColor,
+      backgroundSize: title.backgroundSize,
+      WebkitBackgroundClip: title.WebkitBackgroundClip,
+      backgroundClip: title.backgroundClip,
+      filter: title.filter,
+      transform: title.transform,
+    });
+  }
+
+  return isPastelRotate ? (
+    <PastelRotateText text={theme.name} style={baseStyle} ariaLabel={theme.name} />
+  ) : (
+    <span style={baseStyle} aria-hidden="true">{theme.name}</span>
   );
 };
