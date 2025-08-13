@@ -297,6 +297,36 @@ export const useStore = create<AppState>()(
       set(state => {
         const { base, variant } = layout;
         const theme = state.theme;
+        // Auto-reorder content blocks to new layout's section sizing
+        // Only when section counts match and we have targets on new layout.
+        let reorderedBlocks = state.textBlocks;
+        if (variant.sectionCharTargets && variant.sectionCharTargets.length === state.textBlocks.length) {
+          // Greedy best-fit: iterate targets largest->smallest, pick remaining block with closest length.
+          const blocksWithLen = state.textBlocks.map(b => ({ block: b, len: (b.title + ' ' + b.content).trim().length }));
+          const targets = variant.sectionCharTargets.map((t, idx) => ({ idx, target: t }));
+          targets.sort((a,b)=> b.target - a.target); // largest spaces first
+          const remaining = [...blocksWithLen];
+          const assignment: Record<number, typeof blocksWithLen[0]> = {};
+          for (const tgt of targets) {
+            if (!remaining.length) break;
+            let bestI = 0;
+            let bestDiff = Math.abs(remaining[0].len - tgt.target);
+            for (let i=1;i<remaining.length;i++) {
+              const diff = Math.abs(remaining[i].len - tgt.target);
+              if (diff < bestDiff) { bestDiff = diff; bestI = i; }
+            }
+            assignment[tgt.idx] = remaining.splice(bestI,1)[0];
+          }
+          // Any leftover (shouldn't) append arbitrarily in ascending unfilled indices
+            if (remaining.length) {
+              const unfilled = variant.sectionCharTargets.map((_,i)=>i).filter(i => !(i in assignment));
+              unfilled.forEach((idx,ri)=> { assignment[idx] = remaining[ri]; });
+            }
+          reorderedBlocks = Object.keys(assignment)
+            .map(k => parseInt(k,10))
+            .sort((a,b)=> a-b)
+            .map(idx => assignment[idx].block);
+        }
         const decorations = variant.decorations || [];
         const newAutoLines = decorations.map(dec => {
           const key = `${base.id}:${variant.name}:${dec.position}:${dec.sectionIndex ?? ''}`;
@@ -417,7 +447,7 @@ export const useStore = create<AppState>()(
             date: { ...theme.styles.date, textAlign: variant.dateAlign || 'center' }
           }
         };
-        return { layout, horizontalLines: [...keptManual, ...newAutoLines], theme: updatedTheme };
+  return { layout, horizontalLines: [...keptManual, ...newAutoLines], theme: updatedTheme, textBlocks: reorderedBlocks };
       });
     },
 

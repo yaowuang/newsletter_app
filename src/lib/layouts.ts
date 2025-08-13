@@ -25,6 +25,10 @@ export type LayoutVariant = {
   dateAlign?: 'left' | 'center' | 'right';
   // Optional decorative helpers
   decorations?: LayoutDecoration[];
+  // Approximate recommended character counts per section (title+content) for this variant.
+  // Length must equal parent layout's sections. Used to auto-map existing content
+  // to best-fitting section sizes when the user switches variants/layouts.
+  sectionCharTargets?: number[];
 };
 
 export type Layout = {
@@ -63,7 +67,8 @@ export const newsletterLayouts: Layout[] = [
         decorations: [
           { kind: 'separator', lineId: 'themed', position: 'afterTitle' },
           { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' }
-        ]
+  ],
+  sectionCharTargets: [1200]
       }
     ]
   },
@@ -77,9 +82,9 @@ export const newsletterLayouts: Layout[] = [
       'sec1 sec2'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterDate' } ] },
-  { name: 'Wide Left', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 1fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ] },
-  { name: 'Wide Right', gridTemplateColumns: '1fr 2fr', gridTemplateRows: 'auto auto 1fr', titleAlign: 'right', dateAlign: 'right', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterDate' } ], sectionCharTargets: [750, 750] },
+  { name: 'Wide Left', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 1fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ], sectionCharTargets: [900, 600] },
+  { name: 'Wide Right', gridTemplateColumns: '1fr 2fr', gridTemplateRows: 'auto auto 1fr', titleAlign: 'right', dateAlign: 'right', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ], sectionCharTargets: [600, 900] },
     ]
   },
   {
@@ -91,9 +96,9 @@ export const newsletterLayouts: Layout[] = [
       'sec2'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ] },
-  { name: 'Tall Top', gridTemplateColumns: '1fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ] },
-  { name: 'Tall Bottom', gridTemplateColumns: '1fr', gridTemplateRows: 'auto auto 1fr 2fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ], sectionCharTargets: [800, 800] },
+  { name: 'Tall Top', gridTemplateColumns: '1fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ], sectionCharTargets: [950, 650] },
+  { name: 'Tall Bottom', gridTemplateColumns: '1fr', gridTemplateRows: 'auto auto 1fr 2fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ], sectionCharTargets: [650, 950] },
     ]
   },
 
@@ -107,9 +112,9 @@ export const newsletterLayouts: Layout[] = [
       'sec2 sec3'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ] },
-  { name: 'Wide Left', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ] },
-  { name: 'Wide Right', gridTemplateColumns: '1fr 2fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'right', dateAlign: 'right', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ], sectionCharTargets: [1000, 600, 600] },
+  { name: 'Wide Left', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ], sectionCharTargets: [1050, 600, 600] },
+  { name: 'Wide Right', gridTemplateColumns: '1fr 2fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'right', dateAlign: 'right', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ], sectionCharTargets: [1050, 600, 600] },
     ]
   },
   {
@@ -121,9 +126,9 @@ export const newsletterLayouts: Layout[] = [
       'sec1 sec3'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ] },
-  { name: 'Tall Top', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ] },
-  { name: 'Tall Bottom', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 1fr 2fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ] },
+  { name: 'Balanced', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ], sectionCharTargets: [1100, 550, 550] },
+  { name: 'Tall Top', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ], sectionCharTargets: [1200, 500, 500] },
+  { name: 'Tall Bottom', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 1fr 2fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ], sectionCharTargets: [1000, 600, 600] },
     ]
   },
 
@@ -137,9 +142,9 @@ export const newsletterLayouts: Layout[] = [
       'sec3 sec4'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ] },
-  { name: 'Wide Left', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ] },
-  { name: 'Tall Top', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ], sectionCharTargets: [650, 650, 650, 650] },
+  { name: 'Wide Left', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ], sectionCharTargets: [750, 550, 750, 550] },
+  { name: 'Tall Top', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 2fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ], sectionCharTargets: [750, 750, 600, 600] },
     ]
   },
 
@@ -154,9 +159,9 @@ export const newsletterLayouts: Layout[] = [
       'sec4 sec5'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 4fr 3fr 3fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ] },
-  { name: 'Wide Left', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 4fr 3fr 3fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ] },
-  { name: 'Wide Right', gridTemplateColumns: '1fr 2fr', gridTemplateRows: 'auto auto 4fr 3fr 3fr', titleAlign: 'right', dateAlign: 'right', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 4fr 3fr 3fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ], sectionCharTargets: [1000, 600, 600, 600, 600] },
+  { name: 'Wide Left', gridTemplateColumns: '2fr 1fr', gridTemplateRows: 'auto auto 4fr 3fr 3fr', titleAlign: 'left', dateAlign: 'left', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ], sectionCharTargets: [1050, 600, 600, 600, 600] },
+  { name: 'Wide Right', gridTemplateColumns: '1fr 2fr', gridTemplateRows: 'auto auto 4fr 3fr 3fr', titleAlign: 'right', dateAlign: 'right', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ], sectionCharTargets: [1050, 600, 600, 600, 600] },
     ]
   },
 
@@ -170,8 +175,8 @@ export const newsletterLayouts: Layout[] = [
       'sec4 sec5 sec6'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ] },
-  { name: 'Wide Center', gridTemplateColumns: '1fr 2fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ], sectionCharTargets: [600, 600, 600, 600, 600, 600] },
+  { name: 'Wide Center', gridTemplateColumns: '1fr 2fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ], sectionCharTargets: [550, 700, 550, 550, 700, 550] },
     ]
   },
 
@@ -186,9 +191,9 @@ export const newsletterLayouts: Layout[] = [
       'sec7 sec7 sec7'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ] },
-  { name: 'Tall Base', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1.5fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ] },
-  { name: 'Wide Center', gridTemplateColumns: '1fr 2fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ], sectionCharTargets: [550, 550, 550, 550, 550, 550, 800] },
+  { name: 'Tall Base', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1.5fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ], sectionCharTargets: [550, 550, 550, 550, 550, 550, 900] },
+  { name: 'Wide Center', gridTemplateColumns: '1fr 2fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ], sectionCharTargets: [550, 650, 550, 550, 650, 550, 800] },
     ]
   },
   {
@@ -201,8 +206,8 @@ export const newsletterLayouts: Layout[] = [
       'sec6 sec7 sec7'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterDate' } ] },
-  { name: 'Wide Ends', gridTemplateColumns: '1.5fr 1fr 1.5fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterDate' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterDate' } ], sectionCharTargets: [750, 500, 550, 550, 550, 550, 700] },
+  { name: 'Wide Ends', gridTemplateColumns: '1.5fr 1fr 1.5fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterDate' } ], sectionCharTargets: [780, 500, 560, 560, 560, 560, 720] },
     ]
   },
 
@@ -217,8 +222,8 @@ export const newsletterLayouts: Layout[] = [
       'sec5 sec6 sec6'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 0.9fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ] },
-  { name: 'Wide Closing', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 0.9fr 1fr 1.2fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 0.9fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ], sectionCharTargets: [900, 550, 550, 550, 550, 650] },
+  { name: 'Wide Closing', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 0.9fr 1fr 1.2fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterTitle' } ], sectionCharTargets: [900, 550, 550, 550, 550, 750] },
     ]
   },
   {
@@ -231,8 +236,8 @@ export const newsletterLayouts: Layout[] = [
       'sec7 sec7 sec7'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ] },
-  { name: 'Hero Center', gridTemplateColumns: '1fr 1.4fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ], sectionCharTargets: [550, 550, 550, 550, 550, 550, 800] },
+  { name: 'Hero Center', gridTemplateColumns: '1fr 1.4fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dotted', position: 'afterDate' } ], sectionCharTargets: [550, 650, 550, 550, 650, 550, 800] },
     ]
   },
   {
@@ -245,8 +250,8 @@ export const newsletterLayouts: Layout[] = [
       'sec5 sec6 sec6'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 0.8fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ] },
-  { name: 'Wide Telemetry', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 0.8fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ], sectionCharTargets: [600, 600, 600, 750, 550, 650] },
+  { name: 'Wide Telemetry', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-solid', position: 'afterTitle' } ], sectionCharTargets: [600, 600, 600, 700, 550, 650] },
     ]
   },
   {
@@ -258,8 +263,8 @@ export const newsletterLayouts: Layout[] = [
       'sec4 sec4 sec5'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterDate' } ] },
-  { name: 'Wide Finale', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1.2fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterDate' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterDate' } ], sectionCharTargets: [600, 600, 600, 750, 550] },
+  { name: 'Wide Finale', gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto 1fr 1.2fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'themed', position: 'afterDate' } ], sectionCharTargets: [600, 600, 600, 800, 550] },
     ]
   },
   {
@@ -272,8 +277,8 @@ export const newsletterLayouts: Layout[] = [
       'sec5 sec6'
     ]),
     variants: [
-  { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ] },
-  { name: 'Tall Stats', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1.2fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ] },
+  { name: 'Balanced', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ], sectionCharTargets: [650, 650, 650, 650, 650, 650] },
+  { name: 'Tall Stats', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1.2fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ], sectionCharTargets: [750, 750, 600, 600, 600, 600] },
     ]
   },
 ];
