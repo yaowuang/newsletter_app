@@ -101,10 +101,13 @@ export function Header() {
         saveAs(blob, `${safeTitle}.enl`);
         return;
       }
-      const inner = document.getElementById('newsletter-canvas');
-      if (!inner) return;
-      const wrapper = inner.parentElement as HTMLElement | null;
-      const captureTarget = wrapper || inner;
+  const inner = document.getElementById('newsletter-canvas');
+  if (!inner) return;
+  // IMPORTANT: Do NOT capture the parent wrapper because it has a CSS transform (zoom scaling)
+  // applied in CanvasPanel. html-to-image miscalculates the bounding box for transformed
+  // elements which was causing a horizontal shift and right-side cropping in the export.
+  // Capturing just the untransformed inner canvas fixes the alignment.
+  const captureTarget = inner; 
 
       const selectedBorders = captureTarget.querySelectorAll('.border-blue-500');
       selectedBorders.forEach(el => el.classList.remove('border-blue-500', 'border-2'));
