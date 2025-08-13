@@ -10,8 +10,7 @@ import { useImageUpload } from './hooks/use-stuff-managers';
 export const ElementAdder: React.FC<ElementAdderProps> = ({ 
   onAddTextBlock, 
   onAddHorizontalLine, 
-  onAddImage,
-  isActive 
+  onAddImage
 }) => {
   return (
     <div className="grid grid-cols-2 gap-2 mb-4">

@@ -1,5 +1,7 @@
 import { CSSProperties } from "react";
 
+export type TextAlign = 'left' | 'center' | 'right';
+
 export type Theme = {
   name: string;
   styles: {
@@ -14,7 +16,7 @@ export type Theme = {
     title: {
       fontFamily: CSSProperties['fontFamily'];
       color: CSSProperties['color'];
-      textAlign?: CSSProperties['textAlign']; // added
+      textAlign?: TextAlign; // added
       backgroundImage?: CSSProperties['backgroundImage']; // for gradients
       backgroundColor?: CSSProperties['backgroundColor']; // for solid backgrounds
       backgroundSize?: CSSProperties['backgroundSize'];
@@ -30,7 +32,7 @@ export type Theme = {
     date: {
       fontFamily: CSSProperties['fontFamily'];
       color: CSSProperties['color'];
-      textAlign?: CSSProperties['textAlign']; // added
+      textAlign?: TextAlign; // added
     };
     section: {
       headingColor?: CSSProperties['color'];

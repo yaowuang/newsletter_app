@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { LayoutSelection } from '@/lib/types';
 import { TabRegistry } from './config/tab-registry';
 import { LayoutPicker } from './LayoutPicker';
 import { ThemePicker } from './ThemePicker';
 import { ElementAdder } from './ElementAdder';
 import { ClipartSearch } from './ClipartSearch';
+import type { ImageSearchResult } from './services/image-search-service';
 import { 
   useLayoutManager, 
   useThemeManager, 
@@ -19,20 +21,21 @@ interface StuffPanelProps {
   className?: string;
   
   // Legacy props (will be ignored but kept for backwards compatibility)
-  currentLayoutSelection?: any;
-  onLayoutChange?: any;
-  currentTheme?: any;
-  onThemeChange?: any;
-  onAddTextBlock?: any;
-  onAddHorizontalLine?: any;
-  onSetSectionCount?: any;
-  sectionCount?: any;
+  currentLayoutSelection?: LayoutSelection;
+  onLayoutChange?: (layout: LayoutSelection) => void;
+  currentTheme?: string;
+  onThemeChange?: (theme: string) => void;
+  onAddTextBlock?: () => void;
+  onAddHorizontalLine?: () => void;
+  onSetSectionCount?: (count: number) => void;
+  sectionCount?: number;
 }
 
 export function StuffPanel({ 
   defaultTab = 'layouts',
   className = 'flex h-full flex-col p-4',
   // Legacy props are accepted but ignored (handled internally now)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ...legacyProps
 }: StuffPanelProps) {
   // Use custom hooks for state management (replaces prop passing)
@@ -94,7 +97,8 @@ export function StuffPanel({
         component: ClipartSearch
       },
       props: {
-        onResultSelect: elementCreator.onAddImage,
+        // Adapt the picker contract (expects ImageSearchResult) to elementCreator (expects src string)
+        onResultSelect: (result: ImageSearchResult) => elementCreator.onAddImage(result.fullSize),
         isActive: true
       }
     });

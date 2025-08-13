@@ -1,5 +1,6 @@
 import React from 'react';
-import { RefactoredStuffPanel } from '@/components/stuff/StuffPanel.refactored';
+// Updated to use the production StuffPanel component (refactored version now merged into StuffPanel.tsx)
+import { StuffPanel as RefactoredStuffPanel } from '@/components/stuff/StuffPanel';
 
 // Example: How to integrate the refactored StuffPanel into your application
 // This replaces the usage in app/builder/page.tsx or wherever StuffPanel is used

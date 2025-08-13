@@ -3,11 +3,12 @@
 
 import { LayoutSelection } from '@/lib/types';
 import { Theme } from '@/lib/themes';
+import { ImageSearchResult } from '../services/image-search-service';
 
 // Base interface for all picker components
 export interface BasePickerProps {
   isActive?: boolean;
-  onSelectionChange?: (selection: any) => void;
+  onSelectionChange?: (selection: unknown) => void;
 }
 
 // Layout-specific interface
@@ -39,7 +40,7 @@ export interface ElementCreatorActions {
 
 // Search interface
 export interface SearchActions {
-  onResultSelect: (result: any) => void;
+  onResultSelect: (result: ImageSearchResult) => void;
 }
 
 // Combined interfaces for components

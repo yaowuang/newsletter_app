@@ -7,8 +7,7 @@ import { cn } from '@/lib/utils';
 // Separated theme preview logic and improved component organization
 export const ThemePicker: React.FC<ThemePickerProps> = ({ 
   currentTheme, 
-  onThemeChange,
-  isActive 
+  onThemeChange
 }) => {
   return (
     <div className="w-full h-full overflow-y-auto pr-1 min-h-0">
@@ -113,7 +112,7 @@ const ThemePreviewTile: React.FC<{
 
 // Extracted section miniature component
 const ThemePreviewSection: React.FC<{
-  section: any;
+  section: Theme['styles']['section'];
   borderColor: string;
   isSelected: boolean;
 }> = ({ section, borderColor, isSelected }) => (
@@ -147,7 +146,7 @@ const ThemePreviewSection: React.FC<{
 // Extracted theme name label component
 const ThemePreviewLabel: React.FC<{
   theme: Theme;
-  title: any;
+  title: Theme['styles']['title'];
 }> = ({ theme, title }) => {
   // Handle rainbow gradient styles
   const labelStyle: React.CSSProperties = {

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { allLayouts, Layout } from '@/lib/layouts';
+import { allLayouts, Layout, LayoutVariant } from '@/lib/layouts';
+import type { LayoutSelection } from '@/lib/types';
 import { LayoutPickerProps } from './interfaces/picker-interfaces';
 import { cn } from '@/lib/utils';
 
@@ -11,8 +12,7 @@ export const LayoutPicker: React.FC<LayoutPickerProps> = ({
   currentLayoutSelection, 
   onLayoutChange, 
   onSetSectionCount, 
-  sectionCount,
-  isActive 
+  sectionCount
 }) => {
   const [desiredSections, setDesiredSections] = useState(sectionCount);
   const availableLayouts = allLayouts.filter(l => l.sections === desiredSections);
@@ -87,9 +87,9 @@ const SectionCountSelector: React.FC<{
 // Extracted layout grid component
 const LayoutGrid: React.FC<{
   layouts: Layout[];
-  currentSelection: any;
+  currentSelection: LayoutSelection;
   currentSectionCount: number;
-  onLayoutChange: (layout: any) => void;
+  onLayoutChange: (layout: LayoutSelection) => void;
   onSetSectionCount: (count: number) => void;
 }> = ({ layouts, currentSelection, currentSectionCount, onLayoutChange, onSetSectionCount }) => (
   <div className="grid grid-cols-2 gap-4 place-items-center border-t pt-4">
@@ -165,7 +165,7 @@ const LayoutPreview: React.FC<{
 // Extracted grid visualization component
 const LayoutPreviewGrid: React.FC<{
   layout: Layout;
-  variant: any;
+  variant: LayoutVariant;
   areas: string[];
 }> = ({ layout, variant, areas }) => (
   <div
@@ -196,7 +196,7 @@ const LayoutPreviewGrid: React.FC<{
 // Extracted area component
 const LayoutPreviewArea: React.FC<{
   area: string;
-  variant: any;
+  variant: LayoutVariant;
 }> = ({ area, variant }) => {
   const isSection = area.startsWith('sec');
   const getLabel = () => {

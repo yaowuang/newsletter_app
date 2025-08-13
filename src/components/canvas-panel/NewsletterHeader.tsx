@@ -1,13 +1,11 @@
 import React from 'react';
 import type { Theme } from '@/lib/themes';
-import type { LayoutSelection } from '@/lib/types';
 import { CSSProperties } from 'react';
 
 interface NewsletterHeaderProps {
   title: string;
   date: string;
   theme: Theme;
-  layoutSelection: LayoutSelection;
   denseMode: boolean;
 }
 
@@ -52,14 +50,6 @@ function formatDisplayDate(raw: string): string {
   return raw; // fallback
 }
 
-interface NewsletterHeaderProps {
-  title: string;
-  date: string;
-  theme: Theme;
-  layoutSelection: LayoutSelection;
-  denseMode: boolean;
-}
-
 /**
  * Newsletter header component - renders title and date
  * Follows SRP by focusing only on header content
@@ -68,13 +58,10 @@ export function NewsletterHeader({
   title, 
   date, 
   theme, 
-  layoutSelection, 
   denseMode 
 }: NewsletterHeaderProps) {
-  const { variant } = layoutSelection;
-  
   // Create title style with proper text effect handling - explicit application
-  let titleStyle: CSSProperties = {
+  const titleStyle: CSSProperties = {
     gridArea: 'title',
     fontFamily: theme.styles.title.fontFamily,
     color: theme.styles.title.color,

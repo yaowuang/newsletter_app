@@ -4,15 +4,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { FontSelect } from '@/components/inspector-panel/FontSelect';
 import InspectorSection from '@/components/ui/InspectorSection';
 import FormGroup from '@/components/ui/FormGroup';
+import { TextAlign } from '@/lib/themes';
 
 interface DateStylesSectionProps {
   dateColorId: string;
   dateFontId: string;
   dateAlignId: string;
-  value: { color?: string; fontFamily?: string; textAlign?: string };
+  value: { color?: string; fontFamily?: string; textAlign?: TextAlign };
   setColor?: (v: string) => void;
   setFont?: (v: string) => void;
-  setAlign?: (v: 'left' | 'center' | 'right') => void;
+  setAlign?: (v: TextAlign) => void;
 }
 
 export const DateStylesSection: React.FC<DateStylesSectionProps> = ({ dateColorId, dateFontId, dateAlignId, value, setColor, setFont, setAlign }) => {
@@ -25,10 +26,10 @@ export const DateStylesSection: React.FC<DateStylesSectionProps> = ({ dateColorI
         <FontSelect id={dateFontId} value={value.fontFamily} onChange={val => setFont?.(val)} />
       </FormGroup>
       <FormGroup label="Date Align" id={dateAlignId} inline>
-        <Select value={value.textAlign || 'center'} onValueChange={v => setAlign?.(v as 'left' | 'center' | 'right')}>
+        <Select value={value.textAlign || 'center'} onValueChange={v => setAlign?.(v as TextAlign)}>
           <SelectTrigger id={dateAlignId}><SelectValue placeholder="Alignment" /></SelectTrigger>
           <SelectContent>
-            {['left','center','right'].map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}
+            {(['left','center','right'] as const).map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}
           </SelectContent>
         </Select>
       </FormGroup>

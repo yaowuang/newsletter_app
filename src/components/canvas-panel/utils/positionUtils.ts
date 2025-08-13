@@ -153,7 +153,7 @@ export function updateHorizontalLinePositions(
       // Parse the decoration key to get position info
       const keyParts = line.decorationKey!.split(':');
       if (keyParts.length >= 3) {
-        const position = keyParts[2] as any;
+        const position = keyParts[2] as PositionReference['position'];
         const sectionIndex = keyParts[3] ? parseInt(keyParts[3]) : undefined;
         
         const reference: PositionReference = {

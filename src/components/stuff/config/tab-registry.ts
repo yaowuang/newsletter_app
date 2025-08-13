@@ -4,12 +4,14 @@
 export interface TabConfig {
   id: string;
   label: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: React.ComponentType<any>;
   icon?: React.ComponentType<{ className?: string }>;
 }
 
 export interface TabRegistryEntry {
   config: TabConfig;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: Record<string, any>;
 }
 

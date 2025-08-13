@@ -5,6 +5,7 @@ import { FontSelect } from '@/components/inspector-panel/FontSelect';
 import { TextEffectPicker } from '@/components/ui/TextEffectPicker';
 import InspectorSection from '@/components/ui/InspectorSection';
 import FormGroup from '@/components/ui/FormGroup';
+import { TextAlign } from '@/lib/themes';
 
 interface TitleStylesSectionProps {
   titleColorId: string;
@@ -12,18 +13,18 @@ interface TitleStylesSectionProps {
   titleAlignId: string;
   titleEffectId: string;
   value: { 
-    color?: any; 
-    fontFamily?: any; 
-    textAlign?: any;
-    backgroundImage?: any;
-    backgroundColor?: any;
-    WebkitBackgroundClip?: any;
-    backgroundClip?: any;
+    color?: string; 
+    fontFamily?: string; 
+    textAlign?: TextAlign;
+    backgroundImage?: string;
+    backgroundColor?: string;
+    WebkitBackgroundClip?: string;
+    backgroundClip?: string;
     textEffectId?: string;
   };
   setColor?: (v: string) => void;
   setFont?: (v: string) => void;
-  setAlign?: (v: 'left' | 'center' | 'right') => void;
+  setAlign?: (v: TextAlign) => void;
   setTextEffect?: (effectId: string | undefined) => void;
 }
 
@@ -68,10 +69,10 @@ export const TitleStylesSection: React.FC<TitleStylesSectionProps> = ({
         <FontSelect id={titleFontId} value={value.fontFamily} onChange={val => setFont?.(val)} />
       </FormGroup>
       <FormGroup label="Title Align" id={titleAlignId} inline>
-        <Select value={value.textAlign || 'center'} onValueChange={v => setAlign?.(v as 'left' | 'center' | 'right')}>
+        <Select value={value.textAlign || 'center'} onValueChange={v => setAlign?.(v as TextAlign)}>
           <SelectTrigger id={titleAlignId}><SelectValue placeholder="Alignment" /></SelectTrigger>
           <SelectContent>
-            {['left','center','right'].map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}
+            {(['left','center','right'] as const).map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}
           </SelectContent>
         </Select>
       </FormGroup>

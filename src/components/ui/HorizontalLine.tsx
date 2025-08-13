@@ -151,7 +151,7 @@ const HorizontalLine: React.FC<HorizontalLineProps> = ({
       
       return (
         <div
-          // eslint-disable-next-line react/no-danger
+           
           dangerouslySetInnerHTML={{ __html: scaledSvg }}
           style={{ 
             display: 'flex',
@@ -286,7 +286,7 @@ const HorizontalLine: React.FC<HorizontalLineProps> = ({
         
         return (
           <div
-            // eslint-disable-next-line react/no-danger
+             
             dangerouslySetInnerHTML={{ __html: scaledSvg }}
             style={{ 
               display: 'flex',

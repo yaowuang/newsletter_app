@@ -10,6 +10,16 @@ export interface ImageSearchResult {
   source: string;
 }
 
+// Pixabay API response structure
+interface PixabayHit {
+  id: number;
+  tags: string;
+  previewURL: string;
+  largeImageURL?: string;
+  webformatURL?: string;
+  image_type?: string;
+}
+
 export interface ImageSearchService {
   search(query: string, options?: SearchOptions): Promise<ImageSearchResult[]>;
   validateApiKey?(): boolean;
@@ -63,7 +73,7 @@ export class PixabayImageSearchService implements ImageSearchService {
     const data = await response.json();
     const hits = Array.isArray(data.hits) ? data.hits : [];
 
-    return hits.map((hit: any): ImageSearchResult => ({
+    return hits.map((hit: PixabayHit): ImageSearchResult => ({
       id: hit.id,
       title: hit.tags,
       thumbnail: hit.previewURL,

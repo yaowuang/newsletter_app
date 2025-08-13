@@ -210,8 +210,10 @@ export function getTextEffectsByCategory(category: TextEffect['category']): Text
   return textEffects.filter(effect => effect.category === category);
 }
 
+import { Theme } from './themes';
+
 // Helper function to apply text effect to CSS properties
-export function applyTextEffect(baseStyles: any, effectId?: string): any {
+export function applyTextEffect(baseStyles: Theme['styles']['title'], effectId?: string): Theme['styles']['title'] {
   if (!effectId) return baseStyles;
   
   const effect = getTextEffectById(effectId);

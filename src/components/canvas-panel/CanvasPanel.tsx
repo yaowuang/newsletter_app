@@ -120,7 +120,7 @@ export function CanvasPanel({
     }, 50); // Small delay to ensure state is updated
 
     return () => clearTimeout(timer);
-  }, [layoutSelection.base.id, layoutSelection.variant.name, horizontalLines, updateHorizontalLine]);
+  }, [layoutSelection, horizontalLines, updateHorizontalLine]);
 
   // Layout and styling
   const { base, variant } = layoutSelection;
@@ -176,7 +176,6 @@ export function CanvasPanel({
               title={title}
               date={date}
               theme={theme}
-              layoutSelection={layoutSelection}
               denseMode={denseMode}
             />
 

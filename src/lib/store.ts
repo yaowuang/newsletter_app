@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { nanoid } from 'nanoid';
-import { horizontalLineLibrary, resolveThemedLine } from './horizontalLines';
-import { allLayouts, Layout, LayoutVariant } from '@/lib/layouts';
+import { horizontalLineLibrary, resolveThemedLine, HorizontalLineStyle } from './horizontalLines';
+import { allLayouts } from '@/lib/layouts';
 import { allThemes, Theme } from '@/lib/themes';
-import { buildInitialBlocks, createUserTextBlock, defaultSectionTemplates } from './initialData';
+import { buildInitialBlocks, createUserTextBlock } from './initialData';
 import { AppState, TextBlock, ImageElement, HorizontalLineElement } from './types';
+import { applyTextEffect } from './textEffects';
 
 
 // Note: Default section templates & initial block builders have been moved to initialData.ts
@@ -259,7 +260,6 @@ export const useStore = create<AppState>()(
       }
       
       // Apply text effect using the helper function to ensure mutual exclusion
-      const { applyTextEffect } = require('./textEffects');
       const currentTitle = state.theme.styles.title;
       const updatedStyles = applyTextEffect(currentTitle, effectId);
       
@@ -285,7 +285,7 @@ export const useStore = create<AppState>()(
 
     setLayout: (layout) => {
       // Helper function to convert horizontal line library item to style
-      const getStyleFromLibItem = (libItem: any): 'solid' | 'dashed' | 'dotted' | 'clipart' | 'shadow' => {
+      const getStyleFromLibItem = (libItem: HorizontalLineStyle | null | undefined): 'solid' | 'dashed' | 'dotted' | 'clipart' | 'shadow' => {
         if (!libItem) return 'solid';
         if (libItem.type === 'svg') return 'clipart';
         if (libItem.id.includes('dashed')) return 'dashed';

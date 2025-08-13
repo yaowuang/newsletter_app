@@ -9,7 +9,7 @@ import {
 } from './services/image-search-service';
 
 // Refactored ClipartSearch following Single Responsibility and Dependency Inversion principles
-export const ClipartSearch: React.FC<ClipartSearchProps> = ({ onResultSelect, isActive }) => {
+export const ClipartSearch: React.FC<ClipartSearchProps> = ({ onResultSelect }) => {
   const [searchService] = useState<ImageSearchService | null>(() => 
     ImageSearchServiceFactory.createPixabayService()
   );
@@ -46,7 +46,8 @@ export const ClipartSearch: React.FC<ClipartSearchProps> = ({ onResultSelect, is
   };
 
   const handleResultClick = (result: ImageSearchResult) => {
-    onResultSelect?.(result.fullSize);
+    // Pass the entire result so consumers can choose which fields to use
+    onResultSelect?.(result);
   };
 
   const hasValidApiKey = searchService?.validateApiKey?.() ?? false;
