@@ -135,3 +135,9 @@
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
 }
+
+/* Newsletter title text effects */
+.newsletter-title-effect {
+  /* Ensure text effects work properly by preventing background conflicts */
+  background-color: transparent !important;
+}

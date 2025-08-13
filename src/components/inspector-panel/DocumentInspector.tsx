@@ -21,6 +21,7 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
   const setThemeDateColor = useStore(s => s.setThemeDateColor);
   const setThemeTitleAlignment = useStore(s => s.setThemeTitleAlignment);
   const setThemeDateAlignment = useStore(s => s.setThemeDateAlignment);
+  const setThemeTitleTextEffect = useStore(s => s.setThemeTitleTextEffect);
   const setThemePageBackgroundColor = useStore(s => s.setThemePageBackgroundColor);
   const setThemePageBackgroundImage = useStore(s => s.setThemePageBackgroundImage);
   const setThemePageBackgroundSize = useStore(s => s.setThemePageBackgroundSize);
@@ -110,10 +111,12 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
         titleColorId={React.useId()}
         titleFontId={React.useId()}
         titleAlignId={React.useId()}
+        titleEffectId={React.useId()}
         value={theme.styles.title}
         setColor={setThemeTitleColor}
         setFont={setThemeTitleFont}
         setAlign={setThemeTitleAlignment}
+        setTextEffect={setThemeTitleTextEffect}
       />
       <DateStylesSection
         dateColorId={React.useId()}

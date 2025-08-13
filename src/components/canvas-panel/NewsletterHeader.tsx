@@ -73,14 +73,41 @@ export function NewsletterHeader({
 }: NewsletterHeaderProps) {
   const { variant } = layoutSelection;
   
-  const titleStyle: CSSProperties = {
+  // Create title style with proper text effect handling - explicit application
+  let titleStyle: CSSProperties = {
     gridArea: 'title',
     fontFamily: theme.styles.title.fontFamily,
     color: theme.styles.title.color,
     textAlign: theme.styles.title.textAlign || 'center',
     marginBottom: denseMode ? '12px' : '0px',
   };
-  
+
+  // Apply text effect properties explicitly
+  if (theme.styles.title.textShadow) {
+    titleStyle.textShadow = theme.styles.title.textShadow;
+  }
+  if (theme.styles.title.filter) {
+    titleStyle.filter = theme.styles.title.filter;
+  }
+  if (theme.styles.title.transform) {
+    titleStyle.transform = theme.styles.title.transform;
+  }
+  if (theme.styles.title.backgroundImage) {
+    titleStyle.backgroundImage = theme.styles.title.backgroundImage;
+  }
+  if (theme.styles.title.backgroundColor) {
+    titleStyle.backgroundColor = theme.styles.title.backgroundColor;
+  }
+  if (theme.styles.title.backgroundSize) {
+    titleStyle.backgroundSize = theme.styles.title.backgroundSize;
+  }
+  if (theme.styles.title.WebkitBackgroundClip) {
+    titleStyle.WebkitBackgroundClip = theme.styles.title.WebkitBackgroundClip;
+  }
+  if (theme.styles.title.backgroundClip) {
+    titleStyle.backgroundClip = theme.styles.title.backgroundClip;
+  }
+
   const dateStyle: CSSProperties = {
     gridArea: 'date',
     fontFamily: theme.styles.date.fontFamily,
@@ -91,9 +118,15 @@ export function NewsletterHeader({
 
   const displayDate = formatDisplayDate(date);
 
+  // Use simple classes without complex logic that might interfere
+  const hasTextEffect = Boolean(theme.styles.title.textEffectId);
+  const titleClasses = hasTextEffect 
+    ? "text-4xl font-bold relative z-10 newsletter-title-effect"
+    : "text-4xl font-bold relative z-10";
+
   return (
     <>
-      <h1 style={titleStyle} className="text-4xl font-bold relative z-10">
+      <h1 style={titleStyle} className={titleClasses}>
         {title}
       </h1>
       <p style={dateStyle} className="text-muted-foreground relative z-10">

@@ -109,6 +109,7 @@ export interface AppState {
   setThemeDateColor?: (color: string) => void;
   setThemeTitleAlignment?: (align: 'left' | 'center' | 'right') => void;
   setThemeDateAlignment?: (align: 'left' | 'center' | 'right') => void;
+  setThemeTitleTextEffect?: (effectId: string | undefined) => void;
   setThemePageBackgroundColor?: (color: string) => void;
   setThemePageBackgroundImage?: (image: string | null) => void;
   setThemePageBackgroundSize?: (size: string | null) => void;

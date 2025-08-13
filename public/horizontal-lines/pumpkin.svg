@@ -1,13 +1,262 @@
-<svg data-line-id="pumpkin" width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-  <ellipse cx="24" cy="30" rx="16" ry="12" fill="currentColor"/>
-  <path d="M24 18 Q20 24 24 30 Q28 24 24 18" stroke="currentColor" stroke-width="2" fill="none" opacity="0.7"/>
-  <path d="M16 30 Q12 28 16 26" stroke="currentColor" stroke-width="2" fill="none" opacity="0.7"/>
-  <path d="M32 30 Q36 28 32 26" stroke="currentColor" stroke-width="2" fill="none" opacity="0.7"/>
-  <polygon points="18,26 22,22 20,30" fill="currentColor" opacity="0.9"/>
-  <polygon points="30,26 26,22 28,30" fill="currentColor" opacity="0.9"/>
-  <polygon points="24,32 22,36 26,36" fill="currentColor" opacity="0.9"/>
-  <path d="M18 38 Q22 42 26 38" stroke="currentColor" stroke-width="2" fill="none" opacity="0.9"/>
-  <rect x="22" y="12" width="4" height="8" fill="currentColor" opacity="0.6" rx="2"/>
-  <path d="M20 12 Q16 8 12 12" stroke="currentColor" stroke-width="2" fill="none" opacity="0.6"/>
-  <path d="M28 12 Q32 8 36 12" stroke="currentColor" stroke-width="2" fill="none" opacity="0.6"/>
-</svg>
+<?xml version="1.0"?>
+<svg
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:ns1="http://sozi.baierouge.fr"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    id="svg4005"
+    viewBox="0 0 307.6 211.76"
+    version="1.1"
+  >
+  <defs
+      id="defs4007"
+    >
+    <filter
+        id="filter5596"
+        width="1.1699"
+        y="-.11699"
+        x="-.084961"
+        height="1.234"
+        color-interpolation-filters="sRGB"
+      >
+      <feGaussianBlur
+          id="feGaussianBlur5598"
+          stdDeviation="1.1578893"
+      />
+    </filter
+    >
+    <filter
+        id="filter5611"
+        width="1.1406"
+        y="-.28125"
+        x="-.070312"
+        height="1.5625"
+        color-interpolation-filters="sRGB"
+      >
+      <feGaussianBlur
+          id="feGaussianBlur5613"
+          stdDeviation="7.0158304"
+      />
+    </filter
+    >
+  </defs
+  >
+  <g
+      id="layer4"
+      display="none"
+      transform="translate(4.4951 -374.05)"
+    >
+    <path
+        id="path5601"
+        opacity=".85714"
+        stroke-linejoin="round"
+        d="m255.92 534.93a119.74 29.934 0 1 1 -239.47 0 119.74 29.934 0 1 1 239.47 0z"
+        filter="url(#filter5611)"
+        stroke="#2b1100"
+        stroke-linecap="round"
+        stroke-width="8.209"
+        fill="#2b1100"
+    />
+  </g
+  >
+  <g
+      id="layer2"
+      stroke="#000"
+      stroke-width="1px"
+      transform="translate(4.4951 -374.05)"
+    >
+    <path
+        id="path4062"
+        fill="#a40"
+        d="m141.06 392.89c4.0314-7.0576 18.153-6.375 25.743-3.4654 11.235 4.3075 27.572 16.689 22.772 27.723-4.937 11.35-26.663 7.1028-37.129 0.49505-7.6794-4.8485-15.891-16.866-11.386-24.752z"
+    />
+    <path
+        id="path4060"
+        fill="#a40"
+        d="m110.37 395.87c11.394-4.1413 23.407-7.9335 34.158-3.9604 8.6528 3.1974 22.456 11.823 18.812 20.297-5.8674 13.644-31.877 8.2331-44.554 0.49505-5.3542-3.2681-14.311-14.689-8.4158-16.832z"
+    />
+    <path
+        id="path4066"
+        fill="#a40"
+        d="m206.9 400.32c2.7395-5.1669 11.094-6.0799 16.832-4.9505 3.1102 0.61217 7.6846 2.7813 7.4257 5.9406-0.63351 7.7316-13.078 14.227-20.297 11.386-4.0306-1.5862-5.9894-8.5494-3.9604-12.376z"
+    />
+    <path
+        id="path4064"
+        fill="#a40"
+        d="m187.6 398.84c5.0863-6.0742 19.302-6.0527 23.762 0.49505 4.5559 6.6882-1.1669 19.175-8.4158 22.772-3.5537 1.7637-8.7217-0.52597-11.386-3.4653-4.5208-4.9873-8.282-14.641-3.9604-19.802z"
+    />
+    <path
+        id="path4056"
+        fill="#0f0"
+        d="m167.79 378.54 4.4554 9.4059 15.842-1.4852s-7.1018-10.983-12.871-11.881c-2.699-0.42006-7.4258 3.9604-7.4258 3.9604z"
+    />
+    <path
+        id="path4058"
+        fill="#008000"
+        d="m169.77 382.99s2.8053 6.6006 4.2079 12.376c1.4026 5.7756 2.2277 18.317 2.2277 18.317l18.812-1.4852-6.9307-25.743z"
+    />
+    <path
+        id="path4052"
+        fill="#d45500"
+        d="m220.3 407.81c2.0906-9.892 19.097-18.278 29.208-18.317 9.8899-0.0377 18.486 4.2541 26.238 10.396 8.6454 6.8501 13.913 17.115 18.317 27.228 6.5214 14.978 9.2055 27.743 8.4158 44.059-0.30373 6.2763 0.17808 19.857-5.9406 21.287-39.008 9.1188-84.521-45.46-76.238-84.653z"
+    />
+    <path
+        id="path4044"
+        fill="#d45500"
+        d="m143.56 403.85s-24.261-8.7595-34.158-6.4356c-14.378 3.3757-24.721 15.97-32.178 27.228-8.1366 12.283-11.07 26.544-11.386 40.594-0.32754 14.566 2.889 29.802 9.901 42.574 12.724 23.176 27.228 31.188 27.228 31.188z"
+    />
+    <path
+        id="path4046"
+        fill="#f60"
+        d="m214.85 406.82c3.2334-6.3054 11.797-8.8979 18.812-9.901 10.668-1.5256 22.604 0.6303 31.683 6.4356 11.039 7.0585 17.607 19.866 23.267 31.683 8.0409 16.786 17.388 37.827 11.386 55.446-4.8629 14.274-7.8936 25.679-17.327 37.129-9.2968 11.284-17.899 20.374-31.683 25.248-4.048 1.4312-12.054 5.726-15.347 2.9703-38.459-32.188-43.676-104.38-20.792-149.01z"
+    />
+    <path
+        id="path4040"
+        fill="#ff6b00"
+        d="m200 414.2c2.1361-4.1789 6.6122-7.4931 11.184-8.5526 7.6254-1.7671 16.009 1.1375 23.026 4.6053 10.727 5.301 20.873 13.391 26.974 23.684 10.769 18.171 14.321 40.726 13.816 61.842-0.33707 14.094-3.1908 29.176-11.184 40.789-6.9384 10.08-18.221 17.221-29.605 21.711-8.6289 3.4027-18.361 3.5995-27.632 3.2895-3.5679-0.11932-8.2839 0.80408-10.526-1.9737-30.45-37.73-18.12-102.23 3.95-145.4z"
+    />
+    <path
+        id="path4042"
+        fill="#f60"
+        d="m169.59 414.53s-17.272-13.78-28.12-12.826c-12.545 1.1038-29.575 11.439-36.862 21.711-12.131 17.1-15.058 39.661-17.105 60.526-1.0741 10.947-0.72536 22.42 2.6316 32.895 3.1219 9.7417 8.622 19.017 15.789 26.316 5.7982 5.9046 16.168 10.059 24.023 12.663 10.234 3.3917 29.267 3.1266 29.267 3.1266z"
+    />
+    <path
+        id="path4038"
+        fill="#ff5404"
+        d="m165.79 416.84c-5.7344 3.8125-10.099 9.9934-12.5 16.447-6.1288 16.475-1.4746 35.147-3.2895 52.632-1.2584 12.123-6.77 24.089-5.2632 36.184 1.7018 13.66 3.6574 28.59 14.799 36.673 4.6288 3.358 12.377 2.7853 18.095 2.8009 6.156 0.0168 13.547 2.4439 18.421-1.3158 8.6214-6.6496 8.834-20.165 10.526-30.921 4.2612-27.083 1.1188-54.929-1.3158-82.237-0.96685-10.845 2.154-24.266-5.2632-32.237-3.225-3.4656-9.082-3.334-13.816-3.2895-7.0207 0.066-14.548 1.376-20.395 5.2632z"
+    />
+  </g
+  >
+  <g
+      id="layer3"
+      transform="translate(4.4951 -374.05)"
+    >
+    <path
+        id="path5570"
+        opacity=".85714"
+        d="m173.79 399.07-17.271-8.0988-11.967 1.4852 25.291 20.634 5.7829-1.1778z"
+        filter="url(#filter5596)"
+        stroke="#2b0000"
+        stroke-width=".92916px"
+        fill="#2b0000"
+    />
+  </g
+  >
+  <metadata
+    >
+    <rdf:RDF
+      >
+      <cc:Work
+        >
+        <dc:format
+          >image/svg+xml</dc:format
+        >
+        <dc:type
+            rdf:resource="http://purl.org/dc/dcmitype/StillImage"
+        />
+        <cc:license
+            rdf:resource="http://creativecommons.org/licenses/publicdomain/"
+        />
+        <dc:publisher
+          >
+          <cc:Agent
+              rdf:about="http://openclipart.org/"
+            >
+            <dc:title
+              >Openclipart</dc:title
+            >
+          </cc:Agent
+          >
+        </dc:publisher
+        >
+        <dc:title
+          >Pumpkin</dc:title
+        >
+        <dc:date
+          >2013-04-28T13:56:21</dc:date
+        >
+        <dc:description
+          >potiron, l&#xC3;&#xA9;gumes, l&#xC3;&#xA9;gume, courge, pumpkin, vegetables, veggies, jardin, potager, food, nourriture,</dc:description
+        >
+        <dc:source
+          >https://openclipart.org/detail/177514/pumpkin-by-budwhite72-177514</dc:source
+        >
+        <dc:creator
+          >
+          <cc:Agent
+            >
+            <dc:title
+              >Budwhite72</dc:title
+            >
+          </cc:Agent
+          >
+        </dc:creator
+        >
+        <dc:subject
+          >
+          <rdf:Bag
+            >
+            <rdf:li
+              >courge</rdf:li
+            >
+            <rdf:li
+              >food</rdf:li
+            >
+            <rdf:li
+              >jardin</rdf:li
+            >
+            <rdf:li
+              >l&#xC3;&#xA9;gume</rdf:li
+            >
+            <rdf:li
+              >l&#xC3;&#xA9;gumes</rdf:li
+            >
+            <rdf:li
+              >nourriture</rdf:li
+            >
+            <rdf:li
+              >potager</rdf:li
+            >
+            <rdf:li
+              >potiron</rdf:li
+            >
+            <rdf:li
+              >pumpkin</rdf:li
+            >
+            <rdf:li
+              >vegetables</rdf:li
+            >
+            <rdf:li
+              >veggies</rdf:li
+            >
+          </rdf:Bag
+          >
+        </dc:subject
+        >
+      </cc:Work
+      >
+      <cc:License
+          rdf:about="http://creativecommons.org/licenses/publicdomain/"
+        >
+        <cc:permits
+            rdf:resource="http://creativecommons.org/ns#Reproduction"
+        />
+        <cc:permits
+            rdf:resource="http://creativecommons.org/ns#Distribution"
+        />
+        <cc:permits
+            rdf:resource="http://creativecommons.org/ns#DerivativeWorks"
+        />
+      </cc:License
+      >
+    </rdf:RDF
+    >
+  </metadata
+  >
+</svg
+>

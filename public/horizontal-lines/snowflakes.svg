@@ -1,13 +1,109 @@
-<svg data-line-id="snowflakes" width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-  <g stroke="#FFFFFF" stroke-width="2" stroke-linecap="round">
-    <line x1="6" y1="24" x2="42" y2="24"/>
-    <line x1="24" y1="6" x2="24" y2="42"/>
-    <line x1="12" y1="12" x2="36" y2="36"/>
-    <line x1="36" y1="12" x2="12" y2="36"/>
-    <line x1="24" y1="6" x2="20" y2="10"/>
-    <line x1="24" y1="6" x2="28" y2="10"/>
-    <line x1="24" y1="42" x2="20" y2="38"/>
-    <line x1="24" y1="42" x2="28" y2="38"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64"
+   height="96"
+   viewBox="0 0 16.933333 25.4"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <!-- Added vertical padding (top/bottom ~4.23mm each) to create gap when this SVG tiles vertically -->
+  <g
+     id="layer1"
+     fill="currentColor"
+     stroke="currentColor"
+     transform="translate(0,4.233333)">
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 8.5834532,0.63457436 V 16.365338"
+       id="path1" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 15.41254,4.4466967 1.7892993,12.312077"
+       id="path1-4" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 1.7892992,4.4466971 15.41254,12.312077"
+       id="path1-4-7" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 5.0097976,10.576988 V 12.98169"
+       id="path2" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 12.259988,10.576988 V 12.98169"
+       id="path2-9" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="m 12.503246,3.7376437 v 2.404702"
+       id="path2-0" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 4.7938482,3.7376437 V 6.1423462"
+       id="path2-6" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 4.807574,6.1671015 2.725041,7.3694525"
+       id="path2-4" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 14.481805,9.2204724 12.399272,10.422823"
+       id="path2-4-8" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 5.0107914,10.422823 2.9282582,9.2204723"
+       id="path2-4-8-9" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 14.676507,7.369453 12.593974,6.167101"
+       id="path2-4-8-9-5" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="m 8.5077037,13.004704 -2.082533,1.202351"
+       id="path2-4-8-9-2" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 10.737146,2.2014854 8.6546124,3.4038368"
+       id="path2-4-8-9-2-1" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="M 6.3714022,2.2001322 8.4539366,3.4024836"
+       id="path2-4-8-9-2-1-3" />
+    <path
+       stroke-width="0.765"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       d="m 8.7014902,13.004704 2.0825338,1.202351"
+       id="path2-4-8-9-2-1-3-8" />
   </g>
-  <circle cx="24" cy="24" r="3" fill="#FFFFFF" opacity="0.7"/>
 </svg>

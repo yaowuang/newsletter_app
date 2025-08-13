@@ -87,8 +87,9 @@ export const horizontalLineLibrary: HorizontalLineStyle[] = [
     type: 'svg',
     themeTags: ["St. Patrick's Day"],
     repeat: true,
-    defaultColor: '#16a34a', // Green
-    colorCustomizable: false
+  // Updated to a brighter Shamrock/St. Patrick's Day green
+  defaultColor: '#009E60', // Shamrock Green
+    colorCustomizable: true
   },
   {
     id: 'snowflakes',
@@ -98,7 +99,7 @@ export const horizontalLineLibrary: HorizontalLineStyle[] = [
     themeTags: ['Winter Holiday', 'Christmas'],
     repeat: true,
     defaultColor: '#FFFFFF', // White (matches the SVG's actual color)
-    colorCustomizable: false
+    colorCustomizable: true
   },
   {
     id: 'pumpkin',
@@ -129,6 +130,16 @@ export const horizontalLineLibrary: HorizontalLineStyle[] = [
     repeat: true,
     defaultColor: '#08F7FE', // Cyan (primary color from arcade theme)
     colorCustomizable: false // Fixed colors - cyan and neon green
+  }
+  ,
+  {
+    id: 'beachball',
+    name: 'Beach Ball',
+    preview: '/horizontal-lines/beachball.svg',
+    type: 'svg',
+    themeTags: ['Summer', 'Beach Day', 'Storybook'],
+    repeat: true, // tile multiple beach balls across the line
+    colorCustomizable: false // multi-colored asset; keep original colors
   }
 ];
 

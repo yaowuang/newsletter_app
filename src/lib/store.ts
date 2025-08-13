@@ -199,10 +199,83 @@ export const useStore = create<AppState>()(
     },
     setThemeTitleFont: (font: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...state.theme.styles.title, fontFamily: font } } } })),
     setThemeDateFont: (font: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, date: { ...state.theme.styles.date, fontFamily: font } } } })),
-    setThemeTitleColor: (color: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...state.theme.styles.title, color } } } })),
+    setThemeTitleColor: (color: string) => set(state => {
+      const currentTitle = state.theme.styles.title;
+      // If changing from a text effect, clear all text effect properties
+      if (currentTitle.textEffectId || currentTitle.backgroundImage) {
+        return { 
+          theme: { 
+            ...state.theme, 
+            styles: { 
+              ...state.theme.styles, 
+              title: { 
+                ...currentTitle, 
+                color,
+                backgroundImage: undefined,
+                backgroundColor: undefined,
+                backgroundSize: undefined,
+                WebkitBackgroundClip: undefined,
+                backgroundClip: undefined,
+                textShadow: undefined,
+                filter: undefined,
+                transform: undefined,
+                textEffectId: undefined
+              } 
+            } 
+          } 
+        };
+      }
+      // Otherwise, just update color normally
+      return { theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...currentTitle, color } } } };
+    }),
     setThemeDateColor: (color: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, date: { ...state.theme.styles.date, color } } } })),
     setThemeTitleAlignment: (align) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...state.theme.styles.title, textAlign: align } } } })),
     setThemeDateAlignment: (align) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, date: { ...state.theme.styles.date, textAlign: align } } } })),
+    setThemeTitleTextEffect: (effectId: string | undefined) => set(state => {
+      if (!effectId) {
+        // Clear text effect
+        const currentTitle = state.theme.styles.title;
+        return {
+          theme: {
+            ...state.theme,
+            styles: {
+              ...state.theme.styles,
+              title: {
+                ...currentTitle,
+                backgroundImage: undefined,
+                backgroundColor: undefined,
+                backgroundSize: undefined,
+                WebkitBackgroundClip: undefined,
+                backgroundClip: undefined,
+                textShadow: undefined,
+                filter: undefined,
+                transform: undefined,
+                textEffectId: undefined,
+                color: currentTitle.color === 'transparent' ? '#3B82F6' : currentTitle.color
+              }
+            }
+          }
+        };
+      }
+      
+      // Apply text effect using the helper function to ensure mutual exclusion
+      const { applyTextEffect } = require('./textEffects');
+      const currentTitle = state.theme.styles.title;
+      const updatedStyles = applyTextEffect(currentTitle, effectId);
+      
+      return {
+        theme: {
+          ...state.theme,
+          styles: {
+            ...state.theme.styles,
+            title: {
+              ...updatedStyles,
+              textEffectId: effectId
+            }
+          }
+        }
+      };
+    }),
     setThemePageBackgroundColor: (color) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundColor: color } } } })),
     setThemePageBackgroundImage: (image) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundImage: image || undefined } } } })),
     setThemePageBackgroundSize: (size) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, page: { ...state.theme.styles.page, backgroundSize: size || undefined } } } })),

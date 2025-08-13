@@ -148,26 +148,39 @@ const ThemePreviewSection: React.FC<{
 const ThemePreviewLabel: React.FC<{
   theme: Theme;
   title: any;
-}> = ({ theme, title }) => (
-  <span
-    style={{
-      position: 'absolute',
-      bottom: 4,
-      left: 4,
-      right: 4,
-      fontFamily: title.fontFamily,
-      color: title.color,
-      fontSize: 12,
-      lineHeight: '12px',
-      textAlign: title.textAlign || 'center',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      textShadow: '0 0 2px rgba(0,0,0,0.4)',
-      pointerEvents: 'none'
-    }}
-    aria-hidden="true"
-  >
-    {theme.name}
-  </span>
-);
+}> = ({ theme, title }) => {
+  // Handle rainbow gradient styles
+  const labelStyle: React.CSSProperties = {
+    position: 'absolute',
+    bottom: 4,
+    left: 4,
+    right: 4,
+    fontFamily: title.fontFamily,
+    color: title.color,
+    fontSize: 12,
+    lineHeight: '12px',
+    textAlign: title.textAlign || 'center',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    textShadow: title.textShadow || '0 0 2px rgba(0,0,0,0.4)', // Use effect shadow or default
+    pointerEvents: 'none',
+    // Support text effect properties
+    backgroundImage: title.backgroundImage,
+    backgroundColor: title.backgroundColor,
+    backgroundSize: title.backgroundSize,
+    WebkitBackgroundClip: title.WebkitBackgroundClip,
+    backgroundClip: title.backgroundClip,
+    filter: title.filter,
+    transform: title.transform,
+  };
+
+  return (
+    <span
+      style={labelStyle}
+      aria-hidden="true"
+    >
+      {theme.name}
+    </span>
+  );
+};
