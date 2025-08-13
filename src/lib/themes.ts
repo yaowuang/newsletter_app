@@ -54,11 +54,11 @@ export const allThemes: Theme[] = [
     styles: {
       page: { 
         backgroundColor: '#FEF7E6', // Warm cream background that's easy on the eyes
-        backgroundImage: 'url(/horizontal-lines/stars.svg)', 
-        backgroundSize: '120px 120px', 
-        backgroundRepeat: 'repeat', 
+        backgroundImage: "url(creamy.jpg)",
+        backgroundSize: 'cover', 
+        backgroundRepeat: 'no-repeat', 
         backgroundPosition: 'top left',
-        backgroundImageOpacity: 0.05 // Very subtle star pattern
+        backgroundImageOpacity: 1 // SVG already has transparency built in
       },
       title: { 
         fontFamily: 'Fredoka', // Playful, kid-friendly font 
