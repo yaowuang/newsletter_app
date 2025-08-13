@@ -79,7 +79,6 @@ const TextEffectPreview: React.FC<TextEffectPreviewProps> = ({ effectId, showSam
   if (!effect) return <span>Unknown Effect</span>;
 
   const isPastel = effect.id === 'pastel-rotate';
-  const pastelPalette = ['#F8B4D9','#B5E4FA','#FDE1A9','#C7F9CC','#E5D9FA','#FFE5EC'];
 
   return (
     <div className="flex items-center gap-2">

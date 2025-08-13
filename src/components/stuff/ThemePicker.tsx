@@ -151,7 +151,6 @@ const ThemePreviewLabel: React.FC<{
 }> = ({ theme, title }) => {
   // Handle rainbow gradient styles
   const isPastelRotate = title.textEffectId === 'pastel-rotate';
-  const pastelPalette = ['#F8B4D9','#B5E4FA','#FDE1A9','#C7F9CC','#E5D9FA','#FFE5EC'];
   const baseStyle: React.CSSProperties = {
     position: 'absolute',
     bottom: 4,
