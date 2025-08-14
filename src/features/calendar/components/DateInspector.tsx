@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store/index';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import InspectorSection from '@/components/ui/InspectorSection';

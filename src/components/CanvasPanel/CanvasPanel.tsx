@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store/index';
 import type { LayoutSelection, TextBlock, ImageElement, SectionStyles } from '@/features/newsletter/types';
 import type { Theme } from '@/lib/themes';
 import { CSSProperties } from 'react';

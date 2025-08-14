@@ -2,7 +2,7 @@ import React from 'react';
 import { MarkdownModalEditor } from '@/components/common/MarkdownModalEditor';
 import { PastelRotateText } from '@/components/common/PastelRotateText';
 import { RainbowRotateText } from '@/components/common/RainbowRotateText';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store/index';
 import { generateCalendarGrid, getWeekdayNames, formatCalendarTitle } from '../utils/calendar';
 import { mergeDerivedCalendarStyles } from '../utils/calendarTheme';
 import type { CalendarCell as CalendarCellType } from '../utils/calendar';

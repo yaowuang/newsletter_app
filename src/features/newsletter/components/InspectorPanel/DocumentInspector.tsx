@@ -1,6 +1,6 @@
 import React from "react";
 import { Theme } from "@/lib/themes";
-import { useStore } from "@/lib/store";
+import { useStore } from '@/lib/store/index';
 import TitleDateSection, { DateMode } from '../document/TitleDateSection';
 import TitleStylesSection from '../document/TitleStylesSection';
 import DateStylesSection from '../document/DateStylesSection';
@@ -136,10 +136,10 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
         }}
         themeStyles={theme.styles.page}
         setBgColor={setThemePageBackgroundColor}
-        setBgImage={setThemePageBackgroundImage}
-        setBgSize={setThemePageBackgroundSize}
-        setBgPosition={setThemePageBackgroundPosition}
-        setBgRepeat={setThemePageBackgroundRepeat}
+        setBgImage={(v) => setThemePageBackgroundImage(v ?? '')}
+        setBgSize={(v) => setThemePageBackgroundSize(v ?? '')}
+        setBgPosition={(v) => setThemePageBackgroundPosition(v ?? '')}
+        setBgRepeat={(v) => setThemePageBackgroundRepeat(v ?? '')}
         setBgOpacity={setThemePageBackgroundImageOpacity}
       />
     </div>

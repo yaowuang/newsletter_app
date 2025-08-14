@@ -1,6 +1,6 @@
 // This file has been moved to the inspector folder and is no longer needed.
 import React, { useState, useEffect } from 'react';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store/index';
 import { horizontalLineLibrary } from '@/lib/horizontalLines';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,8 +18,8 @@ export const HorizontalLineInspector: React.FC<HorizontalLineInspectorProps> = (
   const library = horizontalLineLibrary;
   const line = useStore(state => state.horizontalLines.find((l: HorizontalLineElement) => l.id === elementId));
   const updateHorizontalLine = useStore(state => state.updateHorizontalLine);
-  const deleteElement = useStore(state => state.deleteElement);
-  const setElementLocked = useStore(state => state.setElementLocked);
+  const deleteHorizontalLine = useStore(state => state.deleteHorizontalLine);
+  const setElementLocked_horizontalLine = useStore(state => state.setElementLocked_horizontalLine);
   const theme = useStore(state => state.theme);
   
   // State for loading SVG content for previews
@@ -102,8 +102,8 @@ export const HorizontalLineInspector: React.FC<HorizontalLineInspectorProps> = (
       <div className="flex items-center justify-between mb-2">
         <h3 className="font-semibold text-lg">Horizontal Line</h3>
         <div className="flex gap-2">
-          <LockButton locked={locked} onToggle={() => setElementLocked(elementId, 'horizontalLine', !locked)} />
-          <Button size="sm" variant="destructive" onClick={() => deleteElement(elementId, 'horizontalLine')} disabled={locked}>Delete</Button>
+          <LockButton locked={locked} onToggle={() => setElementLocked_horizontalLine(elementId, !locked)} />
+          <Button size="sm" variant="destructive" onClick={() => deleteHorizontalLine(elementId)} disabled={locked}>Delete</Button>
         </div>
       </div>
 

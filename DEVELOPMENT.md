@@ -47,3 +47,5 @@ The Framework is NextJS and React and their best practices apply. Global applica
 ## 8. DRY/KISS
 - Don't Repeat Yourself, if you find yourself copying and pasting code, consider refactoring it into a reusable function or component.
 - Keep it simple, avoid over-engineering solutions. Aim for clarity and simplicity in your code.
+
+base directory is `app/`

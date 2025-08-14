@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import CalendarCellContent from './CalendarCellContent';
 import type { CalendarCell as CalendarCellType } from '../utils/calendar';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store/index';
 
 // Define the props interface for SplitCalendarCell
 interface SplitCalendarCellProps {

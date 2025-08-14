@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store/index';
 import { Button } from '@/components/ui/button';
 import { deriveCalendarStyles, mergeDerivedCalendarStyles } from '@/features/calendar/utils/calendarTheme';
 import ConfigurationSection from './inspectorSections/ConfigurationSection';

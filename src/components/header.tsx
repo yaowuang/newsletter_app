@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toPng, toSvg } from 'html-to-image';
-import { useStore } from "@/lib/store";
+import { useStore } from '@/lib/store/index';
 import type { EditorSnapshot } from "@/features/newsletter/types";
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';

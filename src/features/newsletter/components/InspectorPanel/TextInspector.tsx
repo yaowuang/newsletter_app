@@ -1,6 +1,6 @@
 // This file has been moved to the inspector folder and is no longer needed.
 import React from "react";
-import { useStore } from "@/lib/store";
+import { useStore } from '@/lib/store/index';
 import type { TextBlock, SectionStyle } from "@/features/newsletter/types";
 import { Theme } from "@/lib/themes";
 import { Button } from "@/components/ui/button";
@@ -24,8 +24,8 @@ interface TextInspectorProps {
 }
 
 export const TextInspector: React.FC<TextInspectorProps> = ({ block, theme, currentStyle, onUpdateTextBlock, onStyleChange }) => {
-  const deleteElement = useStore(s => s.deleteElement);
-  const setElementLocked = useStore(s => s.setElementLocked);
+  const deleteTextBlock = useStore(s => s.deleteTextBlock);
+  const setElementLocked_text = useStore(s => s.setElementLocked_text);
   const handleStyleChange = (property: keyof SectionStyle, value: string | number) => {
     onStyleChange(block.id, { [property]: value });
   };
@@ -123,8 +123,8 @@ export const TextInspector: React.FC<TextInspectorProps> = ({ block, theme, curr
       <div className="flex items-center justify-between mb-2">
         <h3 className="font-semibold text-lg">Section</h3>
         <div className="flex gap-2">
-          <LockButton locked={locked} onToggle={() => setElementLocked(block.id, 'text', !locked)} />
-          <Button type="button" size="sm" variant="destructive" onClick={() => deleteElement(block.id, 'text')} aria-label="Delete section" disabled={locked}>Delete</Button>
+          <LockButton locked={locked} onToggle={() => setElementLocked_text(block.id, !locked)} />
+          <Button type="button" size="sm" variant="destructive" onClick={() => deleteTextBlock(block.id)} aria-label="Delete section" disabled={locked}>Delete</Button>
         </div>
       </div>
 

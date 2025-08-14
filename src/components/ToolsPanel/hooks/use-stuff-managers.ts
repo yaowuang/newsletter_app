@@ -2,7 +2,7 @@
 // Each hook manages a specific piece of functionality
 
 import { useState } from 'react';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store/index';
 import { LayoutSelection } from '@/features/newsletter/types';
 import { Theme } from '@/lib/themes';
 import type { TextBlock } from '@/features/newsletter/types';

@@ -9,7 +9,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { useStore } from "@/lib/store";
+import { useStore } from '@/lib/store/index';
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { TextBlock, ImageElement } from '@/features/newsletter/types';
@@ -24,7 +24,7 @@ export default function BuilderPage() {
   const {
     title, date, textBlocks, images, layout, theme, selectedElement, sectionStyles,
     setTitle, setDate, updateTextBlock, updateImage, selectElement, updateStyle,
-    deleteElement,
+    deleteTextBlock, deleteImage, deleteHorizontalLine,
   } = useStore();
 
   // Sidebar visibility
@@ -36,12 +36,18 @@ export default function BuilderPage() {
     const handleDeleteElement = (e: CustomEvent) => {
       const detail = e.detail;
       if (detail && detail.id && (detail.type === 'text' || detail.type === 'image' || detail.type === 'horizontalLine')) {
-        deleteElement(detail.id, detail.type);
+        if (detail.type === 'text') {
+  deleteTextBlock(detail.id);
+} else if (detail.type === 'image') {
+  deleteImage(detail.id);
+} else if (detail.type === 'horizontalLine') {
+  deleteHorizontalLine(detail.id);
+}
       }
     };
     window.addEventListener('delete-element', handleDeleteElement as EventListener);
     return () => window.removeEventListener('delete-element', handleDeleteElement as EventListener);
-  }, [deleteElement]);
+  }, [deleteTextBlock, deleteImage, deleteHorizontalLine]);
 
   const handleUpdateTextBlock = (id: string, property: 'title' | 'content', value: string) => {
      if (typeof updateTextBlock === 'function') {

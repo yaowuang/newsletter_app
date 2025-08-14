@@ -90,10 +90,7 @@ export type EditorSnapshot = {
 };
 
 export interface AppState {
-  title: string;
-  date: string;
   textBlocks: TextBlock[];
-  images: ImageElement[];
   horizontalLines: HorizontalLineElement[];
   selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' } | null;
   sectionStyles: SectionStyles;
@@ -112,14 +109,8 @@ export interface AppState {
   setTitle: (title: string) => void;
   setDate: (date: string) => void;
   addTextBlock: () => void;
-  addHorizontalLine: (props?: Partial<HorizontalLineElement>) => void;
-  updateHorizontalLine: (id: string, newProps: Partial<HorizontalLineElement>) => void;
-  addImage: () => void;
   updateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
-  updateImage: (id: string, newProps: Partial<ImageElement>) => void;
   selectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate', subType?: 'title' | 'content') => void;
-  deleteElement: (id: string, type: 'text' | 'image' | 'horizontalLine') => void;
-  setElementLocked: (id: string, type: 'text' | 'image' | 'horizontalLine', locked: boolean) => void;
   updateStyle: (blockId: string, newStyles: Partial<SectionStyle>) => void;
   setTheme: (theme: Theme) => void;
   setThemeTitleFont?: (font: string) => void;
@@ -135,26 +126,11 @@ export interface AppState {
   setThemePageBackgroundPosition?: (position: string | null) => void;
   setThemePageBackgroundRepeat?: (repeat: string | null) => void;
   setThemePageBackgroundImageOpacity?: (opacity: number) => void;
-  setLayout: (layout: LayoutSelection) => void;
   setSectionCount: (count: number) => void;
   loadSnapshot: (snapshot: EditorSnapshot) => void;
   swapTextBlocks: (id1: string, id2: string) => void;
   setDenseMode: (denseMode: boolean) => void;
   
-  // Calendar-specific actions
-  setCalendarDate: (date: Date) => void;
-  setCalendarTitle: (title: string) => void;
-  setCellContent: (dateKey: string, content: string) => void;
-  addCalendarEvent: (event: CalendarEvent) => void;
-  updateCalendarEvent: (id: string, updates: Partial<CalendarEvent>) => void;
-  deleteCalendarEvent: (id: string) => void;
-  // Removed setters for week numbers & weekend highlight (now fixed behaviors)
-  
-  // Calendar styling actions
-  setCalendarStyle: (styleKey: keyof CalendarStyles, value: string | number | undefined) => void;
-  setCalendarStyles: (styles: Partial<CalendarStyles>) => void;
-  resetCalendarStylesToDefaults: () => void;
-  // Caret actions
   setEditingCaret?: (blockId: string, field: 'title' | 'content', index: number) => void;
 }
 

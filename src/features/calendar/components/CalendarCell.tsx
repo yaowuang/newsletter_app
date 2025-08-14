@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import CalendarCellContent from './CalendarCellContent';
 
 
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store/index';
 
 interface CalendarCellProps {
   date: Date;

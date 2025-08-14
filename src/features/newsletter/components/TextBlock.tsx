@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, CSSProperties } from 'react';
 import { MarkdownModalEditor } from '@/components/common/MarkdownModalEditor';
-import { useStore } from '@/lib/store';
+import { useStore } from '@/lib/store/index';
 import { MarkdownRenderer } from '@/components/common/MarkdownRenderer';
 import type { TextBlock, SectionStyles } from '@/features/newsletter/types';
 import type { Theme } from '@/lib/themes';
@@ -184,7 +184,7 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
   return (
     <>
       <div
-        style={headingStyle}
+        style={{ ...headingStyle, position: 'relative' }}
         className={
           'font-bold text-lg select-none ' + ((isEditingTitle || isEditingContent) ? '' : 'cursor-grab active:cursor-grabbing')
         }
@@ -205,6 +205,23 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
         }}
         onClick={e => e.stopPropagation()}
       >
+        {block.locked && isThisBlockSelected && (
+          <span style={{
+            position: 'absolute',
+            top: 8,
+            right: 12,
+            background: '#fff',
+            borderRadius: '50%',
+            padding: 2,
+            zIndex: 30,
+            boxShadow: '0 1px 4px rgba(0,0,0,0.08)'
+          }} title="Locked" aria-label="Locked">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="10" rx="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
+        )}
         {isEditingTitle ? (
           <div className="relative w-full">
             <input
@@ -254,9 +271,10 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
           }
         }}
       >
-        {editingCaret && editingCaret.blockId === block.id && !isEditingContent && !isEditingTitle && (
-          <CaretOverlay block={block} field={editingCaret.field} index={editingCaret.index} />
-        )}
+        {editingCaret && editingCaret.blockId === block.id && !isEditingContent && !isEditingTitle &&
+          (editingCaret.field === 'title' || editingCaret.field === 'content') && (
+            <CaretOverlay block={block} field={editingCaret.field} index={editingCaret.index} />
+          )}
         {isEditingContent ? (
           <MarkdownModalEditor
             value={draftContent}

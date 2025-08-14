@@ -7,7 +7,7 @@ import { TextInspector } from '@/features/newsletter/components/InspectorPanel/T
 import { DocumentInspector } from '@/features/newsletter/components/InspectorPanel/DocumentInspector';
 import CalendarInspector from '@/features/calendar/components/CalendarInspector';
 import { DateInspector } from '@/features/calendar/components/DateInspector';
-import { useStore } from "@/lib/store";
+import { useStore } from '@/lib/store/index';
 import { ImageInspector } from '@/features/newsletter/components/InspectorPanel/ImageInspector';
 
 type SelectableElement = (TextBlock & { subType?: 'title' | 'content' }) | ImageElement | { id: string; type: 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' };
@@ -160,14 +160,17 @@ export function InspectorPanel({
         onClose={() => selectElement(null)}
       />;
     } else if (selectedElement.type === 'text') {
-      const block = textBlocks.find((b: TextBlock) => b.id === selectedElement.id) as TextBlock;
-      return <TextInspector 
-        block={block}
-        theme={theme}
-        currentStyle={currentStyle}
-        onUpdateTextBlock={onUpdateTextBlock}
-        onStyleChange={onStyleChange}
-      />;
+      const block = textBlocks.find((b: TextBlock) => b.id === selectedElement.id);
+      if (!block) return <div className="text-sm text-muted-foreground">Text block not found.</div>;
+      return (
+        <TextInspector
+          block={block}
+          theme={theme}
+          currentStyle={currentStyle}
+          onUpdateTextBlock={onUpdateTextBlock}
+          onStyleChange={onStyleChange}
+        />
+      );
     } else if (selectedElement.type === 'image') {
       return <ImageInspector 
         image={selectedElement as ImageElement}

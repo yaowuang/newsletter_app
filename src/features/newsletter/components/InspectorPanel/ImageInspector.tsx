@@ -1,5 +1,5 @@
 import React from "react";
-import { useStore } from "@/lib/store";
+import { useStore } from '@/lib/store/index';
 import type { ImageElement } from "@/features/newsletter/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ interface ImageInspectorProps {
 }
 
 export const ImageInspector: React.FC<ImageInspectorProps> = ({ image, onUpdateImage }) => {
-  const deleteElement = useStore(s => s.deleteElement);
+  const deleteImage = useStore(s => s.deleteImage);
   const setElementLocked = useStore(s => s.setElementLocked);
   const posXId = React.useId();
   const posYId = React.useId();
@@ -28,7 +28,7 @@ export const ImageInspector: React.FC<ImageInspectorProps> = ({ image, onUpdateI
         <h3 className="font-semibold text-lg">Image</h3>
         <div className="flex gap-2">
           <LockButton locked={locked} onToggle={() => setElementLocked(image.id, 'image', !locked)} />
-          <Button variant="destructive" size="sm" onClick={() => deleteElement(image.id, 'image')} disabled={locked} aria-label="Delete image element">Delete</Button>
+          <Button variant="destructive" size="sm" onClick={() => deleteImage($1)} disabled={locked} aria-label="Delete image element">Delete</Button>
         </div>
       </div>
 
