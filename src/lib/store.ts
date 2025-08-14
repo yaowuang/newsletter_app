@@ -13,12 +13,50 @@ import { CalendarData, CalendarEvent, CalendarStyles } from '@/lib/calendar';
 // Note: Default section templates & initial block builders have been moved to initialData.ts
 
 // Initialize calendar data with current month
-const initializeCalendarData = (): CalendarData => ({
-  selectedDate: new Date(),
-  // Removed showWeekNumbers (always false) & highlightWeekends (always true)
-  customEvents: [],
-  cellContents: {},
-  calendarStyles: {
+const initializeCalendarData = (): CalendarData => {
+  const today = new Date();
+  const year = today.getFullYear();
+
+  // Helper for nth weekday of month (e.g., 3rd Monday Jan)
+  const nthWeekday = (y: number, month: number, weekday: number, n: number) => {
+    const first = new Date(y, month, 1);
+    const firstWeekday = first.getDay();
+    const offset = ( (7 + weekday - firstWeekday) % 7 ) + (n - 1) * 7;
+    return new Date(y, month, 1 + offset);
+  };
+  // Helper for last weekday of month (e.g., last Monday May)
+  const lastWeekday = (y: number, month: number, weekday: number) => {
+    const last = new Date(y, month + 1, 0); // last day
+    const lastWeekdayVal = last.getDay();
+    const offset = (7 + lastWeekdayVal - weekday) % 7;
+    return new Date(y, month + 1, 0 - offset);
+  };
+
+  const dateKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+  // Compute federal holidays (US) for given year
+  const holidays: Record<string,string> = {};
+  // Fixed-date holidays
+  holidays[`${year}-01-01`] = 'New Year\'s Day';
+  holidays[`${year}-07-04`] = 'Independence Day';
+  holidays[`${year}-06-19`] = 'Juneteenth';
+  holidays[`${year}-12-25`] = 'Christmas Day';
+  // Movable holidays
+  holidays[dateKey(nthWeekday(year, 0, 1, 3))] = 'MLK Jr. Day'; // Third Monday January
+  holidays[dateKey(nthWeekday(year, 1, 1, 3))] = 'Presidents\' Day'; // Third Monday February
+  holidays[dateKey(lastWeekday(year, 4, 1))] = 'Memorial Day'; // Last Monday May
+  holidays[dateKey(nthWeekday(year, 8, 1, 1))] = 'Labor Day'; // First Monday September
+  holidays[dateKey(nthWeekday(year, 10, 4, 4))] = 'Thanksgiving'; // Fourth Thursday November (weekday 4)
+
+  // Prefill cell contents with holiday names (markdown friendly, short)
+  const cellContents: Record<string,string> = {};
+  Object.entries(holidays).forEach(([k,v]) => { cellContents[k] = v; });
+
+  return {
+    selectedDate: today,
+    customEvents: [],
+    cellContents,
+    calendarStyles: {
   // Keep most values undefined so they inherit from the active theme until user overrides
   headerFontFamily: undefined,
   headerColor: undefined,
@@ -38,8 +76,9 @@ const initializeCalendarData = (): CalendarData => ({
   nonCurrentMonthOpacity: 0.5,
   weekNumberTextColor: undefined,
   weekNumberBackgroundColor: undefined
-  }
-});
+    }
+  };
+};
 
 const initialBlocks = buildInitialBlocks();
 const initialLayout = allLayouts.find(l => l.sections === initialBlocks.length)!;
