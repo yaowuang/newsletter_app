@@ -10,13 +10,14 @@ interface TextBlockProps {
   style: SectionStyles[string];
   themeStyle: Theme['styles']['section'];
   denseMode: boolean;
+  onSelectElement?: (id: string, type: 'text', subType?: 'title' | 'content') => void;
 }
 
 /**
  * Text block component - renders a single text block with markdown support
  * Follows SRP by focusing only on text block rendering
  */
-export function TextBlock({ block, style, themeStyle, denseMode }: TextBlockProps) {
+export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement }: TextBlockProps) {
   const headingStyle: CSSProperties = {
     color: style.headingColor || themeStyle.headingColor,
     backgroundColor: style.headingBackgroundColor || themeStyle.headingBackgroundColor,
@@ -77,14 +78,22 @@ export function TextBlock({ block, style, themeStyle, denseMode }: TextBlockProp
         className="font-bold text-lg cursor-grab active:cursor-grabbing select-none"
         draggable
         data-block-id={block.id}
+        data-block-heading="true"
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+  onMouseDown={(e) => { e.stopPropagation(); onSelectElement && onSelectElement(block.id,'text','title'); }}
+  onClick={(e) => { e.stopPropagation(); /* click retained for a11y, selection already set on mousedown */ }}
       >
         {typeof block.title === 'string' ? block.title : ''}
       </div>
-      <div style={contentStyle} className="prose max-w-none">
+      <div 
+        style={contentStyle} 
+        className="prose max-w-none"
+        data-block-content="true"
+        onClick={(e) => { e.stopPropagation(); onSelectElement && onSelectElement(block.id,'text','content'); }}
+      >
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{

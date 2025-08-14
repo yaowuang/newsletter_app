@@ -15,9 +15,9 @@ import { Button } from "@/components/ui/button";
 
 export default function BuilderPage() {
   // Fix selectElement type to accept 'horizontalLine'
-  const handleSelectElement = (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate') => {
+  const handleSelectElement = (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate', subType?: 'title' | 'content') => {
     if (typeof selectElement === 'function') {
-      selectElement(id, type);
+      selectElement(id, type, subType);
     }
   };
   const {
@@ -51,13 +51,13 @@ export default function BuilderPage() {
   const selectedBlock = useMemo(() => {
     if (!selectedElement) return undefined;
     if (selectedElement.type === 'text') {
-      return textBlocks.find(b => b.id === selectedElement.id);
+      const base = textBlocks.find(b => b.id === selectedElement.id);
+      return base ? { ...base, subType: (selectedElement as any).subType } : undefined;
     } else if (selectedElement.type === 'image') {
       return images.find(i => i.id === selectedElement.id);
     } else if (selectedElement.type === 'horizontalLine') {
       return { id: selectedElement.id, type: 'horizontalLine' as const };
     } else if (selectedElement.type === 'calendarDate') {
-      // Pass through calendar date selection so DateInspector renders
       return { id: selectedElement.id, type: 'calendarDate' as const };
     }
     return undefined;

@@ -159,9 +159,9 @@ export const useStore = create<AppState>()(
       }) }));
     },
 
-    selectElement: (id, type) => {
+  selectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate', subType?: 'title' | 'content') => {
       if (!id || !type) set({ selectedElement: null });
-      else set({ selectedElement: { id, type } });
+      else set({ selectedElement: { id, type, subType } });
     },
 
     deleteElement: (id, type) => {

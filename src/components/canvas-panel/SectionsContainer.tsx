@@ -12,7 +12,7 @@ interface SectionsContainerProps {
   theme: Theme;
   denseMode: boolean;
   selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
-  onSelectElement: (id: string, type: 'text') => void;
+  onSelectElement: (id: string, type: 'text', subType?: 'title' | 'content') => void;
   layoutSelection: LayoutSelection; // Add this to know how many sections the layout supports
 }
 
@@ -59,7 +59,8 @@ export function SectionsContainer({
         
         const handleClick = (e: React.MouseEvent) => {
           e.stopPropagation();
-          onSelectElement(block.id, 'text');
+          // Default click (background of section) selects content region
+          onSelectElement(block.id, 'text', 'content');
         };
 
         return (
@@ -76,6 +77,7 @@ export function SectionsContainer({
               style={userStyle} 
               themeStyle={themeStyle} 
               denseMode={denseMode} 
+              onSelectElement={onSelectElement}
             />
           </div>
         );

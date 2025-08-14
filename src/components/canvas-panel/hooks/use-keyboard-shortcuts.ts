@@ -26,7 +26,7 @@ export function useKeyboardShortcuts({
         return;
       }
 
-      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElement?.id) {
+  if ((e.key === 'Delete') && selectedElement?.id) {
         // Only delete supported element types
         if (['text', 'image', 'horizontalLine'].includes(selectedElement.type)) {
           onDeleteElement(selectedElement);

@@ -95,7 +95,7 @@ export interface AppState {
   textBlocks: TextBlock[];
   images: ImageElement[];
   horizontalLines: HorizontalLineElement[];
-  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
+  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' } | null;
   sectionStyles: SectionStyles;
   theme: Theme;
   layout: LayoutSelection;
@@ -111,7 +111,7 @@ export interface AppState {
   addImage: () => void;
   updateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
   updateImage: (id: string, newProps: Partial<ImageElement>) => void;
-  selectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate') => void;
+  selectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate', subType?: 'title' | 'content') => void;
   deleteElement: (id: string, type: 'text' | 'image' | 'horizontalLine') => void;
   setElementLocked: (id: string, type: 'text' | 'image' | 'horizontalLine', locked: boolean) => void;
   updateStyle: (blockId: string, newStyles: Partial<SectionStyle>) => void;

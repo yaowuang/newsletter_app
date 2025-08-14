@@ -21,8 +21,8 @@ interface CanvasPanelProps {
   textBlocks: TextBlock[];
   images: ImageElement[];
   layoutSelection: LayoutSelection;
-  onSelectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate') => void;
-  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
+  onSelectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate', subType?: 'title' | 'content') => void;
+  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' } | null;
   sectionStyles: SectionStyles;
   theme: Theme;
   onUpdateImage: (id: string, newProps: Partial<ImageElement>) => void;
@@ -103,7 +103,7 @@ export function CanvasPanel({
         return;
       }
 
-      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElement?.id) {
+  if ((e.key === 'Delete') && selectedElement?.id) {
         // Only delete supported element types
         if (['text', 'image', 'horizontalLine'].includes(selectedElement.type)) {
           if (typeof window !== 'undefined' && window.dispatchEvent) {

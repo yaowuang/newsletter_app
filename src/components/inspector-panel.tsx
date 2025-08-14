@@ -1,5 +1,6 @@
 "use client";
 
+import React from 'react';
 import type { TextBlock, ImageElement, SectionStyle } from "@/lib/types";
 import { HorizontalLineInspector } from './inspector-panel/HorizontalLineInspector';
 // Refactored components
@@ -10,7 +11,7 @@ import { CalendarInspector } from "./inspector-panel/CalendarInspector";
 import { DateInspector } from "./inspector-panel/DateInspector";
 import { useStore } from "@/lib/store";
 
-type SelectableElement = TextBlock | ImageElement | { id: string; type: 'horizontalLine' | 'calendarDate' };
+type SelectableElement = (TextBlock & { subType?: 'title' | 'content' }) | ImageElement | { id: string; type: 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' };
 
 interface InspectorPanelProps {
   selectedElement?: SelectableElement;
@@ -36,9 +37,120 @@ export function InspectorPanel({
   const theme = useStore(state => state.theme);
   const layout = useStore(state => state.layout);
   const sectionStyles = useStore(state => state.sectionStyles);
-  const textBlocks = useStore(state => state.textBlocks);
   const selectElement = useStore(state => state.selectElement);
   const currentStyle = selectedElement ? sectionStyles[selectedElement.id] || {} : {};
+  const setCellContent = useStore(s => s.setCellContent);
+  const textBlocks = useStore(s => s.textBlocks);
+
+  // Typing-to-focus bridge: when a section or calendar date is selected and the user starts typing
+  // while focus is elsewhere (e.g., canvas), automatically focus the relevant inspector field and append text.
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Ignore if user is already typing in an input / textarea / contentEditable
+      const active = document.activeElement as HTMLElement | null;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
+      if (!selectedElement) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return; // don't hijack shortcuts
+
+      const isPrintable = e.key.length === 1;
+      const isBackspace = e.key === 'Backspace';
+      const isEnter = e.key === 'Enter';
+      if (!isPrintable && !isBackspace && !isEnter) return; // only handle text-like input
+
+      // Prevent page scrolling/back navigation etc. We'll manage insertion ourselves.
+      e.preventDefault();
+
+      if (selectedElement.type === 'text') {
+        const block = textBlocks.find(b => b.id === selectedElement.id);
+        if (!block || block.locked) return;
+        const titleEmpty = !block.title;
+        const targetTitleId = `section-title-${block.id}`;
+        const targetContentId = `section-content-${block.id}`;
+        // Choose field: explicit subType wins; else if title empty -> title; else content
+        const targetId = (selectedElement as any).subType === 'title'
+          ? targetTitleId
+          : (selectedElement as any).subType === 'content'
+            ? targetContentId
+            : (titleEmpty ? targetTitleId : targetContentId);
+        const targetEl = document.getElementById(targetId) as HTMLInputElement | HTMLTextAreaElement | null;
+        const appendToTitle = targetId === targetTitleId;
+        let currentVal = appendToTitle ? (block.title || '') : (typeof block.content === 'string' ? block.content : '');
+
+        if (isBackspace) {
+          currentVal = currentVal.slice(0, -1);
+        } else if (isEnter) {
+            currentVal += '\n';
+        } else if (isPrintable) {
+          currentVal += e.key;
+        }
+        if (appendToTitle) {
+          onUpdateTextBlock(block.id, 'title', currentVal);
+        } else {
+          onUpdateTextBlock(block.id, 'content', currentVal);
+        }
+        // Focus after state update so user keeps typing seamlessly
+        requestAnimationFrame(() => {
+          const el = document.getElementById(targetId) as HTMLInputElement | HTMLTextAreaElement | null;
+          if (el) {
+            el.focus();
+            // Place caret at end
+            const len = el.value.length;
+            (el as any).selectionStart = (el as any).selectionEnd = len;
+          }
+        });
+      } else if (selectedElement.type === 'calendarDate') {
+        const dateKey = selectedElement.id; // already YYYY-MM-DD
+        const textareaId = 'cell-content';
+        // Retrieve current content from store
+        const calendarData = useStore.getState().calendarData;
+        const existing = calendarData.cellContents?.[dateKey] || '';
+        let next = existing;
+        if (isBackspace) next = next.slice(0, -1);
+        else if (isEnter) next += '\n';
+        else if (isPrintable) next += e.key;
+        setCellContent(dateKey, next);
+        requestAnimationFrame(() => {
+          const el = document.getElementById(textareaId) as HTMLTextAreaElement | null;
+          if (el) {
+            el.focus();
+            const len = el.value.length;
+            el.selectionStart = el.selectionEnd = len;
+          }
+        });
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [selectedElement, onUpdateTextBlock, setCellContent, textBlocks]);
+
+  // When selection changes (including subType), pre-focus the correct input so first keypress isn't lost.
+  React.useEffect(() => {
+    if (!selectedElement) return;
+    if (selectedElement.type === 'text') {
+      const block = textBlocks.find(b => b.id === selectedElement.id);
+      if (!block || block.locked) return;
+      const titleId = `section-title-${block.id}`;
+      const contentId = `section-content-${block.id}`;
+      const targetId = (selectedElement as any).subType === 'title' ? titleId : ((selectedElement as any).subType === 'content' ? contentId : (!block.title ? titleId : contentId));
+      requestAnimationFrame(() => {
+        const el = document.getElementById(targetId) as HTMLInputElement | HTMLTextAreaElement | null;
+        if (el) {
+          el.focus();
+          const len = el.value.length;
+          (el as any).selectionStart = (el as any).selectionEnd = len;
+        }
+      });
+    } else if (selectedElement.type === 'calendarDate') {
+      requestAnimationFrame(() => {
+        const el = document.getElementById('cell-content') as HTMLTextAreaElement | null;
+        if (el) {
+          el.focus();
+          const len = el.value.length;
+          el.selectionStart = el.selectionEnd = len;
+        }
+      });
+    }
+  }, [selectedElement, textBlocks]);
 
   // Check if we're in calendar mode
   const isCalendarLayout = layout.base.type === 'calendar';
