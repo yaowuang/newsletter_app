@@ -1,9 +1,9 @@
 // Abstract interfaces following Interface Segregation Principle
 // Each interface has a single, focused responsibility
 
-import { LayoutSelection } from '@/lib/types';
+import { LayoutSelection } from '@/features/newsletter/types';
 import { Theme } from '@/lib/themes';
-import { ImageSearchResult } from '../services/image-search-service';
+import { ImageSearchResult } from '@/components/stuff/services/image-search-service';
 
 // Base interface for all picker components
 export interface BasePickerProps {

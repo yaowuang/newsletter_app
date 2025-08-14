@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import InspectorSection from '@/components/ui/InspectorSection';
 import FormGroup from '@/components/ui/FormGroup';
-import EmojiToolbar from '@/components/inspector-panel/EmojiIconToolbar';
+import EmojiToolbar from '@/features/newsletter/components/EmojiIconToolbar';
 
 export type DateMode = 'single' | 'week' | 'month';
 

@@ -1,14 +1,13 @@
 "use client";
 
 import React from 'react';
-import type { TextBlock, ImageElement, SectionStyle } from "@/lib/types";
-import { HorizontalLineInspector } from './inspector-panel/HorizontalLineInspector';
-// Refactored components
-import { TextInspector } from "./inspector-panel/TextInspector";
-import { ImageInspector } from "./inspector-panel/ImageInspector";
-import { DocumentInspector } from "./inspector-panel/DocumentInspector";
-import { CalendarInspector } from "./inspector-panel/CalendarInspector";
-import { DateInspector } from "./inspector-panel/DateInspector";
+import type { TextBlock, ImageElement, SectionStyle } from "@/features/newsletter/types";
+import { HorizontalLineInspector } from '@/features/newsletter/components/HorizontalLineInspector';
+import { TextInspector } from '@/features/newsletter/components/TextInspector';
+import { ImageInspector } from '@/features/newsletter/components/ImageInspector';
+import { DocumentInspector } from '@/features/newsletter/components/DocumentInspector';
+import { CalendarInspector } from '@/features/newsletter/components/CalendarInspector';
+import { DateInspector } from '@/features/newsletter/components/DateInspector';
 import { useStore } from "@/lib/store";
 
 type SelectableElement = (TextBlock & { subType?: 'title' | 'content' }) | ImageElement | { id: string; type: 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' };
@@ -61,7 +60,7 @@ export function InspectorPanel({
       e.preventDefault();
 
       if (selectedElement.type === 'text') {
-        const block = textBlocks.find(b => b.id === selectedElement.id);
+        const block = textBlocks.find((b: TextBlock) => b.id === selectedElement.id);
         if (!block || block.locked) return;
         // If inline editing is active on canvas for this block (data attribute flag), skip redirect to inspector
         const inlineEditing = document.querySelector(`[data-inline-edit-block="${selectedElement.id}"]`);
@@ -161,7 +160,7 @@ export function InspectorPanel({
         onClose={() => selectElement(null)}
       />;
     } else if (selectedElement.type === 'text') {
-      const block = textBlocks.find(b => b.id === selectedElement.id) as TextBlock;
+      const block = textBlocks.find((b: TextBlock) => b.id === selectedElement.id) as TextBlock;
       return <TextInspector 
         block={block}
         theme={theme}

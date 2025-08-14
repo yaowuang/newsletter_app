@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { UI_CONSTANTS } from '@/lib/ui-constants';
 import { TextBlock as TextBlockComponent } from './TextBlock';
-import type { TextBlock, SectionStyles, LayoutSelection } from '@/lib/types';
+import type { TextBlock, SectionStyles, LayoutSelection } from '@/features/newsletter/types';
 import type { Theme } from '@/lib/themes';
 import { CSSProperties } from 'react';
 

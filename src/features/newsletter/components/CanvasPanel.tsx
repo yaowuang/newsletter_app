@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStore } from '@/lib/store';
-import type { LayoutSelection, TextBlock, ImageElement, SectionStyles } from '@/lib/types';
+import type { LayoutSelection, TextBlock, ImageElement, SectionStyles } from '@/features/newsletter/types';
 import type { Theme } from '@/lib/themes';
 import { CSSProperties } from 'react';
 import { updateHorizontalLinePositions } from './utils/positionUtils';

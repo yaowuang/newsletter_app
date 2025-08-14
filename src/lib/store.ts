@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { nanoid } from 'nanoid';
 import { horizontalLineLibrary, resolveThemedLine, HorizontalLineStyle } from './horizontalLines';
-import { allLayouts } from '@/lib/layouts';
+import { allLayouts } from '@/features/newsletter/utils/layouts';
 import { allThemes, Theme } from '@/lib/themes';
 import { deriveCalendarStyles } from '@/lib/calendarTheme';
 import { buildInitialBlocks, createUserTextBlock } from './initialData';
-import { AppState, TextBlock, ImageElement, HorizontalLineElement } from './types';
+import { AppState, TextBlock, ImageElement, HorizontalLineElement } from '@/features/newsletter/types';
 import { applyTextEffect } from './textEffects';
 import { CalendarData, CalendarEvent, CalendarStyles } from '@/lib/calendar';
 

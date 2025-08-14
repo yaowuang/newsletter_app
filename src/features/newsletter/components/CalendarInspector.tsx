@@ -2,7 +2,7 @@ import React from 'react';
 import { useStore } from '@/lib/store';
 import { formatCalendarTitle } from '@/lib/calendar';
 import { Button } from '@/components/ui/button';
-import { FontSelect } from '@/components/inspector-panel/FontSelect';
+import { FontSelect } from '@/features/newsletter/components/FontSelect';
 import { TextEffectPicker } from '@/components/ui/TextEffectPicker';
 import InspectorSection from '@/components/ui/InspectorSection';
 import FormGroup from '@/components/ui/FormGroup';

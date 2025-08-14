@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { LayoutSelection } from '@/lib/types';
+import type { LayoutSelection } from '@/features/newsletter/types';
 import { TabRegistry } from './config/tab-registry';
 import { LayoutPicker } from './LayoutPicker';
 import { ThemePicker } from './ThemePicker';

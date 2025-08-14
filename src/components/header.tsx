@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toPng, toSvg } from 'html-to-image';
 import { useStore } from "@/lib/store";
-import type { EditorSnapshot } from "@/lib/types";
+import type { EditorSnapshot } from "@/features/newsletter/types";
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 

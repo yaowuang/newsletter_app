@@ -1,13 +1,13 @@
 import React from "react";
 import { useStore } from "@/lib/store";
-import type { TextBlock, SectionStyle } from "@/lib/types";
+import type { TextBlock, SectionStyle } from "@/features/newsletter/types";
 import { Theme } from "@/lib/themes";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import FormattingToolbar, { FormattingAction } from '@/components/inspector-panel/FormattingToolbar';
-import EmojiToolbar from '@/components/inspector-panel/EmojiIconToolbar';
-import SectionTitleInput from '@/components/inspector-panel/SectionTitleInput';
-import { FontSelect } from '@/components/inspector-panel/FontSelect';
+import FormattingToolbar, { FormattingAction } from '@/features/newsletter/components/FormattingToolbar';
+import EmojiToolbar from '@/features/newsletter/components/EmojiIconToolbar';
+import SectionTitleInput from '@/features/newsletter/components/SectionTitleInput';
+import { FontSelect } from '@/features/newsletter/components/FontSelect';
 import InspectorSection from '@/components/ui/InspectorSection';
 import FormGroup from '@/components/ui/FormGroup';
 import LockButton from '@/components/ui/LockButton';

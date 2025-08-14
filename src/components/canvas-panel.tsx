@@ -1,1 +1,1 @@
-export { CanvasPanel } from './canvas-panel/CanvasPanel';
+export { CanvasPanel } from '@/features/newsletter/components/CanvasPanel';

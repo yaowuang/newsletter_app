@@ -2,7 +2,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import EmojiToolbar from '@/components/inspector-panel/EmojiIconToolbar';
+import EmojiToolbar from '@/features/newsletter/components/EmojiIconToolbar';
 
 interface SectionTitleInputProps {
   blockId: string;

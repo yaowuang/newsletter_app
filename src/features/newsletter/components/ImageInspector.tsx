@@ -1,6 +1,6 @@
 import React from "react";
 import { useStore } from "@/lib/store";
-import type { ImageElement } from "@/lib/types";
+import type { ImageElement } from "@/features/newsletter/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import InspectorSection from '@/components/ui/InspectorSection';

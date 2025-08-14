@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import type { ElementSelection } from '../types';
+import type { ElementSelection } from '@/features/newsletter/types';
 
 interface UseKeyboardShortcutsProps {
   selectedElement: ElementSelection | null;

@@ -7,6 +7,7 @@ import InspectorSection from '@/components/ui/InspectorSection';
 import FormGroup from '@/components/ui/FormGroup';
 import LockButton from '@/components/ui/LockButton';
 import ColorInputWithReset from '@/components/ui/ColorInputWithReset';
+import type { HorizontalLineElement } from '@/features/newsletter/types';
 
 interface HorizontalLineInspectorProps {
   elementId: string;
@@ -14,7 +15,7 @@ interface HorizontalLineInspectorProps {
 
 export const HorizontalLineInspector: React.FC<HorizontalLineInspectorProps> = ({ elementId }) => {
   const library = horizontalLineLibrary;
-  const line = useStore(state => state.horizontalLines.find(l => l.id === elementId));
+  const line = useStore(state => state.horizontalLines.find((l: HorizontalLineElement) => l.id === elementId));
   const updateHorizontalLine = useStore(state => state.updateHorizontalLine);
   const deleteElement = useStore(state => state.deleteElement);
   const setElementLocked = useStore(state => state.setElementLocked);

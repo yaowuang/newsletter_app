@@ -3,8 +3,9 @@
 
 import { useState } from 'react';
 import { useStore } from '@/lib/store';
-import { LayoutSelection } from '@/lib/types';
+import { LayoutSelection } from '@/features/newsletter/types';
 import { Theme } from '@/lib/themes';
+import type { TextBlock } from '@/features/newsletter/types';
 
 // Layout management hook
 export const useLayoutManager = () => {
@@ -29,7 +30,7 @@ export const useLayoutManager = () => {
     } else if (currentSections > targetSections) {
       // Remove excess sections (starting from the end)
       const textBlocksToRemove = useStore.getState().textBlocks.slice(targetSections);
-      textBlocksToRemove.forEach(block => {
+      textBlocksToRemove.forEach((block: TextBlock) => {
         deleteElement(block.id, 'text');
       });
     }
@@ -46,7 +47,7 @@ export const useLayoutManager = () => {
     } else if (currentSections > count) {
       // Remove excess sections (starting from the end)
       const textBlocksToRemove = useStore.getState().textBlocks.slice(count);
-      textBlocksToRemove.forEach(block => {
+      textBlocksToRemove.forEach((block: TextBlock) => {
         deleteElement(block.id, 'text');
       });
     }

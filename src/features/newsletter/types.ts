@@ -2,7 +2,7 @@
 // Keeping these separate avoids large monolithic store files and helps re-use across components.
 
 import { Theme } from '@/lib/themes';
-import { Layout, LayoutVariant } from '@/lib/layouts';
+import { Layout, LayoutVariant } from '@/features/newsletter/utils/layouts';
 import { CalendarData, CalendarEvent, CalendarStyles } from '@/lib/calendar';
 
 export type TextBlock = {
@@ -152,4 +152,22 @@ export interface AppState {
   resetCalendarStylesToDefaults: () => void;
   // Caret actions
   setEditingCaret?: (blockId: string, field: 'title' | 'content', index: number) => void;
+}
+
+export interface ElementSelection {
+  id: string;
+  type: 'text' | 'image' | 'horizontalLine';
+}
+
+export interface ZoomControls {
+  zoom: number;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onResetZoom: () => void;
+}
+
+export interface CanvasConfig {
+  width: string;
+  height: string;
+  scale: number;
 }

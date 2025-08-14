@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import InspectorSection from '@/components/ui/InspectorSection';
 import FormGroup from '@/components/ui/FormGroup';
-import FormattingToolbar, { FormattingAction } from '@/components/inspector-panel/FormattingToolbar';
-import EmojiToolbar from '@/components/inspector-panel/EmojiIconToolbar';
+import FormattingToolbar, { FormattingAction } from '@/features/newsletter/components/FormattingToolbar';
+import EmojiToolbar from '@/features/newsletter/components/EmojiIconToolbar';
 
 interface DateInspectorProps {
   dateKey: string;

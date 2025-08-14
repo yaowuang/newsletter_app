@@ -1,7 +1,7 @@
 import Link from 'next/link';
 // import Image from 'next/image';
 import { Metadata } from 'next';
-import ExampleCarousel from '../components/ExampleCarousel';
+import ExampleCarousel from '@/components/ExampleCarousel';
 
 // Optimized metadata for your homepage
 export const metadata: Metadata = {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { allLayouts, Layout, LayoutVariant } from '@/lib/layouts';
-import type { LayoutSelection } from '@/lib/types';
+import { allLayouts, Layout, LayoutVariant } from '@/features/newsletter/utils/layouts';
+import type { LayoutSelection } from '@/features/newsletter/types';
 import { LayoutPickerProps } from './interfaces/picker-interfaces';
 import { cn } from '@/lib/utils';
 

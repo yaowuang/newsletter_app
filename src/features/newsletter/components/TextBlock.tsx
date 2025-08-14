@@ -4,7 +4,7 @@ import { useStore } from '@/lib/store';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { CSSProperties } from 'react';
-import type { TextBlock, SectionStyles } from '@/lib/types';
+import type { TextBlock, SectionStyles } from '@/features/newsletter/types';
 import type { Theme } from '@/lib/themes';
 
 interface TextBlockProps {

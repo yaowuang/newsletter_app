@@ -3,7 +3,7 @@ import { Rnd } from 'react-rnd';
 import { Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { UI_CONSTANTS } from '@/lib/ui-constants';
-import type { ImageElement } from '@/lib/types';
+import type { ImageElement } from '@/features/newsletter/types';
 
 interface ImagesLayerProps {
   images: ImageElement[];

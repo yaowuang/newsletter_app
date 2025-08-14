@@ -1,5 +1,5 @@
 import type { Theme } from '@/lib/themes';
-import type { LayoutSelection } from '@/lib/types';
+import type { LayoutSelection } from '@/features/newsletter/types';
 import { CSSProperties } from 'react';
 
 interface StyleConfig {

@@ -1,7 +1,7 @@
 /**
  * Utilities for positioning horizontal lines based on grid layout definitions
  */
-import type { HorizontalLineElement, LayoutSelection } from '@/lib/types';
+import type { HorizontalLineElement, LayoutSelection } from '@/features/newsletter/types';
 
 export type PositionReference = {
   position: 'afterTitle' | 'afterDate' | 'beforeSections' | 'afterSections' | 'betweenSections' | 'afterSection';

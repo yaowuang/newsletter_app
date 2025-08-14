@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { ZoomControls } from '../types';
+import type { ZoomControls } from '@/features/newsletter/types';
 
 const ZOOM_LIMITS = {
   MIN: 0.25,

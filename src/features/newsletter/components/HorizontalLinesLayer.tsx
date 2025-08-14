@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { UI_CONSTANTS } from '@/lib/ui-constants';
 import { horizontalLineLibrary } from '@/lib/horizontalLines';
 import HorizontalLine from '@/components/ui/HorizontalLine';
-import type { HorizontalLineElement } from '@/lib/types';
+import type { HorizontalLineElement } from '@/features/newsletter/types';
 
 interface HorizontalLinesLayerProps {
   horizontalLines: HorizontalLineElement[];
