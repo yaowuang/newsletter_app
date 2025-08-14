@@ -4,6 +4,7 @@ import "./globals.css";
 import Footer from "@/components/footer";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"], variable: "--font-poppins" });
 const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito" });
@@ -125,6 +126,7 @@ export default function RootLayout({
         )}
       >
         {children}
+        <Analytics />
         <Footer />
       </body>
     </html>
