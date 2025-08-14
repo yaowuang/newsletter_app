@@ -1,5 +1,6 @@
 import React from 'react';
 import { PastelRotateText } from '@/components/common/PastelRotateText';
+import { RainbowRotateText } from '@/components/common/RainbowRotateText';
 import { Theme, allThemes } from '@/lib/themes';
 import { ThemePickerProps } from './interfaces/picker-interfaces';
 import { cn } from '@/lib/utils';
@@ -151,6 +152,7 @@ const ThemePreviewLabel: React.FC<{
 }> = ({ theme, title }) => {
   // Handle rainbow gradient styles
   const isPastelRotate = title.textEffectId === 'pastel-rotate';
+  const isRainbowRotate = title.textEffectId === 'rainbow-rotate';
   const baseStyle: React.CSSProperties = {
     position: 'absolute',
     bottom: 4,
@@ -166,7 +168,7 @@ const ThemePreviewLabel: React.FC<{
     pointerEvents: 'none',
   };
 
-  if (!isPastelRotate) {
+  if (!isPastelRotate && !isRainbowRotate) {
     Object.assign(baseStyle, {
       color: title.color,
       textShadow: title.textShadow || '0 0 2px rgba(0,0,0,0.4)',
@@ -180,9 +182,17 @@ const ThemePreviewLabel: React.FC<{
     });
   }
 
-  return isPastelRotate ? (
-    <PastelRotateText text={theme.name} style={baseStyle} ariaLabel={theme.name} />
-  ) : (
-    <span style={baseStyle} aria-hidden="true">{theme.name}</span>
-  );
+  if (isPastelRotate) {
+    return (
+      <PastelRotateText text={theme.name} style={baseStyle} ariaLabel={theme.name} />
+    );
+  } else if (isRainbowRotate) {
+    return (
+      <RainbowRotateText text={theme.name} style={baseStyle} ariaLabel={theme.name} />
+    );
+  } else {
+    return (
+      <span style={baseStyle} aria-hidden="true">{theme.name}</span>
+    );
+  }
 };

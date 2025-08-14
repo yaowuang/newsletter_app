@@ -2,6 +2,7 @@ import React from 'react';
 import type { Theme } from '@/lib/themes';
 import { CSSProperties } from 'react';
 import { PastelRotateText } from '@/components/common/PastelRotateText';
+import { RainbowRotateText } from '@/components/common/RainbowRotateText';
 
 interface NewsletterHeaderProps {
   title: string;
@@ -113,7 +114,14 @@ export function NewsletterHeader({
     : "text-4xl font-bold relative z-10";
 
   const isPastelRotate = theme.styles.title.textEffectId === 'pastel-rotate';
-  const renderedTitle = isPastelRotate ? <PastelRotateText text={title} /> : title;
+  const isRainbowRotate = theme.styles.title.textEffectId === 'rainbow-rotate';
+  
+  let renderedTitle: React.ReactNode = title;
+  if (isPastelRotate) {
+    renderedTitle = <PastelRotateText text={title} />;
+  } else if (isRainbowRotate) {
+    renderedTitle = <RainbowRotateText text={title} />;
+  }
   return (
     <>
       <h1 style={titleStyle} className={titleClasses}>

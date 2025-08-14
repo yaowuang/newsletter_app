@@ -43,6 +43,16 @@ export const textEffects: TextEffect[] = [
     }
   },
   {
+    id: 'rainbow-rotate',
+    name: 'Rainbow Rotate',
+    description: 'Each character cycles through bold rainbow colors',
+    category: 'special',
+    styles: {
+      // Base color acts as fallback; actual per-char colors applied in component when this effect id is detected
+      color: '#ffffff'
+    }
+  },
+  {
     id: 'sunset',
     name: 'Sunset',
     description: 'Warm sunset gradient',
