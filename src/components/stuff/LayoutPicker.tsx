@@ -15,18 +15,37 @@ export const LayoutPicker: React.FC<LayoutPickerProps> = ({
   sectionCount
 }) => {
   const [desiredSections, setDesiredSections] = useState(sectionCount);
-  const availableLayouts = allLayouts.filter(l => l.sections === desiredSections);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  
+  // Separate newsletter layouts from special layouts (like calendar)
+  const newsletterLayouts = allLayouts.filter(l => l.type !== 'calendar');
+  const calendarLayouts = allLayouts.filter(l => l.type === 'calendar');
+  
+  const availableLayouts = selectedCategory === 'calendar' 
+    ? calendarLayouts
+    : newsletterLayouts.filter(l => l.sections === desiredSections);
 
   const handleSectionChange = (count: number) => {
     setDesiredSections(count);
   };
 
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+  };
+
   return (
     <div className="space-y-4">
-      <SectionCountSelector
-        selectedCount={desiredSections}
-        onCountChange={handleSectionChange}
+      <CategorySelector
+        selectedCategory={selectedCategory}
+        onCategoryChange={handleCategoryChange}
       />
+      
+      {selectedCategory !== 'calendar' && (
+        <SectionCountSelector
+          selectedCount={desiredSections}
+          onCountChange={handleSectionChange}
+        />
+      )}
       
       <LayoutGrid
         layouts={availableLayouts}
@@ -38,6 +57,38 @@ export const LayoutPicker: React.FC<LayoutPickerProps> = ({
     </div>
   );
 };
+
+// Category selector for different layout types
+const CategorySelector: React.FC<{
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+}> = ({ selectedCategory, onCategoryChange }) => (
+  <div>
+    <label htmlFor="layout-category" className="text-sm font-medium">
+      Layout Type
+    </label>
+    <div 
+      role="group" 
+      aria-label="Layout Category" 
+      className="flex items-center justify-center gap-2 mt-2"
+    >
+      <Button
+        variant={selectedCategory === 'all' ? 'default' : 'outline'}
+        size="sm"
+        onClick={() => onCategoryChange('all')}
+      >
+        Newsletter
+      </Button>
+      <Button
+        variant={selectedCategory === 'calendar' ? 'default' : 'outline'}
+        size="sm"
+        onClick={() => onCategoryChange('calendar')}
+      >
+        Calendar
+      </Button>
+    </div>
+  </div>
+);
 
 // Extracted section count selector component
 const SectionCountSelector: React.FC<{
@@ -93,43 +144,72 @@ const LayoutGrid: React.FC<{
   onSetSectionCount: (count: number) => void;
 }> = ({ layouts, currentSelection, currentSectionCount, onLayoutChange, onSetSectionCount }) => (
   <div className="grid grid-cols-2 gap-4 place-items-center border-t pt-4">
-    {layouts.map(layout => (
-      <Dialog key={layout.id}>
-        <DialogTrigger asChild>
-          <div>
+    {layouts.map(layout => {
+      // If layout has only one variant, select it directly without dialog
+      if (layout.variants.length === 1) {
+        const variant = layout.variants[0];
+        return (
+          <div
+            key={layout.id}
+            onClick={() => {
+              onSetSectionCount(layout.sections);
+              onLayoutChange({ base: layout, variant });
+              if (typeof window !== 'undefined' && layout.type === 'calendar') {
+                window.dispatchEvent(new CustomEvent('calendar-layout-selected'));
+              }
+            }}
+            className="cursor-pointer"
+          >
             <LayoutPreview
               layout={layout}
               isSelected={currentSelection.base.id === layout.id && currentSectionCount === layout.sections}
             />
           </div>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Choose a variation for {layout.name}</DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-3 gap-4 py-4">
-            {layout.variants.map(variant => (
-              <div
-                key={variant.name}
-                onClick={() => {
-                  onSetSectionCount(layout.sections);
-                  onLayoutChange({ base: layout, variant });
-                }}
-              >
-                <LayoutPreview
-                  layout={layout}
-                  variantName={variant.name}
-                  isSelected={
-                    currentSelection.variant.name === variant.name &&
-                    currentSelection.base.id === layout.id
-                  }
-                />
-              </div>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
-    ))}
+        );
+      }
+      
+      // For layouts with multiple variants, show dialog
+      return (
+        <Dialog key={layout.id}>
+          <DialogTrigger asChild>
+            <div>
+              <LayoutPreview
+                layout={layout}
+                isSelected={currentSelection.base.id === layout.id && currentSectionCount === layout.sections}
+              />
+            </div>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Choose a variation for {layout.name}</DialogTitle>
+            </DialogHeader>
+            <div className="grid grid-cols-3 gap-4 py-4">
+              {layout.variants.map(variant => (
+                <div
+                  key={variant.name}
+                  onClick={() => {
+                    onSetSectionCount(layout.sections);
+                    onLayoutChange({ base: layout, variant });
+                    if (typeof window !== 'undefined' && layout.type === 'calendar') {
+                      window.dispatchEvent(new CustomEvent('calendar-layout-selected'));
+                    }
+                  }}
+                >
+                  <LayoutPreview
+                    layout={layout}
+                    variantName={variant.name}
+                    isSelected={
+                      currentSelection.variant.name === variant.name &&
+                      currentSelection.base.id === layout.id
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
+      );
+    })}
   </div>
 );
 
@@ -167,31 +247,68 @@ const LayoutPreviewGrid: React.FC<{
   layout: Layout;
   variant: LayoutVariant;
   areas: string[];
-}> = ({ layout, variant, areas }) => (
-  <div
-    style={{
-      display: 'grid',
-      gridTemplateAreas: layout.gridTemplateAreas,
-      gridTemplateColumns: variant.gridTemplateColumns,
-      gridTemplateRows: variant.gridTemplateRows
-        .replace(/auto/g, '10px')
-        .replace(/(\d+)fr/g, '$1fr'),
-      gap: '3px',
-      width: '80px',
-      height: '90px',
-      border: '1px solid #ccc',
-      padding: '4px'
-    }}
-  >
-    {areas.map(area => (
-      <LayoutPreviewArea
-        key={area}
-        area={area}
-        variant={variant}
-      />
-    ))}
-  </div>
-);
+}> = ({ layout, variant, areas }) => {
+  // Special handling for calendar layout
+  if (layout.type === 'calendar') {
+    return (
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(7, 1fr)',
+          gridTemplateRows: 'auto repeat(5, 1fr)',
+          gap: '1px',
+          width: '80px',
+          height: '90px',
+          border: '1px solid #ccc',
+          padding: '4px'
+        }}
+      >
+        {/* Calendar header */}
+        <div 
+          style={{ gridColumn: '1 / -1' }}
+          className="bg-blue-100 dark:bg-blue-800 text-[6px] flex items-center justify-center rounded-sm"
+        >
+          Calendar
+        </div>
+        {/* Calendar grid cells */}
+        {Array.from({ length: 35 }, (_, i) => (
+          <div
+            key={i}
+            className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+            style={{ fontSize: '4px' }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // Regular newsletter layout preview
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateAreas: layout.gridTemplateAreas,
+        gridTemplateColumns: variant.gridTemplateColumns,
+        gridTemplateRows: variant.gridTemplateRows
+          .replace(/auto/g, '10px')
+          .replace(/(\d+)fr/g, '$1fr'),
+        gap: '3px',
+        width: '80px',
+        height: '90px',
+        border: '1px solid #ccc',
+        padding: '4px'
+      }}
+    >
+      {areas.map(area => (
+        <LayoutPreviewArea
+          key={area}
+          area={area}
+          variant={variant}
+        />
+      ))}
+    </div>
+  );
+};
 
 // Extracted area component
 const LayoutPreviewArea: React.FC<{
@@ -239,6 +356,9 @@ const LayoutPreviewLabel: React.FC<{
   <p className="text-[10px] text-center mt-1 leading-tight">
     {layoutName}
     <br />
-    <span className="text-[9px] opacity-70">{variantName}</span>
+    <span className="text-[9px] opacity-70">
+      {variantName}
+      {layoutName.includes('Calendar') && ' (Landscape)'}
+    </span>
   </p>
 );

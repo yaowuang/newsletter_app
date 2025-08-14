@@ -29,6 +29,8 @@ export type LayoutVariant = {
   // Length must equal parent layout's sections. Used to auto-map existing content
   // to best-fitting section sizes when the user switches variants/layouts.
   sectionCharTargets?: number[];
+  // Orientation for special layouts like calendar
+  orientation?: 'portrait' | 'landscape';
 };
 
 export type Layout = {
@@ -40,6 +42,8 @@ export type Layout = {
   variants: LayoutVariant[]; // each variant can tailor alignments & decorations
   category?: string;     // optional grouping category
   notes?: string;        // optional notes
+  type?: 'newsletter' | 'calendar'; // layout type for special handling
+  orientation?: 'portrait' | 'landscape'; // overall orientation
 };
 
 // Helper to assemble multiline template areas for readability
@@ -281,6 +285,30 @@ export const newsletterLayouts: Layout[] = [
   { name: 'Tall Stats', gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto 1.2fr 1fr 1fr', titleAlign: 'center', dateAlign: 'center', decorations: [ { kind: 'separator', lineId: 'classic-dashed', position: 'afterDate' } ], sectionCharTargets: [750, 750, 600, 600, 600, 600] },
     ]
   },
+
+  // Monthly Calendar Layout (Landscape)
+  {
+    id: 'monthly-calendar',
+    name: 'Monthly Calendar',
+    type: 'calendar',
+    sections: 1, // Single section for calendar grid
+    orientation: 'landscape',
+    category: 'Calendar',
+    notes: 'Landscape 5x7 grid calendar automatically populated with selected month',
+    gridTemplateAreas: areas([
+      'calendar calendar calendar calendar calendar calendar calendar'
+    ]),
+    variants: [
+      {
+        name: 'Standard',
+        gridTemplateColumns: 'repeat(7, 1fr)',
+        gridTemplateRows: '1fr',
+        orientation: 'landscape',
+        description: 'Standard calendar layout with equal-sized cells',
+        decorations: []
+      }
+    ]
+  }
 ];
 
 // Backward compatibility export (existing code imports allLayouts)

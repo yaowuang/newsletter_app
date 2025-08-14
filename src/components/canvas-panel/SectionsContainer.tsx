@@ -11,7 +11,7 @@ interface SectionsContainerProps {
   sectionStyles: SectionStyles;
   theme: Theme;
   denseMode: boolean;
-  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' } | null;
+  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
   onSelectElement: (id: string, type: 'text') => void;
   layoutSelection: LayoutSelection; // Add this to know how many sections the layout supports
 }

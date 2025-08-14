@@ -136,6 +136,41 @@
   margin-bottom: 0.25rem;
 }
 
+/* Calendar cell markdown styling */
+.calendar-cell-content ul,
+.calendar-cell-content ol {
+  margin: 0 0 2px 0;
+  padding-left: 14px;
+}
+.calendar-cell-content ul {
+  list-style-type: disc;
+  list-style-position: inside; /* keep bullets visible within tight cell padding */
+  margin-left: 0; /* override any global resets */
+}
+.calendar-cell-content ol {
+  list-style-type: decimal;
+  list-style-position: inside;
+  margin-left: 0;
+}
+.calendar-cell-content li {
+  margin: 0;
+  padding: 0;
+  line-height: 1.1;
+}
+.calendar-cell-content p {
+  margin: 0 0 2px 0;
+  line-height: 1.15;
+}
+.calendar-cell-content strong { font-weight: 600; }
+.calendar-cell-content em { font-style: italic; }
+.calendar-cell-content a {
+  text-decoration: underline;
+  color: inherit;
+}
+.calendar-cell-content table { width:100%; border-collapse: collapse; font-size:10px; }
+.calendar-cell-content th, .calendar-cell-content td { border:1px solid rgba(0,0,0,0.15); padding:2px 4px; }
+.calendar-cell-content hr { border:0; border-top:1px solid rgba(0,0,0,0.2); margin:2px 0; }
+
 /* Newsletter title text effects */
 .newsletter-title-effect {
   /* Ensure text effects work properly by preventing background conflicts */

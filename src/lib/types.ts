@@ -3,6 +3,7 @@
 
 import { Theme } from '@/lib/themes';
 import { Layout, LayoutVariant } from '@/lib/layouts';
+import { CalendarData, CalendarEvent, CalendarStyles } from '@/lib/calendar';
 
 export type TextBlock = {
   id: string;
@@ -42,6 +43,14 @@ export type HorizontalLineElement = {
 
 export type SelectableElement = (TextBlock | ImageElement | HorizontalLineElement) & { type: 'text' | 'image' | 'horizontalLine' };
 
+export type CalendarDateElement = {
+  id: string; // dateKey format: 'YYYY-MM-DD'
+  type: 'calendarDate';
+  date: Date;
+};
+
+export type ExtendedSelectableElement = SelectableElement | CalendarDateElement;
+
 export type LayoutSelection = {
   base: Layout;
   variant: LayoutVariant;
@@ -76,6 +85,8 @@ export type EditorSnapshot = {
   theme: Theme;
   layout: LayoutSelection;
   denseMode: boolean;
+  // Calendar-specific data
+  calendarData?: CalendarData;
 };
 
 export interface AppState {
@@ -84,11 +95,13 @@ export interface AppState {
   textBlocks: TextBlock[];
   images: ImageElement[];
   horizontalLines: HorizontalLineElement[];
-  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' } | null;
+  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
   sectionStyles: SectionStyles;
   theme: Theme;
   layout: LayoutSelection;
   denseMode: boolean;
+  // Calendar-specific state
+  calendarData: CalendarData;
   
   setTitle: (title: string) => void;
   setDate: (date: string) => void;
@@ -98,7 +111,7 @@ export interface AppState {
   addImage: () => void;
   updateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
   updateImage: (id: string, newProps: Partial<ImageElement>) => void;
-  selectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine') => void;
+  selectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate') => void;
   deleteElement: (id: string, type: 'text' | 'image' | 'horizontalLine') => void;
   setElementLocked: (id: string, type: 'text' | 'image' | 'horizontalLine', locked: boolean) => void;
   updateStyle: (blockId: string, newStyles: Partial<SectionStyle>) => void;
@@ -121,4 +134,18 @@ export interface AppState {
   loadSnapshot: (snapshot: EditorSnapshot) => void;
   swapTextBlocks: (id1: string, id2: string) => void;
   setDenseMode: (denseMode: boolean) => void;
+  
+  // Calendar-specific actions
+  setCalendarDate: (date: Date) => void;
+  setCalendarTitle: (title: string) => void;
+  setCellContent: (dateKey: string, content: string) => void;
+  addCalendarEvent: (event: CalendarEvent) => void;
+  updateCalendarEvent: (id: string, updates: Partial<CalendarEvent>) => void;
+  deleteCalendarEvent: (id: string) => void;
+  // Removed setters for week numbers & weekend highlight (now fixed behaviors)
+  
+  // Calendar styling actions
+  setCalendarStyle: (styleKey: keyof CalendarStyles, value: string | number | undefined) => void;
+  setCalendarStyles: (styles: Partial<CalendarStyles>) => void;
+  resetCalendarStylesToDefaults: () => void;
 }

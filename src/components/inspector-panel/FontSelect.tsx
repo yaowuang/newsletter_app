@@ -7,11 +7,13 @@ export const FONT_OPTIONS = [
   'Bangers',
   'Cinzel',
   'Cinzel Decorative',
+  'Comfortaa',
   'Comic Neue',
   'Creepster',
   'Fredoka',
   'Inter',
   'Irish Grover',
+  'Kalam',
   'Lato',
   'Lora',
   'Merriweather',
@@ -26,7 +28,9 @@ export const FONT_OPTIONS = [
   'Raleway',
   'Roboto',
   'Roboto Condensed',
+  'Righteous',
   'Rye',
+  'Schoolbell',
   'Share Tech Mono',
   'Source Sans 3',
   'Special Elite',
@@ -37,7 +41,13 @@ export const FONT_OPTIONS = [
 export const FONT_LABEL_TO_VALUE: Record<string,string> = {
   'Share Tech Mono': 'var(--font-share-tech-mono)',
   'Mountains of Christmas': 'var(--font-mountains-of-christmas)',
-  'Source Sans 3': 'var(--font-source-sans3)'
+  'Source Sans 3': 'var(--font-source-sans3)',
+  'Schoolbell': 'var(--font-schoolbell)',
+  'Righteous': 'var(--font-righteous)',
+  'Comfortaa': 'var(--font-comfortaa)',
+  'Kalam': 'var(--font-kalam)',
+  // Non-variable fonts below remain as labels but included for completeness if later variable-ized
+  // Add variables if design switches to CSS variable usage
 };
 export const FONT_VALUE_TO_LABEL: Record<string,string> = Object.fromEntries(Object.entries(FONT_LABEL_TO_VALUE).map(([k,v]) => [v,k]));
 

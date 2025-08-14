@@ -8,7 +8,7 @@ import type { HorizontalLineElement } from '@/lib/types';
 
 interface HorizontalLinesLayerProps {
   horizontalLines: HorizontalLineElement[];
-  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' } | null;
+  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
   zoom: number;
   onSelectElement: (id: string, type: 'horizontalLine') => void;
   onUpdateHorizontalLine: (id: string, updates: Partial<HorizontalLineElement>) => void;

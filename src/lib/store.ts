@@ -3,13 +3,43 @@ import { nanoid } from 'nanoid';
 import { horizontalLineLibrary, resolveThemedLine, HorizontalLineStyle } from './horizontalLines';
 import { allLayouts } from '@/lib/layouts';
 import { allThemes, Theme } from '@/lib/themes';
+import { deriveCalendarStyles } from '@/lib/calendarTheme';
 import { buildInitialBlocks, createUserTextBlock } from './initialData';
 import { AppState, TextBlock, ImageElement, HorizontalLineElement } from './types';
 import { applyTextEffect } from './textEffects';
+import { CalendarData, CalendarEvent, CalendarStyles } from '@/lib/calendar';
 
 
 // Note: Default section templates & initial block builders have been moved to initialData.ts
 
+// Initialize calendar data with current month
+const initializeCalendarData = (): CalendarData => ({
+  selectedDate: new Date(),
+  // Removed showWeekNumbers (always false) & highlightWeekends (always true)
+  customEvents: [],
+  cellContents: {},
+  calendarStyles: {
+  // Keep most values undefined so they inherit from the active theme until user overrides
+  headerFontFamily: undefined,
+  headerColor: undefined,
+  headerBackgroundColor: undefined,
+  weekdayFontFamily: undefined,
+  weekdayColor: undefined,
+  weekdayBackgroundColor: undefined,
+  cellFontFamily: undefined,
+  cellTextColor: undefined,
+  cellBackgroundColor: undefined,
+  cellBorderColor: undefined,
+  weekendCellTextColor: undefined,
+  weekendCellBackgroundColor: undefined,
+  // Non-current month styles now also derive from theme unless user overrides
+  nonCurrentMonthCellTextColor: undefined,
+  nonCurrentMonthCellBackgroundColor: undefined,
+  nonCurrentMonthOpacity: 0.5,
+  weekNumberTextColor: undefined,
+  weekNumberBackgroundColor: undefined
+  }
+});
 
 const initialBlocks = buildInitialBlocks();
 const initialLayout = allLayouts.find(l => l.sections === initialBlocks.length)!;
@@ -26,6 +56,7 @@ export const useStore = create<AppState>()(
     theme: allThemes[0],
     layout: { base: initialLayout, variant: initialLayout.variants[0] },
     denseMode: false,
+    calendarData: initializeCalendarData(),
 
     setTitle: (title) => set({ title }),
     setDate: (date) => set({ date }),
@@ -192,10 +223,28 @@ export const useStore = create<AppState>()(
         }
         return line;
       });
+      // Adapt calendar derived styles: update any calendar overrides that were effectively "linked" to the old theme.
+      const currentCalendar = state.calendarData;
+      const oldDerived = deriveCalendarStyles(state.theme);
+      const newDerived = deriveCalendarStyles(newTheme);
+      const updatedCalendarStyles = { ...(currentCalendar.calendarStyles || {}) };
+      const calendarStylesBefore = currentCalendar.calendarStyles || {};
+      (Object.keys(newDerived) as (keyof typeof newDerived)[]).forEach(key => {
+        const originalOverride = calendarStylesBefore[key as keyof typeof calendarStylesBefore];
+        // If user never explicitly overrode (undefined) leave undefined so new derived flows through.
+        if (originalOverride === undefined) return;
+        // If override matches old derived value, treat it as theme-linked and swap to new derived (or clear to allow derivation)
+        if (originalOverride === (oldDerived as Record<string, unknown>)[key as string]) {
+          // Prefer clearing so future theme changes continue to flow; but if we set to new derived we pin it again.
+          delete (updatedCalendarStyles as Record<string, unknown>)[key as string];
+        }
+      });
+
       set({ 
         theme: newTheme, 
         sectionStyles: {},
-        horizontalLines: refreshed
+        horizontalLines: refreshed,
+        calendarData: { ...currentCalendar, calendarStyles: updatedCalendarStyles }
       });
     },
     setThemeTitleFont: (font: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...state.theme.styles.title, fontFamily: font } } } })),
@@ -477,6 +526,7 @@ export const useStore = create<AppState>()(
           theme: snapshot.theme ?? get().theme,
           layout: snapshot.layout ?? get().layout,
           denseMode: snapshot.denseMode ?? get().denseMode,
+          calendarData: snapshot.calendarData ?? get().calendarData,
           selectedElement: null,
         });
       } catch (e) {
@@ -493,6 +543,79 @@ export const useStore = create<AppState>()(
         return { textBlocks: newBlocks };
       });
     },
-    setDenseMode: (denseMode) => set({ denseMode })
+    setDenseMode: (denseMode) => set({ denseMode }),
+
+    // Calendar-specific actions
+    setCalendarDate: (date: Date) => set(state => ({
+      calendarData: { ...state.calendarData, selectedDate: date }
+    })),
+    
+    setCalendarTitle: (title: string) => {
+      // No-op since we don't use titles anymore - keeping for compatibility
+    },
+    
+    setCellContent: (dateKey: string, content: string) => set(state => ({
+      calendarData: {
+        ...state.calendarData,
+        cellContents: {
+          ...state.calendarData.cellContents,
+          [dateKey]: content
+        }
+      }
+    })),
+    
+    addCalendarEvent: (event: CalendarEvent) => set(state => ({
+      calendarData: {
+        ...state.calendarData,
+        customEvents: [...(state.calendarData.customEvents || []), event]
+      }
+    })),
+    
+    updateCalendarEvent: (id: string, updates: Partial<CalendarEvent>) => set(state => ({
+      calendarData: {
+        ...state.calendarData,
+        customEvents: (state.calendarData.customEvents || []).map(event =>
+          event.id === id ? { ...event, ...updates } : event
+        )
+      }
+    })),
+    
+    deleteCalendarEvent: (id: string) => set(state => ({
+      calendarData: {
+        ...state.calendarData,
+        customEvents: (state.calendarData.customEvents || []).filter(event => event.id !== id)
+      }
+    })),
+    
+  // Removed setters for week numbers & weekend highlighting (now fixed)
+    
+    // Calendar styling actions
+    setCalendarStyle: (styleKey: keyof CalendarStyles, value: string | number | undefined) => set(state => ({
+      calendarData: {
+        ...state.calendarData,
+        calendarStyles: {
+          ...state.calendarData.calendarStyles,
+          [styleKey]: value
+        }
+      }
+    })),
+
+    setCalendarStyles: (styles: Partial<CalendarStyles>) => set(state => ({
+      calendarData: {
+        ...state.calendarData,
+        calendarStyles: {
+          ...state.calendarData.calendarStyles,
+          ...styles
+        }
+      }
+    })),
+
+    resetCalendarStylesToDefaults: () => set(state => ({
+      calendarData: {
+        ...state.calendarData,
+  // Recreate default (theme-derivable) calendar styles; preserve selectedDate & contents
+  calendarStyles: initializeCalendarData().calendarStyles
+      }
+    }))
   })
 );

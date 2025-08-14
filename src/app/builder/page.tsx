@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 
 export default function BuilderPage() {
   // Fix selectElement type to accept 'horizontalLine'
-  const handleSelectElement = (id: string | null, type?: 'text' | 'image' | 'horizontalLine') => {
+  const handleSelectElement = (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate') => {
     if (typeof selectElement === 'function') {
       selectElement(id, type);
     }
@@ -56,6 +56,9 @@ export default function BuilderPage() {
       return images.find(i => i.id === selectedElement.id);
     } else if (selectedElement.type === 'horizontalLine') {
       return { id: selectedElement.id, type: 'horizontalLine' as const };
+    } else if (selectedElement.type === 'calendarDate') {
+      // Pass through calendar date selection so DateInspector renders
+      return { id: selectedElement.id, type: 'calendarDate' as const };
     }
     return undefined;
   }, [textBlocks, images, selectedElement]);

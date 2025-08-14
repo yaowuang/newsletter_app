@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStore } from '@/lib/store';
 import type { LayoutSelection, TextBlock, ImageElement, SectionStyles } from '@/lib/types';
 import type { Theme } from '@/lib/themes';
@@ -13,6 +13,7 @@ import { SectionsContainer } from './SectionsContainer';
 import { HorizontalLinesLayer } from './HorizontalLinesLayer';
 import { ImagesLayer } from './ImagesLayer';
 import { Watermark } from './Watermark';
+import CalendarGrid from './CalendarGrid';
 
 interface CanvasPanelProps {
   title: string;
@@ -20,8 +21,8 @@ interface CanvasPanelProps {
   textBlocks: TextBlock[];
   images: ImageElement[];
   layoutSelection: LayoutSelection;
-  onSelectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine') => void;
-  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' } | null;
+  onSelectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate') => void;
+  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
   sectionStyles: SectionStyles;
   theme: Theme;
   onUpdateImage: (id: string, newProps: Partial<ImageElement>) => void;
@@ -58,6 +59,7 @@ export function CanvasPanel({
 
   // Zoom functionality
   const [zoom, setZoom] = useState(1);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const handleZoomIn = useCallback(() => {
     setZoom(prev => Math.min(prev + 0.25, 2));
   }, []);
@@ -67,6 +69,25 @@ export function CanvasPanel({
   const handleResetZoom = useCallback(() => {
     setZoom(1);
   }, []);
+
+  // Auto-adjust zoom & centering when switching to / from calendar layout
+  useEffect(() => {
+    const isCalendar = layoutSelection.base.type === 'calendar';
+    if (isCalendar) {
+      // Set to 75% zoom specifically for calendar for better overview
+      setZoom(prev => (prev !== 0.75 ? 0.75 : prev));
+      // Center after next paint to ensure dimensions available
+      requestAnimationFrame(() => {
+        const sc = scrollContainerRef.current;
+        const canvasEl = sc?.querySelector('#newsletter-canvas')?.parentElement as HTMLDivElement | null;
+        if (sc && canvasEl) {
+          const targetScrollLeft = Math.max(0, (canvasEl.scrollWidth - sc.clientWidth) / 2);
+          const targetScrollTop = Math.max(0, (canvasEl.scrollHeight - sc.clientHeight) / 2);
+          sc.scrollTo({ left: targetScrollLeft, top: targetScrollTop, behavior: 'smooth' });
+        }
+      });
+    }
+  }, [layoutSelection]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -124,6 +145,8 @@ export function CanvasPanel({
 
   // Layout and styling
   const { base, variant } = layoutSelection;
+  const isCalendarLayout = base.type === 'calendar';
+  const isLandscape = variant.orientation === 'landscape' || base.orientation === 'landscape';
 
   const pageStyle: CSSProperties = {
     display: 'grid',
@@ -138,11 +161,17 @@ export function CanvasPanel({
     height: '100%',
   };
 
+  // Adjust canvas dimensions for landscape orientation
+  const canvasWidth = isLandscape ? '11in' : '8.5in';
+  const canvasHeight = isLandscape ? '8.5in' : '11in';
+  const canvasWidthPx = isLandscape ? 11 * 96 : 8.5 * 96;
+  const canvasHeightPx = isLandscape ? 8.5 * 96 : 11 * 96;
+
   const canvasStyle = {
-    minWidth: '8.5in',
-    minHeight: '11in',
+    minWidth: canvasWidth,
+    minHeight: canvasHeight,
     transform: `scale(${zoom})`,
-    marginBottom: zoom < 1 ? 0 : `${(zoom - 1) * 11 * 96}px`, // 96px per inch
+    marginBottom: zoom < 1 ? 0 : `${(zoom - 1) * canvasHeightPx}px`,
   };
 
   const handleCanvasClick = () => onSelectElement(null);
@@ -158,10 +187,14 @@ export function CanvasPanel({
       />
 
       {/* Scrollable Canvas Container */}
-      <div className="h-full overflow-auto p-8" onClick={handleCanvasClick}>
+  <div ref={scrollContainerRef} className="h-full overflow-auto p-8" onClick={handleCanvasClick}>
         <div 
-          className="mx-auto w-[8.5in] h-[11in] shadow-lg bg-white origin-top" 
-          style={canvasStyle}
+          className="mx-auto shadow-lg bg-white origin-top" 
+          style={{
+            width: canvasWidth,
+            height: canvasHeight,
+            ...canvasStyle
+          }}
         >
           <div 
             id="newsletter-canvas" 
@@ -171,13 +204,26 @@ export function CanvasPanel({
             {/* Background Layer */}
             <PageBackground theme={theme} />
 
-            {/* Header Layer */}
-            <NewsletterHeader
-              title={title}
-              date={date}
-              theme={theme}
-              denseMode={denseMode}
-            />
+            {/* Header Layer - Only show for newsletter layouts */}
+            {!isCalendarLayout && (
+              <NewsletterHeader
+                title={title}
+                date={date}
+                theme={theme}
+                denseMode={denseMode}
+              />
+            )}
+
+            {/* Calendar Layer - Only for calendar layouts */}
+            {isCalendarLayout && (
+              <div style={{ gridArea: 'calendar', position: 'relative' }}>
+                <CalendarGrid
+                  containerWidth={canvasWidthPx - 64} // Subtract padding
+                  containerHeight={canvasHeightPx - 64} // No header space needed
+                  onSelectElement={onSelectElement}
+                />
+              </div>
+            )}
 
             {/* Horizontal Lines Layer */}
             <HorizontalLinesLayer
@@ -188,16 +234,18 @@ export function CanvasPanel({
               onUpdateHorizontalLine={updateHorizontalLine}
             />
 
-            {/* Text Sections Layer */}
-            <SectionsContainer
-              textBlocks={textBlocks}
-              sectionStyles={sectionStyles}
-              theme={theme}
-              denseMode={denseMode}
-              selectedElement={selectedElement}
-              onSelectElement={onSelectElement}
-              layoutSelection={layoutSelection}
-            />
+            {/* Text Sections Layer - Only for newsletter layouts */}
+            {!isCalendarLayout && (
+              <SectionsContainer
+                textBlocks={textBlocks}
+                sectionStyles={sectionStyles}
+                theme={theme}
+                denseMode={denseMode}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                layoutSelection={layoutSelection}
+              />
+            )}
 
             {/* Images Layer */}
             <ImagesLayer

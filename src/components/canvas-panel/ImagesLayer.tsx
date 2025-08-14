@@ -7,7 +7,7 @@ import type { ImageElement } from '@/lib/types';
 
 interface ImagesLayerProps {
   images: ImageElement[];
-  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' } | null;
+  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
   zoom: number;
   onSelectElement: (id: string, type: 'image') => void;
   onUpdateImage: (id: string, newProps: Partial<ImageElement>) => void;

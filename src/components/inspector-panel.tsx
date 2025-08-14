@@ -6,9 +6,11 @@ import { HorizontalLineInspector } from './inspector-panel/HorizontalLineInspect
 import { TextInspector } from "./inspector-panel/TextInspector";
 import { ImageInspector } from "./inspector-panel/ImageInspector";
 import { DocumentInspector } from "./inspector-panel/DocumentInspector";
+import { CalendarInspector } from "./inspector-panel/CalendarInspector";
+import { DateInspector } from "./inspector-panel/DateInspector";
 import { useStore } from "@/lib/store";
 
-type SelectableElement = TextBlock | ImageElement | { id: string; type: 'horizontalLine' };
+type SelectableElement = TextBlock | ImageElement | { id: string; type: 'horizontalLine' | 'calendarDate' };
 
 interface InspectorPanelProps {
   selectedElement?: SelectableElement;
@@ -32,12 +34,22 @@ export function InspectorPanel({
   onDateChange
 }: InspectorPanelProps) {
   const theme = useStore(state => state.theme);
+  const layout = useStore(state => state.layout);
   const sectionStyles = useStore(state => state.sectionStyles);
   const textBlocks = useStore(state => state.textBlocks);
+  const selectElement = useStore(state => state.selectElement);
   const currentStyle = selectedElement ? sectionStyles[selectedElement.id] || {} : {};
+
+  // Check if we're in calendar mode
+  const isCalendarLayout = layout.base.type === 'calendar';
 
   // Render content using refactored components
   const getInspectorContent = () => {
+    // Always show calendar inspector for calendar layouts when no element is selected
+    if (isCalendarLayout && !selectedElement) {
+      return <CalendarInspector />;
+    }
+    
     if (!selectedElement) {
       return <DocumentInspector 
         title={title}
@@ -47,7 +59,18 @@ export function InspectorPanel({
         onDateChange={onDateChange}
       />;
     }
-    if (selectedElement.type === 'text') {
+
+    if (selectedElement.type === 'calendarDate') {
+      const dateKey = selectedElement.id; // format YYYY-MM-DD (local)
+      // Parse manually to avoid UTC interpretation shifting date backwards in some TZs
+      const [y, m, d] = dateKey.split('-').map(n => parseInt(n, 10));
+      const date = new Date(y, (m ?? 1) - 1, d ?? 1);
+      return <DateInspector 
+        dateKey={dateKey}
+        date={date}
+        onClose={() => selectElement(null)}
+      />;
+    } else if (selectedElement.type === 'text') {
       const block = textBlocks.find(b => b.id === selectedElement.id) as TextBlock;
       return <TextInspector 
         block={block}
