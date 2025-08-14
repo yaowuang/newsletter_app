@@ -63,6 +63,9 @@ export function InspectorPanel({
       if (selectedElement.type === 'text') {
         const block = textBlocks.find(b => b.id === selectedElement.id);
         if (!block || block.locked) return;
+        // If inline editing is active on canvas for this block (data attribute flag), skip redirect to inspector
+        const inlineEditing = document.querySelector(`[data-inline-edit-block="${selectedElement.id}"]`);
+        if (inlineEditing) return; // let inline editor handle the keypress natively
         const titleEmpty = !block.title;
         const targetTitleId = `section-title-${block.id}`;
         const targetContentId = `section-content-${block.id}`;
@@ -100,6 +103,9 @@ export function InspectorPanel({
         });
       } else if (selectedElement.type === 'calendarDate') {
         const dateKey = selectedElement.id; // already YYYY-MM-DD
+        // If an inline date cell editor is active (textarea with matching aria-label), don't reroute
+        const inlineDateEditor = document.querySelector(`textarea[aria-label="Edit content for ${dateKey}"]`);
+        if (inlineDateEditor) return; // inline editor will receive native input
         const textareaId = 'cell-content';
         // Retrieve current content from store
         const calendarData = useStore.getState().calendarData;
@@ -123,34 +129,6 @@ export function InspectorPanel({
     return () => window.removeEventListener('keydown', handler);
   }, [selectedElement, onUpdateTextBlock, setCellContent, textBlocks]);
 
-  // When selection changes (including subType), pre-focus the correct input so first keypress isn't lost.
-  React.useEffect(() => {
-    if (!selectedElement) return;
-    if (selectedElement.type === 'text') {
-      const block = textBlocks.find(b => b.id === selectedElement.id);
-      if (!block || block.locked) return;
-      const titleId = `section-title-${block.id}`;
-      const contentId = `section-content-${block.id}`;
-      const targetId = (selectedElement as any).subType === 'title' ? titleId : ((selectedElement as any).subType === 'content' ? contentId : (!block.title ? titleId : contentId));
-      requestAnimationFrame(() => {
-        const el = document.getElementById(targetId) as HTMLInputElement | HTMLTextAreaElement | null;
-        if (el) {
-          el.focus();
-          const len = el.value.length;
-          (el as any).selectionStart = (el as any).selectionEnd = len;
-        }
-      });
-    } else if (selectedElement.type === 'calendarDate') {
-      requestAnimationFrame(() => {
-        const el = document.getElementById('cell-content') as HTMLTextAreaElement | null;
-        if (el) {
-          el.focus();
-          const len = el.value.length;
-          el.selectionStart = el.selectionEnd = len;
-        }
-      });
-    }
-  }, [selectedElement, textBlocks]);
 
   // Check if we're in calendar mode
   const isCalendarLayout = layout.base.type === 'calendar';

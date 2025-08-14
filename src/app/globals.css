@@ -1,3 +1,4 @@
+@import '../app/emoji-dropdown-fix.css';
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -179,3 +180,12 @@
 
 /* Pastel rotate per-character static styling (no animation) */
 .pastel-rotate-char { display: inline-block; }
+
+/* Disable typography styling inside inline editing container so raw markdown shows plainly */
+.prose-disable :where(p,ul,ol,li,table,thead,tbody,tr,th,td,code,pre,h1,h2,h3,h4,h5,h6,blockquote) {
+  all: unset;
+  font: inherit;
+  color: inherit;
+  line-height: inherit;
+  white-space: inherit;
+}

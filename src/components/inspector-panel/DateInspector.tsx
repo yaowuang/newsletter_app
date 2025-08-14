@@ -19,6 +19,13 @@ export const DateInspector: React.FC<DateInspectorProps> = ({ dateKey, date, onC
   const cellContent = cellContents[dateKey] || '';
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
+  // Prevent auto-focus: blur textarea on mount if not editing (so CalendarGrid can catch keydown)
+  React.useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.blur();
+    }
+  }, []);
+
   const insertToken = (token: string) => {
     const current = typeof cellContent === 'string' ? cellContent : '';
     const el = textareaRef.current;

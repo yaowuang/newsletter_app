@@ -1,0 +1,7 @@
+.emoji-dropdown-menu, .emoji-picker-react, .EmojiPickerReact {
+  z-index: 10110 !important;
+  position: absolute !important;
+  filter: none !important;
+  background: white !important;
+  backdrop-filter: none !important;
+}

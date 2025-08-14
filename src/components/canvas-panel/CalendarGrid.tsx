@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { MarkdownModalEditor } from '@/components/common/MarkdownModalEditor';
 import { PastelRotateText } from '@/components/common/PastelRotateText';
 import { RainbowRotateText } from '@/components/common/RainbowRotateText';
 import { useStore } from '@/lib/store';
@@ -13,7 +15,7 @@ interface CalendarGridProps {
 }
 
 export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, containerHeight, onSelectElement }) => {
-  const { calendarData, theme } = useStore();
+  const { calendarData, theme, setCellContent } = useStore();
   const { selectedDate, cellContents, calendarStyles: userCalendarStyles = {} } = calendarData;
   const calendarStyles = mergeDerivedCalendarStyles(theme, userCalendarStyles);
 
@@ -31,7 +33,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
     renderedCalendarTitle = <RainbowRotateText text={calendarTitle} />;
   }
 
-  // Calculate dimensions
+  // Calculate dimension
   const columns = 7; // week numbers removed
   const titleHeight = 60; // Space for month/year title
   const headerHeight = 40; // Space for weekday names
@@ -113,17 +115,45 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
 
   // Week number styles removed
 
+  // Inline editing state for a single date cell
+  const [editingDateKey, setEditingDateKey] = React.useState<string | null>(null);
+  const [draftContent, setDraftContent] = React.useState('');
+  // Remove textareaRef, not needed with MarkdownModalEditor
+
+  const beginEditCell = (date: Date) => {
+    if (!date) return;
+    const key = toDateKey(date);
+    setEditingDateKey(key);
+    setDraftContent(getCellContent(date));
+    // ensure selection state reflects calendar date (so global typing still works if they exit inline)
+    onSelectElement(key, 'calendarDate');
+  };
+  const commitEditCell = () => {
+    if (editingDateKey != null) {
+      setCellContent(editingDateKey, draftContent);
+    }
+    setEditingDateKey(null);
+  };
+  const cancelEditCell = () => {
+    setEditingDateKey(null);
+  };
+
+  // Close editor if user clicks elsewhere (using modal, so not needed)
+
   // Render a calendar cell (standard full-height row)
   const renderCalendarCell = (date: Date, isCurrentMonth: boolean, isToday: boolean, isWeekend: boolean, rowIndex: number, colIndex: number) => {
     const cellContent = getCellContent(date);
     const cellLeft = colIndex * cellWidth;
     const cellTop = titleHeight + headerHeight + (rowIndex * cellHeight);
     const cellStyles = getCellStyles(isCurrentMonth, isToday, isWeekend);
+    const dateKey = toDateKey(date);
+    const isEditing = editingDateKey === dateKey;
     
     return (
       <div
         key={`${date.getTime()}-${rowIndex}-${colIndex}`}
         onClick={(e) => { e.stopPropagation(); handleCellClick(date); }}
+        onDoubleClick={(e) => { e.stopPropagation(); beginEditCell(date); }}
         style={{
           position: 'absolute',
           left: cellLeft,
@@ -148,19 +178,29 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
         }}>
           {date.getDate()}
         </div>
-        
-        {/* Cell content */}
-        {cellContent && (
-          <div
-            className="calendar-cell-content"
-            style={{ 
-              fontSize: '12px',
-              flex: 1,
-              overflow: 'hidden',
-              wordWrap: 'break-word'
-            }}
-            dangerouslySetInnerHTML={{ __html: basicMarkdownToHtml(cellContent) }}
+        {/* Cell content / inline editor */}
+        {isEditing ? (
+          <MarkdownModalEditor
+            value={draftContent}
+            onChange={setDraftContent}
+            onAccept={commitEditCell}
+            onCancel={cancelEditCell}
+            label={`Edit content for ${dateKey}`}
+            placeholder="Enter Markdown for this date..."
           />
+        ) : (
+          cellContent && (
+            <div
+              className="calendar-cell-content"
+              style={{ 
+                fontSize: '12px',
+                flex: 1,
+                overflow: 'hidden',
+                wordWrap: 'break-word'
+              }}
+              dangerouslySetInnerHTML={{ __html: basicMarkdownToHtml(cellContent) }}
+            />
+          )
         )}
       </div>
     );
@@ -340,8 +380,9 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
                   />
                 )}
               </div>
-              <div
+                <div
                 onClick={(e) => { if (bottomCell) { e.stopPropagation(); handleCellClick(bottomCell.date); } }}
+                onDoubleClick={(e) => { if (bottomCell) { e.stopPropagation(); beginEditCell(bottomCell.date); } }}
                 style={{
                   position: 'relative',
                   flex: 1,
@@ -358,13 +399,48 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
                     <div style={{ display: 'flex', justifyContent: 'flex-end', fontWeight: 'normal', marginBottom: '2px' }}>
                       {bottomCell.date.getDate()}
                     </div>
-                    {bottomCellContent && (
-                      <div
-                        className="calendar-cell-content"
-                        style={{ fontSize: '10px', flex: 1, overflow: 'hidden', wordWrap: 'break-word' }}
-                        dangerouslySetInnerHTML={{ __html: basicMarkdownToHtml(bottomCellContent) }}
-                      />
-                    )}
+                    {/* Inline editor for split bottom cell */}
+                    {(() => {
+                      const dateKey = toDateKey(bottomCell.date);
+                      const isEditing = editingDateKey === dateKey;
+                      if (isEditing) {
+                        return (
+                          <div style={{ position: 'relative', flex: 1, width: '100%' }} data-calendar-inline-editor="true">
+                            <textarea
+                              value={draftContent}
+                              onChange={e => setDraftContent(e.target.value)}
+                              onKeyDown={e => {
+                                if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); commitEditCell(); }
+                                else if (e.key === 'Escape') { e.preventDefault(); cancelEditCell(); }
+                              }}
+                              style={{
+                                position: 'absolute',
+                                inset: 0,
+                                resize: 'none',
+                                background: 'white',
+                                border: '1px solid #60a5fa',
+                                fontSize: '10px',
+                                lineHeight: 1.2,
+                                padding: '2px 2px',
+                                outline: 'none',
+                                fontFamily: bottomStyles.fontFamily,
+                                color: bottomStyles.color,
+                                borderRadius: 2,
+                              }}
+                              data-inline-calendar-editor="true"
+                              aria-label={`Edit content for ${dateKey}`}
+                            />
+                          </div>
+                        );
+                      }
+                      return bottomCellContent && (
+                        <div
+                          className="calendar-cell-content"
+                          style={{ fontSize: '10px', flex: 1, overflow: 'hidden', wordWrap: 'break-word' }}
+                          dangerouslySetInnerHTML={{ __html: basicMarkdownToHtml(bottomCellContent) }}
+                        />
+                      );
+                    })()}
                   </>
                 )}
               </div>

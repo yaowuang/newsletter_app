@@ -30,6 +30,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({ block, theme, curr
   };
 
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+  const setEditingCaret = useStore(s => s.setEditingCaret);
   const insertToken = (token: string) => {
     const current = typeof block.content === 'string' ? block.content : '';
     const el = textareaRef.current;
@@ -136,6 +137,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({ block, theme, curr
             onUpdateContent={onUpdateTextBlock}
             currentContent={typeof block.content === 'string' ? block.content : ''}
             disabled={locked}
+            onCaretChange={(idx) => setEditingCaret && setEditingCaret(block.id,'title', idx)}
           />
         </FormGroup>
         <FormGroup label="Section Content" id={`section-content-${block.id}`}> 
@@ -145,7 +147,9 @@ export const TextInspector: React.FC<TextInspectorProps> = ({ block, theme, curr
             name={`sectionContent-${block.id}`}
             ref={textareaRef}
             value={typeof block.content === 'string' ? block.content : ''}
-            onChange={e => onUpdateTextBlock(block.id, 'content', e.target.value)}
+            onChange={e => { onUpdateTextBlock(block.id, 'content', e.target.value); setEditingCaret && setEditingCaret(block.id,'content', e.target.selectionStart ?? e.target.value.length); }}
+            onClick={e => { const el = e.currentTarget; setEditingCaret && setEditingCaret(block.id,'content', el.selectionStart ?? 0); }}
+            onKeyUp={e => { const el = e.currentTarget; setEditingCaret && setEditingCaret(block.id,'content', el.selectionStart ?? 0); }}
             disabled={locked}
             className="h-32 text-sm"
           />

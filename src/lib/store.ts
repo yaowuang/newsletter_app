@@ -96,6 +96,7 @@ export const useStore = create<AppState>()(
     layout: { base: initialLayout, variant: initialLayout.variants[0] },
     denseMode: false,
     calendarData: initializeCalendarData(),
+  editingCaret: null,
 
     setTitle: (title) => set({ title }),
     setDate: (date) => set({ date }),
@@ -655,6 +656,8 @@ export const useStore = create<AppState>()(
   // Recreate default (theme-derivable) calendar styles; preserve selectedDate & contents
   calendarStyles: initializeCalendarData().calendarStyles
       }
-    }))
+  })),
+
+  setEditingCaret: (blockId, field, index) => set({ editingCaret: { blockId, field, index } })
   })
 );

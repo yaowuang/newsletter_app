@@ -12,6 +12,7 @@ interface SectionTitleInputProps {
   onUpdateContent: (blockId: string, property: 'content', value: string) => void;
   currentContent: string;
   disabled?: boolean;
+  onCaretChange?: (index: number) => void;
 }
 
 export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({ 
@@ -21,7 +22,8 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
   onCommit, 
   onUpdateContent, 
   currentContent,
-  disabled
+  disabled,
+  onCaretChange
 }) => {
   const [open, setOpen] = React.useState(false);
   const [active, setActive] = React.useState(-1);
@@ -163,7 +165,9 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
           aria-activedescendant={active >= 0 ? `${listId}-item-${active}` : undefined}
           placeholder="Start typing e.g. Principal's Message"
           value={value}
-          onChange={e => { onChange(e.target.value); setOpen(true); /* reset active so effect will set to 0 */ setActive(-1); }}
+          onChange={e => { onChange(e.target.value); setOpen(true); setActive(-1); if (onCaretChange) { const el = e.target as HTMLInputElement; onCaretChange(el.selectionStart ?? e.target.value.length); } }}
+          onClick={e => { if (onCaretChange) { const el = e.target as HTMLInputElement; onCaretChange(el.selectionStart ?? 0); } }}
+          onKeyUp={e => { if (onCaretChange) { const el = e.currentTarget; onCaretChange(el.selectionStart ?? 0); } }}
           onKeyDown={handleKeyDown}
           onFocus={() => setOpen(true)}
           onBlur={handleBlur}

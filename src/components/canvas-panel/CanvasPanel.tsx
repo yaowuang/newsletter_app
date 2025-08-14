@@ -198,8 +198,9 @@ export function CanvasPanel({
         >
           <div 
             id="newsletter-canvas" 
-            className="w-full h-full p-8" 
+            className="w-full h-full p-8 outline-none" 
             style={pageStyle}
+            tabIndex={-1}
           >
             {/* Background Layer */}
             <PageBackground theme={theme} />

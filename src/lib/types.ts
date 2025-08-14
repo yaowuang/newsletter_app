@@ -102,6 +102,8 @@ export interface AppState {
   denseMode: boolean;
   // Calendar-specific state
   calendarData: CalendarData;
+  // Caret tracking for reflecting cursor position on canvas
+  editingCaret?: { blockId: string; field: 'title' | 'content'; index: number } | null;
   
   setTitle: (title: string) => void;
   setDate: (date: string) => void;
@@ -148,4 +150,6 @@ export interface AppState {
   setCalendarStyle: (styleKey: keyof CalendarStyles, value: string | number | undefined) => void;
   setCalendarStyles: (styles: Partial<CalendarStyles>) => void;
   resetCalendarStylesToDefaults: () => void;
+  // Caret actions
+  setEditingCaret?: (blockId: string, field: 'title' | 'content', index: number) => void;
 }

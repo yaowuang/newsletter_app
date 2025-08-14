@@ -16,15 +16,16 @@ const emojiAndIconList = [
 ];
 
 export const EmojiToolbar: React.FC<EmojiToolbarProps> = ({ onInsert }) => {
+  const [open, setOpen] = React.useState(false);
   return (
     <div className="flex items-center gap-2 pt-1 flex-wrap">
-      <DropdownMenu>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button type="button" variant="outline" size="sm">😊 Emojis</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="max-h-56 w-64 overflow-y-auto grid grid-cols-8 gap-1 p-2">
           {emojiAndIconList.map(e => (
-            <DropdownMenuItem key={e} className="justify-center px-0" onSelect={(ev) => { ev.preventDefault(); onInsert(e); }}>
+            <DropdownMenuItem key={e} className="justify-center px-0" onSelect={(ev) => { ev.preventDefault(); onInsert(e); setOpen(false); }}>
               {e}
             </DropdownMenuItem>
           ))}
