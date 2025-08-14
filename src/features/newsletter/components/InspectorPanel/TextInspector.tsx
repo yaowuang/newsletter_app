@@ -142,7 +142,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({ block, theme, curr
           />
         </FormGroup>
         <FormGroup label="Section Content" id={`section-content-${block.id}`}> 
-          <FormattingToolbar onAction={(a: FormattingAction) => applyFormatting(a)} />
+          <FormattingToolbar onAction={(a: FormattingAction) => applyFormatting(a)} disabled={locked} />
           <Textarea
             id={`section-content-${block.id}`}
             name={`sectionContent-${block.id}`}
@@ -154,7 +154,7 @@ export const TextInspector: React.FC<TextInspectorProps> = ({ block, theme, curr
             disabled={locked}
             className="h-32 text-sm"
           />
-          <EmojiToolbar onInsert={insertToken} />
+          <EmojiToolbar onInsert={insertToken} disabled={locked} />
         </FormGroup>
       </InspectorSection>
 

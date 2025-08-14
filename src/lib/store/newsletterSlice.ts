@@ -35,11 +35,29 @@ export interface NewsletterSlice {
 	setDenseMode: (denseMode: boolean) => void;
 	updateStyle: (blockId: string, newStyles: Record<string, any>) => void;
   deleteTextBlock: (id: string) => void;
+  addTextBlock: () => void;
   setElementLocked_text: (id: string, locked: boolean) => void;
   updateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
 }
 
 export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], NewsletterSlice> = (set, get) => ({
+  addTextBlock: () => {
+    // Add a new text block with a unique id and default content
+    const id = nanoid();
+    set(state => ({
+      textBlocks: [
+        ...state.textBlocks,
+        {
+          id,
+          type: 'text',
+          title: '',
+          content: '',
+          locked: false
+        }
+      ],
+      sectionStyles: { ...state.sectionStyles, [id]: {} }
+    }));
+  },
   deleteTextBlock: (id) => {
     set(state => ({
       textBlocks: state.textBlocks.filter(b => b.id !== id),

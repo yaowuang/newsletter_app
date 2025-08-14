@@ -253,7 +253,7 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
       <div
         style={contentStyle}
         className={
-          'max-w-none cursor-text ' + (isEditingContent ? 'prose-disable' : 'prose')
+          'max-w-none cursor-text prose'
         }
         data-block-content="true"
         onClick={e => {
@@ -275,7 +275,7 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
           (editingCaret.field === 'title' || editingCaret.field === 'content') && (
             <CaretOverlay block={block} field={editingCaret.field} index={editingCaret.index} />
           )}
-        {isEditingContent ? (
+        {isEditingContent && (
           <MarkdownModalEditor
             value={draftContent}
             onChange={handleContentChange}
@@ -284,9 +284,10 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
             label="Edit section content (Markdown)"
             placeholder="Enter Markdown content..."
           />
-        ) : (
+        )}
+        <div className={isEditingContent ? 'prose' : ''}>
           <MarkdownRenderer
-            markdown={typeof block.content === 'string' ? block.content : ''}
+            markdown={isEditingContent ? draftContent : (typeof block.content === 'string' ? block.content : '')}
             denseMode={denseMode}
             borderColor={borderColor}
             tableHeaderBg={tableHeaderBg}
@@ -295,7 +296,7 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
             linkColor={linkColor}
             headingFontFamily={headingStyle.fontFamily}
           />
-        )}
+        </div>
       </div>
     </>
   );

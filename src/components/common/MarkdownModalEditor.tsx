@@ -111,7 +111,8 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
   if (typeof window === 'undefined' || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div className="fixed inset-0 z-[9999] flex items-start justify-end pt-12 pr-12">
+      {/* Removed backdrop-blur-sm to eliminate blur. Positioned modal top-right with pt-12 pr-12, items-start justify-end. */}
       <div
         ref={modalRef}
         className={

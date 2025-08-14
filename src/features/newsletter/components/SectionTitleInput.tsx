@@ -197,26 +197,29 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
       )}
       </div>
       {/* Emoji toolbar for inserting into the section title */}
-      <EmojiToolbar onInsert={(emoji) => {
-        const el = inputRef.current;
-        const cur = value || '';
-        if (!el) {
-          const next = cur + emoji;
-          onChange(next); onCommit(next); return;
-        }
-        const start = el.selectionStart ?? cur.length;
-        const end = el.selectionEnd ?? start;
-        const next = cur.slice(0, start) + emoji + cur.slice(end);
-        onChange(next);
-        onCommit(next);
-        requestAnimationFrame(() => {
-          if (inputRef.current) {
-            const pos = start + emoji.length;
-            inputRef.current.selectionStart = inputRef.current.selectionEnd = pos;
-            inputRef.current.focus();
+      <EmojiToolbar
+        onInsert={(emoji) => {
+          const el = inputRef.current;
+          const cur = value || '';
+          if (!el) {
+            const next = cur + emoji;
+            onChange(next); onCommit(next); return;
           }
-        });
-      }} />
+          const start = el.selectionStart ?? cur.length;
+          const end = el.selectionEnd ?? start;
+          const next = cur.slice(0, start) + emoji + cur.slice(end);
+          onChange(next);
+          onCommit(next);
+          requestAnimationFrame(() => {
+            if (inputRef.current) {
+              const pos = start + emoji.length;
+              inputRef.current.selectionStart = inputRef.current.selectionEnd = pos;
+              inputRef.current.focus();
+            }
+          });
+        }}
+        disabled={disabled}
+      />
     </div>
   );
 };

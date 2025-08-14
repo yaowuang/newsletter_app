@@ -13,7 +13,7 @@ export const useLayoutManager = () => {
   const sectionCount = useStore(state => state.textBlocks.length);
   const setLayout = useStore(state => state.setLayout);
   const addTextBlock = useStore(state => state.addTextBlock);
-  const deleteElement = useStore(state => state.deleteElement);
+  const deleteTextBlock = useStore(state => state.deleteTextBlock);
   
   const handleLayoutChange = (layout: LayoutSelection) => {
     setLayout(layout);
@@ -31,7 +31,7 @@ export const useLayoutManager = () => {
       // Remove excess sections (starting from the end)
       const textBlocksToRemove = useStore.getState().textBlocks.slice(targetSections);
       textBlocksToRemove.forEach((block: TextBlock) => {
-        deleteElement(block.id, 'text');
+        deleteTextBlock(block.id);
       });
     }
   };
@@ -48,7 +48,7 @@ export const useLayoutManager = () => {
       // Remove excess sections (starting from the end)
       const textBlocksToRemove = useStore.getState().textBlocks.slice(count);
       textBlocksToRemove.forEach((block: TextBlock) => {
-        deleteElement(block.id, 'text');
+        deleteTextBlock(block.id);
       });
     }
   };
