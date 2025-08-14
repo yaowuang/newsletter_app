@@ -153,7 +153,7 @@ export function deriveCalendarStyles(theme: Theme): Partial<CalendarStyles> {
   // Dark green board, soft chalk-white text, faint dusty borders.
   if (theme.name === 'Default') {
     const boardBg = '#1f362b'; // deep green
-    const boardBgAlt = '#223d31';
+  // const boardBgAlt = '#223d31';
     const chalk = '#F4F6F3';
     const chalkMuted = '#B8C4BC';
     const chalkAccent = '#F8F9F3';

@@ -70,12 +70,12 @@ export function InspectorPanel({
         const targetTitleId = `section-title-${block.id}`;
         const targetContentId = `section-content-${block.id}`;
         // Choose field: explicit subType wins; else if title empty -> title; else content
-        const targetId = (selectedElement as any).subType === 'title'
+  const targetId = (selectedElement as unknown as { subType?: string }).subType === 'title'
           ? targetTitleId
-          : (selectedElement as any).subType === 'content'
+          : (selectedElement as unknown as { subType?: string }).subType === 'content'
             ? targetContentId
             : (titleEmpty ? targetTitleId : targetContentId);
-        const targetEl = document.getElementById(targetId) as HTMLInputElement | HTMLTextAreaElement | null;
+  // Removed unused variable targetEl
         const appendToTitle = targetId === targetTitleId;
         let currentVal = appendToTitle ? (block.title || '') : (typeof block.content === 'string' ? block.content : '');
 
@@ -98,7 +98,7 @@ export function InspectorPanel({
             el.focus();
             // Place caret at end
             const len = el.value.length;
-            (el as any).selectionStart = (el as any).selectionEnd = len;
+            (el as HTMLTextAreaElement).selectionStart = (el as HTMLTextAreaElement).selectionEnd = len;
           }
         });
       } else if (selectedElement.type === 'calendarDate') {

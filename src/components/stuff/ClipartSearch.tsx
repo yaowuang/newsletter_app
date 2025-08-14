@@ -192,6 +192,7 @@ const SearchResultItem: React.FC<{
     onClick={onClick}
   >
     {result.thumbnail ? (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={result.thumbnail}
         alt={result.title}

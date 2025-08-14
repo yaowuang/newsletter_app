@@ -85,7 +85,7 @@ const initialLayout = allLayouts.find(l => l.sections === initialBlocks.length)!
 
 export const useStore = create<AppState>()(
   (set, get) => ({
-    title: 'Newsletter Title',
+  title: 'Newsletter Title', // used
     date: 'August 6, 2025',
   textBlocks: initialBlocks,
   horizontalLines: [],
@@ -98,7 +98,7 @@ export const useStore = create<AppState>()(
     calendarData: initializeCalendarData(),
   editingCaret: null,
 
-    setTitle: (title) => set({ title }),
+  setTitle: (title) => set({ title }), // used
     setDate: (date) => set({ date }),
 
   addTextBlock: () => {
@@ -202,7 +202,7 @@ export const useStore = create<AppState>()(
       const oldBorderColor = state.theme.styles.section.borderColor || '#888';
       
       // Preserve layout-specific alignments
-      const currentTitleAlign = state.theme.styles.title.textAlign;
+  const currentTitleAlign = state.theme.styles.title.textAlign; // used
       const currentDateAlign = state.theme.styles.date.textAlign;
 
       const newTheme = {
@@ -290,7 +290,7 @@ export const useStore = create<AppState>()(
     setThemeTitleFont: (font: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, title: { ...state.theme.styles.title, fontFamily: font } } } })),
     setThemeDateFont: (font: string) => set(state => ({ theme: { ...state.theme, styles: { ...state.theme.styles, date: { ...state.theme.styles.date, fontFamily: font } } } })),
     setThemeTitleColor: (color: string) => set(state => {
-      const currentTitle = state.theme.styles.title;
+  const currentTitle = state.theme.styles.title; // used
       // If changing from a text effect, clear all text effect properties
       if (currentTitle.textEffectId || currentTitle.backgroundImage) {
         return { 

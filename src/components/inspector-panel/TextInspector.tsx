@@ -147,9 +147,9 @@ export const TextInspector: React.FC<TextInspectorProps> = ({ block, theme, curr
             name={`sectionContent-${block.id}`}
             ref={textareaRef}
             value={typeof block.content === 'string' ? block.content : ''}
-            onChange={e => { onUpdateTextBlock(block.id, 'content', e.target.value); setEditingCaret && setEditingCaret(block.id,'content', e.target.selectionStart ?? e.target.value.length); }}
-            onClick={e => { const el = e.currentTarget; setEditingCaret && setEditingCaret(block.id,'content', el.selectionStart ?? 0); }}
-            onKeyUp={e => { const el = e.currentTarget; setEditingCaret && setEditingCaret(block.id,'content', el.selectionStart ?? 0); }}
+            onChange={e => { onUpdateTextBlock(block.id, 'content', e.target.value); if (setEditingCaret) { setEditingCaret(block.id,'content', e.target.selectionStart ?? e.target.value.length); } }}
+            onClick={e => { const el = e.currentTarget; if (setEditingCaret) { setEditingCaret(block.id,'content', el.selectionStart ?? 0); } }}
+            onKeyUp={e => { const el = e.currentTarget; if (setEditingCaret) { setEditingCaret(block.id,'content', el.selectionStart ?? 0); } }}
             disabled={locked}
             className="h-32 text-sm"
           />

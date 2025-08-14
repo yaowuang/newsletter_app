@@ -305,6 +305,7 @@ const HorizontalLine: React.FC<HorizontalLineProps> = ({
     }
     
     // Fallback for other image types
+    // eslint-disable-next-line @next/next/no-img-element
     return <img 
       src={clipartSrc} 
       alt="Horizontal Line Clipart" 

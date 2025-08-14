@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toPng, toSvg, toJpeg } from 'html-to-image';
+import { toPng, toSvg } from 'html-to-image';
 import { useStore } from "@/lib/store";
 import type { EditorSnapshot } from "@/lib/types";
 import { saveAs } from 'file-saver';

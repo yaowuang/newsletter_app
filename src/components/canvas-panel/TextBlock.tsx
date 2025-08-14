@@ -238,7 +238,7 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-  onMouseDown={(e) => { e.stopPropagation(); onSelectElement && onSelectElement(block.id,'text','title'); }}
+  onMouseDown={(e) => { e.stopPropagation(); if (onSelectElement) { onSelectElement(block.id,'text','title'); } }}
         onDoubleClick={(e) => { e.stopPropagation(); beginEdit('title'); }}
         onClick={(e) => { e.stopPropagation(); }}
       >
@@ -276,7 +276,7 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
           e.stopPropagation();
           if (editingField) return;
           // Always select this block's content on click
-          onSelectElement && onSelectElement(block.id, 'text', 'content');
+          if (onSelectElement) { onSelectElement(block.id, 'text', 'content'); }
         }}
         onDoubleClick={e => {
           e.stopPropagation();
@@ -285,7 +285,7 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
             beginEdit('content');
             // After textarea mounts, set selection so store reflects editing block
             requestAnimationFrame(() => {
-              onSelectElement && onSelectElement(block.id, 'text', 'content');
+              if (onSelectElement) { onSelectElement(block.id, 'text', 'content'); }
             });
           }
         }}

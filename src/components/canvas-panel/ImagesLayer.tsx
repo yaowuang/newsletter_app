@@ -68,13 +68,14 @@ export function ImagesLayer({
           >
             <div style={{ position: 'relative', width: '100%', height: '100%' }}>
               {image.src ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={image.src}
                   alt=""
                   className="w-full h-full select-none pointer-events-none"
                   style={{ objectFit: 'fill' }}
                   draggable={false}
-                  onDragStart={(e) => { e.preventDefault(); }}
+                  onDragStart={(e: React.DragEvent<HTMLImageElement>) => { e.preventDefault(); }}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center h-full bg-gray-200 select-none">

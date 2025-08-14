@@ -52,7 +52,9 @@ export default function BuilderPage() {
     if (!selectedElement) return undefined;
     if (selectedElement.type === 'text') {
       const base = textBlocks.find(b => b.id === selectedElement.id);
-      return base ? { ...base, subType: (selectedElement as any).subType } : undefined;
+  const subType = (selectedElement as { subType?: string }).subType;
+  const validSubType: 'title' | 'content' | undefined = subType === 'title' || subType === 'content' ? subType : undefined;
+  return base ? { ...base, subType: validSubType } as typeof base & { subType?: 'title' | 'content' } : undefined;
     } else if (selectedElement.type === 'image') {
       return images.find(i => i.id === selectedElement.id);
     } else if (selectedElement.type === 'horizontalLine') {

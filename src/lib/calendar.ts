@@ -103,9 +103,9 @@ export function generateCalendarGrid(date: Date): CalendarGrid {
   const prevMonthLastDay = new Date(year, month, 0).getDate();
   
   // Calculate total cells needed (always show 6 weeks = 42 cells)
-  const totalCells = 42;
+  // const totalCells = 42;
   const daysInCurrentMonth = lastDay.getDate();
-  const daysFromNextMonth = totalCells - daysFromPrevMonth - daysInCurrentMonth;
+  // const daysFromNextMonth = totalCells - daysFromPrevMonth - daysInCurrentMonth;
   
   const weeks: CalendarCell[][] = [];
   let currentCellIndex = 0;
