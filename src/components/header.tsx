@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toPng, toSvg } from 'html-to-image';
+import { toPng, toSvg, toJpeg } from 'html-to-image';
 import { useStore } from "@/lib/store";
 import type { EditorSnapshot } from "@/lib/types";
 import { saveAs } from 'file-saver';
@@ -147,8 +147,8 @@ export function Header() {
         const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
         saveAs(blob, `${safeTitle}.svg`);
       } else if (format === 'pdf') {
-        // Reuse html-to-image (already working for PNG) to avoid html2canvas lab() parsing error
-        const dataUrl = await toPng(captureTarget, { cacheBust: true, pixelRatio: 3 });
+        // Use PNG for maximum quality
+        const dataUrl = await toPng(captureTarget, { cacheBust: true, pixelRatio: 1, quality: 1 });
         const img = new Image();
         img.src = dataUrl;
         await new Promise(res => { img.onload = () => res(null); });
