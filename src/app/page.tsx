@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
+import ExampleCarousel from '../components/ExampleCarousel';
 
 // Optimized metadata for your homepage
 export const metadata: Metadata = {
@@ -19,10 +20,10 @@ export const metadata: Metadata = {
     description: 'Free drag-and-drop builder for engaging elementary school newsletters. Themes, emojis, instant exports.',
     images: [
       {
-        url: 'https://elementaryschoolnewsletters.com/builder-screenshot.png',
+        url: 'https://elementaryschoolnewsletters.com/examples/default.png',
         width: 1200,
         height: 630,
-        alt: 'Elementary school newsletter builder interface'
+        alt: 'Elementary school newsletter template examples'
       }
     ]
   },
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Elementary School Newsletter Builder',
     description: 'Build & export engaging classroom newsletters in minutes – free, no login.',
-    images: ['https://elementaryschoolnewsletters.com/builder-screenshot.png']
+    images: ['https://elementaryschoolnewsletters.com/examples/default.png']
   }
 };
 
@@ -175,32 +176,8 @@ function Hero() {
           </ul>
         </div>
 
-        {/* Wide Screenshot Showcase */}
-        <div className="relative group">
-          {/* Frame & glow */}
-          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-fuchsia-500/20 blur-xl opacity-40 group-hover:opacity-55 transition" aria-hidden />
-          <div className="relative rounded-3xl ring-1 ring-white/12 bg-gradient-to-br from-slate-800/70 via-slate-900/70 to-slate-800/40 shadow-2xl overflow-hidden backdrop-blur-xl">
-            {/* Use intrinsic wide ratio; adjust numbers to your new asset */}
-            <div className="relative w-full aspect-[21/9] md:aspect-[18/7] lg:aspect-[16/6]">
-              <Image
-                src="/builder-screenshot.png"
-                alt="Elementary school newsletter builder interface with drag-and-drop sections, theme styling panel and export options."
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 1280px"
-                className="object-cover object-top"
-              />
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-tr from-blue-500/10 via-transparent to-fuchsia-500/10 transition" />
-            </div>
-          </div>
-          {/* Callouts repositioned for wide asset */}
-          <div className="hidden md:block absolute -top-6 left-6 bg-slate-900/95 text-slate-100 rounded-xl border border-white/15 shadow-lg px-4 py-3 text-[11px] max-w-[200px] -rotate-2">
-            Drag sections & change themes.
-          </div>
-          <div className="hidden md:block absolute -bottom-6 right-8 bg-slate-900/95 text-slate-100 rounded-xl border border-white/15 shadow-lg px-4 py-3 text-[11px] max-w-[210px] rotate-2">
-            Export PNG / SVG / PDF instantly.
-          </div>
-        </div>
+        {/* Example Newsletter Carousel */}
+        <ExampleCarousel />
       </div>
     </section>
   );
