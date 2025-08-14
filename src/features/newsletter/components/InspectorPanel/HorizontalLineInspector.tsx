@@ -1,3 +1,4 @@
+// This file has been moved to the inspector folder and is no longer needed.
 import React, { useState, useEffect } from 'react';
 import { useStore } from '@/lib/store';
 import { horizontalLineLibrary } from '@/lib/horizontalLines';

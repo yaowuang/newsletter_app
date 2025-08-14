@@ -1,7 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import FormattingToolbar, { FormattingAction } from '@/features/newsletter/components/FormattingToolbar';
-import EmojiToolbar from '@/features/newsletter/components/EmojiIconToolbar';
+import FormattingToolbar, { FormattingAction } from '@/components/common/FormattingToolbar';
+import EmojiToolbar from '@/components/common/EmojiIconToolbar';
 
 interface MarkdownModalEditorProps {
   value: string;

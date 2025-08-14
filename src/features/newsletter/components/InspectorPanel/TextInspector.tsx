@@ -1,11 +1,12 @@
+// This file has been moved to the inspector folder and is no longer needed.
 import React from "react";
 import { useStore } from "@/lib/store";
 import type { TextBlock, SectionStyle } from "@/features/newsletter/types";
 import { Theme } from "@/lib/themes";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import FormattingToolbar, { FormattingAction } from '@/features/newsletter/components/FormattingToolbar';
-import EmojiToolbar from '@/features/newsletter/components/EmojiIconToolbar';
+import FormattingToolbar, { FormattingAction } from '@/components/common/FormattingToolbar';
+import EmojiToolbar from '@/components/common/EmojiIconToolbar';
 import SectionTitleInput from '@/features/newsletter/components/SectionTitleInput';
 import { FontSelect } from '@/features/newsletter/components/FontSelect';
 import InspectorSection from '@/components/ui/InspectorSection';

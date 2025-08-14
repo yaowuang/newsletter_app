@@ -3,7 +3,7 @@
 
 import { Theme } from '@/lib/themes';
 import { Layout, LayoutVariant } from '@/features/newsletter/utils/layouts';
-import { CalendarData, CalendarEvent, CalendarStyles } from '@/lib/calendar';
+import { CalendarData, CalendarEvent, CalendarStyles } from '@/features/calendar/types';
 
 export type TextBlock = {
   id: string;
@@ -104,6 +104,10 @@ export interface AppState {
   calendarData: CalendarData;
   // Caret tracking for reflecting cursor position on canvas
   editingCaret?: { blockId: string; field: 'title' | 'content'; index: number } | null;
+
+  // Calendar cell editing actions
+  setEditingDateKey?: (key: string | null) => void;
+  setDraftContent?: (content: string) => void;
   
   setTitle: (title: string) => void;
   setDate: (date: string) => void;

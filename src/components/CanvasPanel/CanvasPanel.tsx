@@ -3,17 +3,17 @@ import { useStore } from '@/lib/store';
 import type { LayoutSelection, TextBlock, ImageElement, SectionStyles } from '@/features/newsletter/types';
 import type { Theme } from '@/lib/themes';
 import { CSSProperties } from 'react';
-import { updateHorizontalLinePositions } from './utils/positionUtils';
+import { updateHorizontalLinePositions } from '@/features/newsletter/components/utils/positionUtils';
 
 // Component imports
-import { ZoomControlsComponent } from './ZoomControls';
-import { PageBackground } from './PageBackground';
-import { NewsletterHeader } from './NewsletterHeader';
-import { SectionsContainer } from './SectionsContainer';
-import { HorizontalLinesLayer } from './HorizontalLinesLayer';
-import { ImagesLayer } from './ImagesLayer';
+import { PageBackground } from '@/features/newsletter/components/PageBackground';
+import { NewsletterHeader } from '@/features/newsletter/components/NewsletterHeader';
+import { SectionsContainer } from '@/features/newsletter/components/SectionsContainer';
+import { HorizontalLinesLayer } from '@/features/newsletter/components/HorizontalLinesLayer';
+import { ImagesLayer } from '@/features/newsletter/components/ImagesLayer';
 import { Watermark } from './Watermark';
-import CalendarGrid from './CalendarGrid';
+import { ZoomControlsComponent } from './ZoomControls';
+import CalendarGrid from '@/features/calendar/components/CalendarGrid';
 
 interface CanvasPanelProps {
   title: string;

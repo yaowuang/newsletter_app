@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useRef, useEffect, useState, CSSProperties } from 'react';
 import { MarkdownModalEditor } from '@/components/common/MarkdownModalEditor';
 import { useStore } from '@/lib/store';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { CSSProperties } from 'react';
+import { MarkdownRenderer } from '@/components/common/MarkdownRenderer';
 import type { TextBlock, SectionStyles } from '@/features/newsletter/types';
 import type { Theme } from '@/lib/themes';
+import { useInlineEdit } from '@/hooks/useInlineEdit';
 
 interface TextBlockProps {
   block: TextBlock;
@@ -15,164 +14,126 @@ interface TextBlockProps {
   onSelectElement?: (id: string, type: 'text', subType?: 'title' | 'content') => void;
 }
 
-/**
- * Text block component - renders a single text block with markdown support
- * Follows SRP by focusing only on text block rendering
- */
+// TextBlock: Renders a single text block with markdown support. SRP: only text block rendering.
 export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement }: TextBlockProps) {
+  // Zustand store hooks
   const editingCaret = useStore(s => s.editingCaret);
   const updateTextBlock = useStore(s => s.updateTextBlock);
   const selectedElement = useStore(s => s.selectedElement);
 
-  // Inline edit mode state
-  const [editingField, setEditingField] = React.useState<null | 'title' | 'content'>(null);
-  const [draftValue, setDraftValue] = React.useState('');
-  const titleInputRef = React.useRef<HTMLInputElement | null>(null);
-  const contentTextareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+  // Inline edit state (DRY via useInlineEdit)
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const {
+    isEditing: isEditingTitle,
+    draftValue: draftTitle,
+    beginEdit: beginEditTitle,
+    commitEdit: commitEditTitle,
+    cancelEdit: cancelEditTitle,
+    handleChange: handleTitleChange,
+    setDraftValue: setDraftTitle,
+    setIsEditing: setIsEditingTitle,
+    setOriginalValue: setOriginalTitle,
+  } = useInlineEdit({
+    initialValue: block.title || '',
+    onCommit: (v) => {
+      updateTextBlock(block.id, 'title', v);
+      if (onSelectElement) onSelectElement(block.id, 'text');
+      requestAnimationFrame(() => {
+        const canvas = document.getElementById('newsletter-canvas');
+        if (canvas) canvas.focus();
+      });
+    },
+    onCancel: () => {
+      if (onSelectElement) onSelectElement(block.id, 'text');
+      requestAnimationFrame(() => {
+        const canvas = document.getElementById('newsletter-canvas');
+        if (canvas) canvas.focus();
+      });
+    },
+  autoFocusRef: titleInputRef as React.RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  });
+  const {
+    isEditing: isEditingContent,
+    draftValue: draftContent,
+    beginEdit: beginEditContent,
+    commitEdit: commitEditContent,
+    cancelEdit: cancelEditContent,
+    handleChange: handleContentChange,
+    setDraftValue: setDraftContent,
+    setIsEditing: setIsEditingContent,
+    setOriginalValue: setOriginalContent,
+  } = useInlineEdit({
+    initialValue: block.content || '',
+    onCommit: (v) => {
+      updateTextBlock(block.id, 'content', v);
+      if (onSelectElement) onSelectElement(block.id, 'text');
+      requestAnimationFrame(() => {
+        const canvas = document.getElementById('newsletter-canvas');
+        if (canvas) canvas.focus();
+      });
+    },
+    onCancel: () => {
+      if (onSelectElement) onSelectElement(block.id, 'text');
+      requestAnimationFrame(() => {
+        const canvas = document.getElementById('newsletter-canvas');
+        if (canvas) canvas.focus();
+      });
+    },
+  autoFocusRef: contentTextareaRef as React.RefObject<HTMLInputElement | HTMLTextAreaElement>,
+  });
 
-  // Check if this block is currently selected
+  // Is this block selected?
   const isThisBlockSelected = selectedElement?.id === block.id && selectedElement?.type === 'text';
 
-  // Handle keyboard input to start inline editing when this block is selected
-  React.useEffect(() => {
-    if (!isThisBlockSelected || block.locked || editingField) return;
-
+  // Keyboard: start inline editing if selected (preserve original logic)
+  useEffect(() => {
+    if (!isThisBlockSelected || block.locked || isEditingTitle || isEditingContent) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      const activeElement = document.activeElement as HTMLElement | null;
-      
-      // Don't handle if user is already typing in an input field
-      if (activeElement && (
-        activeElement.tagName === 'INPUT' || 
-        activeElement.tagName === 'TEXTAREA' || 
-        activeElement.isContentEditable
-      )) {
-        return;
-      }
-
-      // Don't handle shortcuts or special keys
+      const active = document.activeElement as HTMLElement | null;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      
       const isPrintable = e.key.length === 1;
       const isBackspace = e.key === 'Backspace';
       const isEnter = e.key === 'Enter';
-      
       if (!isPrintable && !isBackspace && !isEnter) return;
-
-      // Determine which field to edit based on selection subType or content state
       let targetField: 'title' | 'content';
-      if (selectedElement?.subType === 'title') {
-        targetField = 'title';
-      } else if (selectedElement?.subType === 'content') {
-        targetField = 'content';
-      } else {
-        // Default: if title is empty, edit title; otherwise edit content
-        targetField = (!block.title || block.title.trim() === '') ? 'title' : 'content';
-      }
-
-      // Start editing and handle the initial keystroke
+      if (selectedElement?.subType === 'title') targetField = 'title';
+      else if (selectedElement?.subType === 'content') targetField = 'content';
+      else targetField = (!block.title || block.title.trim() === '') ? 'title' : 'content';
       e.preventDefault();
       const currentValue = targetField === 'title' ? (block.title || '') : (block.content || '');
-      setOriginalValue(currentValue); // Store original value for cancel functionality
-      let newValue = currentValue;
-      
-      if (isBackspace) {
-        newValue = currentValue.slice(0, -1);
-      } else if (isEnter && targetField === 'content') {
-        newValue = currentValue + '\n';
-      } else if (isPrintable) {
-        newValue = currentValue + e.key;
+      if (targetField === 'title') {
+        setOriginalTitle(currentValue);
+        let newValue = currentValue;
+        if (isBackspace) newValue = currentValue.slice(0, -1);
+        else if (isPrintable) newValue = currentValue + e.key;
+        setDraftTitle(newValue);
+        setIsEditingTitle(true);
+      } else {
+        setOriginalContent(currentValue);
+        let newValue = currentValue;
+        if (isBackspace) newValue = currentValue.slice(0, -1);
+        else if (isEnter) newValue = currentValue + '\n';
+        else if (isPrintable) newValue = currentValue + e.key;
+        setDraftContent(newValue);
+        setIsEditingContent(true);
       }
-
-      // Begin editing with the updated value
-      setEditingField(targetField);
-      setDraftValue(newValue);
-      
-      // Focus the appropriate input after it mounts
       requestAnimationFrame(() => {
         const inputRef = targetField === 'title' ? titleInputRef : contentTextareaRef;
         if (inputRef.current) {
           inputRef.current.focus();
-          // Place cursor at the end
-          const length = newValue.length;
+          const length = (inputRef.current as any).value.length;
           inputRef.current.selectionStart = length;
           inputRef.current.selectionEnd = length;
         }
       });
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isThisBlockSelected, block.locked, editingField, selectedElement?.subType, block.title, block.content]);
+  }, [isThisBlockSelected, block.locked, isEditingTitle, isEditingContent, selectedElement?.subType, block.title, block.content, setOriginalTitle, setDraftTitle, setIsEditingTitle, setOriginalContent, setDraftContent, setIsEditingContent]);
 
-  // Store original values to enable proper cancel functionality
-  const [originalValue, setOriginalValue] = React.useState('');
-
-  const beginEdit = (field: 'title' | 'content') => {
-    if (block.locked) return;
-    const currentValue = field === 'title' ? (block.title || '') : (block.content || '');
-    setOriginalValue(currentValue);
-    setEditingField(field);
-    setDraftValue(currentValue);
-    // Delay focus to next paint
-    requestAnimationFrame(() => {
-      if (field === 'title' && titleInputRef.current) {
-        titleInputRef.current.focus();
-        titleInputRef.current.selectionStart = titleInputRef.current.selectionEnd = titleInputRef.current.value.length;
-      } else if (field === 'content' && contentTextareaRef.current) {
-        contentTextareaRef.current.focus();
-        contentTextareaRef.current.selectionStart = contentTextareaRef.current.selectionEnd = contentTextareaRef.current.value.length;
-      }
-    });
-  };
-
-  const commitEdit = () => {
-    if (!editingField) return;
-    // Final commit - the store was already updated in real-time, so just exit editing mode
-    setEditingField(null);
-    // Clear selection to prevent inspector auto-focus
-    if (onSelectElement) {
-      onSelectElement(block.id, 'text'); // Select without subType to avoid auto-focus
-    }
-    // Focus the canvas container to prevent inspector from taking focus
-    requestAnimationFrame(() => {
-      const canvasElement = document.getElementById('newsletter-canvas');
-      if (canvasElement) {
-        canvasElement.focus();
-      }
-    });
-  };
-  
-  const cancelEdit = () => {
-    if (!editingField) return;
-    // Revert to original value
-    if (editingField === 'title') {
-      updateTextBlock(block.id, 'title', originalValue);
-    } else {
-      updateTextBlock(block.id, 'content', originalValue);
-    }
-    setEditingField(null);
-    // Clear selection to prevent inspector auto-focus
-    if (onSelectElement) {
-      onSelectElement(block.id, 'text'); // Select without subType to avoid auto-focus
-    }
-    // Focus the canvas container to prevent inspector from taking focus
-    requestAnimationFrame(() => {
-      const canvasElement = document.getElementById('newsletter-canvas');
-      if (canvasElement) {
-        canvasElement.focus();
-      }
-    });
-  };
-
-  // Update store in real-time as user types to keep inspector in sync
-  const handleInputChange = (newValue: string) => {
-    setDraftValue(newValue);
-    if (editingField === 'title') {
-      updateTextBlock(block.id, 'title', newValue);
-    } else {
-      updateTextBlock(block.id, 'content', newValue);
-    }
-  };
+  // Styles
   const headingStyle: CSSProperties = {
     color: style.headingColor || themeStyle.headingColor,
     backgroundColor: style.headingBackgroundColor || themeStyle.headingBackgroundColor,
@@ -181,7 +142,6 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
     borderBottom: '1px solid',
     borderBottomColor: style.borderColor || themeStyle.borderColor,
   };
-  
   const contentStyle: CSSProperties = {
     color: style.contentColor || themeStyle.contentColor,
     backgroundColor: style.backgroundColor || themeStyle.backgroundColor,
@@ -191,37 +151,32 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
     overflowY: 'auto',
     lineHeight: denseMode ? '1.3' : '1.5',
   };
-  
   const borderColor = style.borderColor || themeStyle.borderColor || '#ccc';
   const tableHeaderBg = style.headingBackgroundColor || themeStyle.headingBackgroundColor || '#f5f5f5';
   const tableHeaderColor = style.headingColor || themeStyle.headingColor || 'inherit';
   const tableCellBg = style.backgroundColor || themeStyle.backgroundColor || 'transparent';
   const linkColor = style.headingBackgroundColor || themeStyle.headingBackgroundColor;
 
+  // Drag and drop handlers
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData('text/plain', block.id);
     e.dataTransfer.effectAllowed = 'move';
   };
-
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     (e.currentTarget as HTMLElement).classList.add('ring-2', 'ring-blue-400');
   };
-
   const handleDragLeave = (e: React.DragEvent) => {
     (e.currentTarget as HTMLElement).classList.remove('ring-2', 'ring-blue-400');
   };
-
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     (e.currentTarget as HTMLElement).classList.remove('ring-2', 'ring-blue-400');
     const sourceId = e.dataTransfer.getData('text/plain');
     const targetId = block.id;
     if (sourceId && targetId && sourceId !== targetId) {
-      const swapEvent = new CustomEvent('swap-text-blocks', { 
-        detail: { sourceId, targetId } 
-      });
+      const swapEvent = new CustomEvent('swap-text-blocks', { detail: { sourceId, targetId } });
       window.dispatchEvent(swapEvent);
     }
   };
@@ -230,28 +185,41 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
     <>
       <div
         style={headingStyle}
-        className={"font-bold text-lg select-none " + (editingField ? '' : 'cursor-grab active:cursor-grabbing')}
-        draggable={!editingField}
+        className={
+          'font-bold text-lg select-none ' + ((isEditingTitle || isEditingContent) ? '' : 'cursor-grab active:cursor-grabbing')
+        }
+        draggable={!(isEditingTitle || isEditingContent)}
         data-block-id={block.id}
         data-block-heading="true"
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-  onMouseDown={(e) => { e.stopPropagation(); if (onSelectElement) { onSelectElement(block.id,'text','title'); } }}
-        onDoubleClick={(e) => { e.stopPropagation(); beginEdit('title'); }}
-        onClick={(e) => { e.stopPropagation(); }}
+        onMouseDown={e => {
+          e.stopPropagation();
+          if (onSelectElement) onSelectElement(block.id, 'text', 'title');
+        }}
+        onDoubleClick={e => {
+          e.stopPropagation();
+          beginEditTitle();
+        }}
+        onClick={e => e.stopPropagation()}
       >
-  {editingField === 'title' ? (
+        {isEditingTitle ? (
           <div className="relative w-full">
             <input
               ref={titleInputRef}
-              value={draftValue}
-              onChange={e => handleInputChange(e.target.value)}
-              onBlur={commitEdit}
+              value={draftTitle}
+              onChange={e => handleTitleChange(e.target.value)}
+              onBlur={commitEditTitle}
               onKeyDown={e => {
-                if (e.key === 'Enter') { e.preventDefault(); commitEdit(); }
-                else if (e.key === 'Escape') { e.preventDefault(); cancelEdit(); }
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  commitEditTitle();
+                } else if (e.key === 'Escape') {
+                  e.preventDefault();
+                  cancelEditTitle();
+                }
               }}
               data-inline-edit-block={block.id}
               className="w-full bg-white/80 dark:bg-zinc-800/80 outline-none border-2 border-blue-400/70 focus:border-blue-500 rounded-sm px-2 py-1 text-inherit font-inherit shadow-sm"
@@ -259,176 +227,69 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
               autoComplete="off"
               placeholder="Enter section title..."
             />
-            {/* Keyboard hint */}
             <div className="absolute top-0 right-2 text-xs text-gray-500/70 font-mono pointer-events-none leading-tight">
               Enter: Save • Esc: Cancel
             </div>
           </div>
-        ) : (
-          typeof block.title === 'string' ? block.title : ''
-        )}
+        ) : typeof block.title === 'string' ? block.title : ''}
       </div>
       <div
         style={contentStyle}
-        className={"max-w-none cursor-text " + (editingField ? 'prose-disable' : 'prose')}
+        className={
+          'max-w-none cursor-text ' + (isEditingContent ? 'prose-disable' : 'prose')
+        }
         data-block-content="true"
         onClick={e => {
           e.stopPropagation();
-          if (editingField) return;
-          // Always select this block's content on click
-          if (onSelectElement) { onSelectElement(block.id, 'text', 'content'); }
+          if (isEditingContent || isEditingTitle) return;
+          if (onSelectElement) onSelectElement(block.id, 'text', 'content');
         }}
         onDoubleClick={e => {
           e.stopPropagation();
-          // Always start editing on double-click
-          if (!editingField) {
-            beginEdit('content');
-            // After textarea mounts, set selection so store reflects editing block
+          if (!(isEditingContent || isEditingTitle)) {
+            beginEditContent();
             requestAnimationFrame(() => {
-              if (onSelectElement) { onSelectElement(block.id, 'text', 'content'); }
+              if (onSelectElement) onSelectElement(block.id, 'text', 'content');
             });
           }
         }}
       >
-        {/* Synthetic caret for live preview */}
-        {editingCaret && editingCaret.blockId === block.id && !editingField && (
+        {editingCaret && editingCaret.blockId === block.id && !isEditingContent && !isEditingTitle && (
           <CaretOverlay block={block} field={editingCaret.field} index={editingCaret.index} />
         )}
-    {editingField === 'content' ? (
-      <MarkdownModalEditor
-        value={draftValue}
-        onChange={handleInputChange}
-        onAccept={commitEdit}
-        onCancel={cancelEdit}
-        label="Edit section content (Markdown)"
-        placeholder="Enter Markdown content..."
-      />
-    ) : (
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            table: ({ ...props}) => (
-              <div className="overflow-x-auto">
-                <table
-                  {...props}
-                  style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    fontSize: '0.875rem',
-                    backgroundColor: tableCellBg,
-                  }}
-                />
-              </div>
-            ),
-            thead: ({ ...props}) => (
-              <thead {...props} style={{ backgroundColor: tableHeaderBg, color: tableHeaderColor }} />
-            ),
-            th: ({ ...props}) => (
-              <th
-                {...props}
-                style={{
-                  border: `1px solid ${borderColor}`,
-                  padding: '4px 6px',
-                  textAlign: 'left',
-                  fontWeight: 600,
-                  fontFamily: headingStyle.fontFamily,
-                  fontSize: '0.75rem',
-                  lineHeight: 1.2,
-                }}
-              />
-            ),
-            td: ({ ...props}) => (
-              <td
-                {...props}
-                style={{
-                  border: `1px solid ${borderColor}`,
-                  padding: '4px 6px',
-                  fontSize: '0.75rem',
-                  lineHeight: 1.25,
-                  backgroundColor: tableCellBg,
-                }}
-              />
-            ),
-            a: ({ ...props}) => (
-              <a
-                {...props}
-                style={{
-                  color: linkColor,
-                  textDecoration: 'underline',
-                }}
-              />
-            ),
-            ul: ({ ...props}) => (
-              <ul
-                {...props}
-                style={{
-                  marginTop: denseMode ? '0.125rem' : '0.25rem',
-                  marginBottom: denseMode ? '0.125rem' : '0.25rem',
-                  paddingLeft: '1rem',
-                  listStyleType: 'disc',
-                }}
-              />
-            ),
-            ol: ({ ...props}) => (
-              <ol
-                {...props}
-                style={{
-                  marginTop: denseMode ? '0.125rem' : '0.25rem',
-                  marginBottom: denseMode ? '0.125rem' : '0.25rem',
-                  paddingLeft: '1rem',
-                  listStyleType: 'decimal',
-                }}
-              />
-            ),
-            li: ({ ...props}) => (
-              <li
-                {...props}
-                style={{
-                  marginTop: denseMode ? '0.05rem' : '0.125rem',
-                  marginBottom: denseMode ? '0.05rem' : '0.125rem',
-                  paddingLeft: '0.15rem',
-                }}
-              />
-            ),
-            p: ({ ...props}) => (
-              <p
-                {...props}
-                style={{
-                  marginTop: denseMode ? '0.25rem' : '0.5rem',
-                  marginBottom: denseMode ? '0.25rem' : '0.5rem',
-                }}
-              />
-            ),
-            hr: ({ ...props}) => (
-              <hr
-                {...props}
-                style={{
-                  borderTop: `1px solid ${borderColor}`,
-                  margin: denseMode ? '0.5rem 0' : '1rem 0',
-                  width: '100%',
-                }}
-              />
-            ),
-          }}
-        >
-          {typeof block.content === 'string' ? block.content : ''}
-        </ReactMarkdown>
+        {isEditingContent ? (
+          <MarkdownModalEditor
+            value={draftContent}
+            onChange={handleContentChange}
+            onAccept={commitEditContent}
+            onCancel={cancelEditContent}
+            label="Edit section content (Markdown)"
+            placeholder="Enter Markdown content..."
+          />
+        ) : (
+          <MarkdownRenderer
+            markdown={typeof block.content === 'string' ? block.content : ''}
+            denseMode={denseMode}
+            borderColor={borderColor}
+            tableHeaderBg={tableHeaderBg}
+            tableHeaderColor={tableHeaderColor}
+            tableCellBg={tableCellBg}
+            linkColor={linkColor}
+            headingFontFamily={headingStyle.fontFamily}
+          />
         )}
       </div>
     </>
   );
 }
 
-// Lightweight caret overlay (approximate). For content, we place caret at start of block plus measured width of substring.
-// This avoids parsing markdown; we strip markdown syntax for width approximation.
+// CaretOverlay: lightweight caret overlay for live preview.
 const CaretOverlay: React.FC<{ block: TextBlock; field: 'title' | 'content'; index: number }> = ({ block, field, index }) => {
-  const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const [pos, setPos] = React.useState<{ left: number; top: number; height: number }>({ left: 0, top: 0, height: 16 });
-
-  React.useEffect(() => {
-    const el = containerRef.current?.parentElement; // content container
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [pos, setPos] = useState<{ left: number; top: number; height: number }>({ left: 0, top: 0, height: 16 });
+  useEffect(() => {
+    const el = containerRef.current?.parentElement;
     if (!el) return;
-    // For title caret we anchor in heading (previous sibling)
     if (field === 'title') {
       const headingEl = el.parentElement?.querySelector('[data-block-heading="true"]') as HTMLElement | null;
       if (headingEl) {
@@ -439,13 +300,11 @@ const CaretOverlay: React.FC<{ block: TextBlock; field: 'title' | 'content'; ind
         return;
       }
     }
-    // Content caret approximation
     const text = block.content || '';
     const plain = stripMarkdown(text);
     const safeIdx = Math.min(index, plain.length);
     const sub = plain.slice(0, safeIdx);
     const meas = measureText(sub, el);
-    // Rough line wrapping: assume font-size ~12-14px, width el.clientWidth; compute lines
     const avgChar = meas / (safeIdx || 1);
     const charsPerLine = Math.max(10, Math.floor(el.clientWidth / Math.max(6, avgChar)));
     const line = Math.floor(safeIdx / charsPerLine);
@@ -455,7 +314,6 @@ const CaretOverlay: React.FC<{ block: TextBlock; field: 'title' | 'content'; ind
     const lineHeight = parseFloat(getComputedStyle(el).lineHeight || '20');
     setPos({ left: el.offsetLeft + 16 + inLineWidth, top: el.offsetTop + 8 + line * lineHeight, height: lineHeight });
   }, [block.title, block.content, field, index]);
-
   return (
     <div ref={containerRef} style={{ position: 'absolute', pointerEvents: 'none', inset: 0 }}>
       <div
@@ -466,7 +324,7 @@ const CaretOverlay: React.FC<{ block: TextBlock; field: 'title' | 'content'; ind
           width: 1,
           height: pos.height,
           background: 'black',
-          animation: 'blink 1s step-start infinite'
+          animation: 'blink 1s step-start infinite',
         }}
       />
       <style>{`@keyframes blink { 50% { opacity: 0; } }`}</style>

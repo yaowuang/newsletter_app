@@ -2,6 +2,8 @@
 
 This guide summarizes key best practices for contributing to this codebase. Follow these guidelines to ensure code quality, maintainability, and consistency.
 
+The Framework is NextJS and React and their best practices apply. Global application state is managed with Zustand.
+
 ## 1. Project Structure
 **Shared components**: Place in `src/components/`.
 **Feature modules**: Place in `src/features/<feature>/` (with their own components, hooks, utils, types).
@@ -26,6 +28,7 @@ This guide summarizes key best practices for contributing to this codebase. Foll
 - Keep UI, logic, and configuration separate.
 - Place feature-specific logic and components within their feature module.
 - Avoid mixing unrelated concerns in a single file.
+- One component per .tsx file.
 
 ## 5. Refactoring & PRs
 - Refactor in small, testable increments.
@@ -40,3 +43,7 @@ This guide summarizes key best practices for contributing to this codebase. Foll
 ## 7. Documentation
 - Update internal docs to reflect structure changes.
 - Document any exceptions or special cases (e.g., config file locations).
+
+## 8. DRY/KISS
+- Don't Repeat Yourself, if you find yourself copying and pasting code, consider refactoring it into a reusable function or component.
+- Keep it simple, avoid over-engineering solutions. Aim for clarity and simplicity in your code.

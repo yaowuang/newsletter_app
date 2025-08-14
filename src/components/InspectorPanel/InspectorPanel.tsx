@@ -2,13 +2,13 @@
 
 import React from 'react';
 import type { TextBlock, ImageElement, SectionStyle } from "@/features/newsletter/types";
-import { HorizontalLineInspector } from '@/features/newsletter/components/HorizontalLineInspector';
-import { TextInspector } from '@/features/newsletter/components/TextInspector';
-import { ImageInspector } from '@/features/newsletter/components/ImageInspector';
-import { DocumentInspector } from '@/features/newsletter/components/DocumentInspector';
-import { CalendarInspector } from '@/features/newsletter/components/CalendarInspector';
-import { DateInspector } from '@/features/newsletter/components/DateInspector';
+import { HorizontalLineInspector } from '@/features/newsletter/components/InspectorPanel/HorizontalLineInspector';
+import { TextInspector } from '@/features/newsletter/components/InspectorPanel/TextInspector';
+import { DocumentInspector } from '@/features/newsletter/components/InspectorPanel/DocumentInspector';
+import CalendarInspector from '@/features/calendar/components/CalendarInspector';
+import { DateInspector } from '@/features/calendar/components/DateInspector';
 import { useStore } from "@/lib/store";
+import { ImageInspector } from '@/features/newsletter/components/InspectorPanel/ImageInspector';
 
 type SelectableElement = (TextBlock & { subType?: 'title' | 'content' }) | ImageElement | { id: string; type: 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' };
 

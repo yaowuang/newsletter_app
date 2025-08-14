@@ -1,9 +1,9 @@
 "use client";
 
-import { CanvasPanel } from "@/components/canvas-panel";
+import { CanvasPanel } from "@/components/CanvasPanel/CanvasPanel";
 import { Header } from "@/components/header";
-import { InspectorPanel } from "@/components/inspector-panel";
-import { StuffPanel } from "@/components/stuff";
+import { InspectorPanel } from "@/components/InspectorPanel/InspectorPanel";
+import { StuffPanel } from "@/components/ToolsPanel";
 import {
   ResizableHandle,
   ResizablePanel,

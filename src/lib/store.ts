@@ -3,11 +3,11 @@ import { nanoid } from 'nanoid';
 import { horizontalLineLibrary, resolveThemedLine, HorizontalLineStyle } from './horizontalLines';
 import { allLayouts } from '@/features/newsletter/utils/layouts';
 import { allThemes, Theme } from '@/lib/themes';
-import { deriveCalendarStyles } from '@/lib/calendarTheme';
+import { deriveCalendarStyles } from '@/features/calendar/utils/calendarTheme';
 import { buildInitialBlocks, createUserTextBlock } from './initialData';
 import { AppState, TextBlock, ImageElement, HorizontalLineElement } from '@/features/newsletter/types';
 import { applyTextEffect } from './textEffects';
-import { CalendarData, CalendarEvent, CalendarStyles } from '@/lib/calendar';
+import { CalendarData, CalendarEvent, CalendarStyles } from '@/features/calendar/types';
 
 
 // Note: Default section templates & initial block builders have been moved to initialData.ts
@@ -76,7 +76,9 @@ const initializeCalendarData = (): CalendarData => {
   nonCurrentMonthOpacity: 0.5,
   weekNumberTextColor: undefined,
   weekNumberBackgroundColor: undefined
-    }
+    },
+    editingDateKey: null,
+    draftContent: '',
   };
 };
 
@@ -586,8 +588,17 @@ export const useStore = create<AppState>()(
     setDenseMode: (denseMode) => set({ denseMode }),
 
     // Calendar-specific actions
+
     setCalendarDate: (date: Date) => set(state => ({
       calendarData: { ...state.calendarData, selectedDate: date }
+    })),
+
+    setEditingDateKey: (key: string | null) => set(state => ({
+      calendarData: { ...state.calendarData, editingDateKey: key }
+    })),
+
+    setDraftContent: (content: string) => set(state => ({
+      calendarData: { ...state.calendarData, draftContent: content }
     })),
     
     setCalendarTitle: (title: string) => {
@@ -614,7 +625,7 @@ export const useStore = create<AppState>()(
     updateCalendarEvent: (id: string, updates: Partial<CalendarEvent>) => set(state => ({
       calendarData: {
         ...state.calendarData,
-        customEvents: (state.calendarData.customEvents || []).map(event =>
+  customEvents: (state.calendarData.customEvents || []).map((event: CalendarEvent) =>
           event.id === id ? { ...event, ...updates } : event
         )
       }
@@ -623,7 +634,7 @@ export const useStore = create<AppState>()(
     deleteCalendarEvent: (id: string) => set(state => ({
       calendarData: {
         ...state.calendarData,
-        customEvents: (state.calendarData.customEvents || []).filter(event => event.id !== id)
+  customEvents: (state.calendarData.customEvents || []).filter((event: CalendarEvent) => event.id !== id)
       }
     })),
     

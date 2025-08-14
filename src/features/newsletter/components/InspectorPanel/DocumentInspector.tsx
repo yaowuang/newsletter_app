@@ -1,11 +1,11 @@
 import React from "react";
 import { Theme } from "@/lib/themes";
 import { useStore } from "@/lib/store";
-import TitleDateSection, { DateMode } from './document/TitleDateSection';
-import TitleStylesSection from './document/TitleStylesSection';
-import DateStylesSection from './document/DateStylesSection';
-import PageBackgroundSection from './document/PageBackgroundSection';
-import DenseModeSection from './document/DenseModeSection';
+import TitleDateSection, { DateMode } from '../document/TitleDateSection';
+import TitleStylesSection from '../document/TitleStylesSection';
+import DateStylesSection from '../document/DateStylesSection';
+import PageBackgroundSection from '../document/PageBackgroundSection';
+import DenseModeSection from '../document/DenseModeSection';
 
 interface DocumentInspectorProps { title: string; date: string; theme: Theme; onTitleChange: (title: string) => void; onDateChange: (date: string) => void; }
 
