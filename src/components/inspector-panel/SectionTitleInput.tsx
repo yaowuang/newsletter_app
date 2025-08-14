@@ -83,7 +83,7 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
   // Filter suggestions based on input
   const filteredSuggestions = React.useMemo(() => {
     const q = stripLeadingEmojis(value).toLowerCase();
-    if (!q) return [] as Suggestion[];
+    if (!q) return titleSuggestions; // Show all suggestions when no input
     return titleSuggestions
       .filter(s => s.title.toLowerCase().includes(q) && stripLeadingEmojis(value) !== s.title)
       .slice(0, 8);
@@ -174,7 +174,7 @@ export const SectionTitleInput: React.FC<SectionTitleInputProps> = ({
         <ul
           id={listId}
           role="listbox"
-          className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg text-sm focus:outline-none"
+          className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg text-sm focus:outline-none"
         >
       {filteredSuggestions.map((s: Suggestion, i: number) => (
             <li
