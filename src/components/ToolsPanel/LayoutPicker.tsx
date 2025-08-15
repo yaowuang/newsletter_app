@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { allLayouts, Layout, LayoutVariant } from '@/features/newsletter/utils/layouts';
-import type { LayoutSelection } from '@/features/newsletter/types';
+import { allLayouts, LayoutType, LayoutVariantType } from '@/features/newsletter/utils/layouts';
+import type { LayoutSelectionType } from '@/features/newsletter/types';
 import { LayoutPickerProps } from './interfaces/picker-interfaces';
 import { cn } from '@/lib/utils';
 
@@ -137,10 +137,10 @@ const SectionCountSelector: React.FC<{
 
 // Extracted layout grid component
 const LayoutGrid: React.FC<{
-  layouts: Layout[];
-  currentSelection: LayoutSelection;
+  layouts: LayoutType[];
+  currentSelection: LayoutSelectionType;
   currentSectionCount: number;
-  onLayoutChange: (layout: LayoutSelection) => void;
+  onLayoutChange: (layout: LayoutSelectionType) => void;
   onSetSectionCount: (count: number) => void;
 }> = ({ layouts, currentSelection, currentSectionCount, onLayoutChange, onSetSectionCount }) => (
   <div className="grid grid-cols-2 gap-4 place-items-center border-t pt-4">
@@ -215,7 +215,7 @@ const LayoutGrid: React.FC<{
 
 // Extracted layout preview component with improved organization
 const LayoutPreview: React.FC<{
-  layout: Layout;
+  layout: LayoutType;
   variantName?: string;
   isSelected: boolean;
 }> = ({ layout, variantName, isSelected }) => {
@@ -244,8 +244,8 @@ const LayoutPreview: React.FC<{
 
 // Extracted grid visualization component
 const LayoutPreviewGrid: React.FC<{
-  layout: Layout;
-  variant: LayoutVariant;
+  layout: LayoutType;
+  variant: LayoutVariantType;
   areas: string[];
 }> = ({ layout, variant, areas }) => {
   // Special handling for calendar layout
@@ -313,7 +313,7 @@ const LayoutPreviewGrid: React.FC<{
 // Extracted area component
 const LayoutPreviewArea: React.FC<{
   area: string;
-  variant: LayoutVariant;
+  variant: LayoutVariantType;
 }> = ({ area, variant }) => {
   const isSection = area.startsWith('sec');
   const getLabel = () => {

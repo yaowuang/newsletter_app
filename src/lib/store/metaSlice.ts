@@ -1,52 +1,27 @@
 import { StateCreator } from 'zustand';
 import { createUserTextBlock } from '../initialData';
-import { NewsletterSlice } from './newsletterSlice';
-import { ImageSlice } from './imageSlice';
-import { HorizontalLineSlice } from './horizontalLineSlice';
-import { CalendarSlice } from './calendarSlice';
-import { SelectionSlice } from './selectionSlice';
-
-import type { TextBlock, ImageElement, SectionStyles, EditorSnapshot } from '@/features/newsletter/types';
-import type { Theme } from '@/lib/themes';
-import type { Layout } from '@/features/newsletter/utils/layouts';
-import type { CalendarData } from '@/features/calendar/types';
+import type { TextBlockType, EditorSnapshotType } from '@/features/newsletter/types';
+import { RootStore } from '.';
 
 
 
 export interface MetaSlice {
-  loadSnapshot: (snapshot: EditorSnapshot) => void;
+  loadSnapshot: (snapshot: EditorSnapshotType) => void;
   setSectionCount: (count: number) => void;
   setDenseMode: (denseMode: boolean) => void;
 }
-
-
-type RootStore = NewsletterSlice & ImageSlice & HorizontalLineSlice & CalendarSlice & SelectionSlice & MetaSlice & {
-  textBlockMap: Record<string, TextBlock>;
-  textBlockOrder: string[];
-  textBlocks: TextBlock[];
-  images: ImageElement[];
-  sectionStyles: SectionStyles;
-  theme: Theme;
-  layout: Layout;
-  denseMode: boolean;
-  calendarData: CalendarData;
-  selectedElement: string | null;
-  title: string;
-  date: string;
-  selectElement?: (el: string | null) => void;
-};
 
 export const createMetaSlice: StateCreator<RootStore, [], [], MetaSlice> = (set, get) => ({
   loadSnapshot: (snapshot) => {
     try {
       if (!snapshot || typeof snapshot !== 'object') return;
       let textBlocks = Array.isArray(snapshot.textBlocks) ? [...snapshot.textBlocks] : [...get().textBlocks];
-      let textBlockMap: Record<string, TextBlock> = {};
+      let textBlockMap: Record<string, TextBlockType> = {};
       let textBlockOrder: string[] = [];
       if (snapshot.textBlockMap && snapshot.textBlockOrder) {
         textBlockMap = { ...snapshot.textBlockMap };
         textBlockOrder = [...snapshot.textBlockOrder];
-        textBlocks = textBlockOrder.map(id => textBlockMap[id]).filter((b): b is TextBlock => Boolean(b));
+        textBlocks = textBlockOrder.map(id => textBlockMap[id]).filter((b): b is TextBlockType => Boolean(b));
       } else {
         for (const block of textBlocks) {
           if (block && block.id) {

@@ -1,8 +1,8 @@
 // This file has been moved to the inspector folder and is no longer needed.
 import React from "react";
 import { useStore } from '@/lib/store/index';
-import type { TextBlock, SectionStyle } from "@/features/newsletter/types";
-import { Theme } from "@/lib/themes";
+import type { TextBlock, SectionStyleType } from "@/features/newsletter/types";
+import { ThemeType } from "@/lib/themes";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import FormattingToolbar, { FormattingAction } from '@/components/common/FormattingToolbar';
@@ -17,16 +17,16 @@ import { Input } from '@/components/ui/input';
 
 interface TextInspectorProps {
   block: TextBlock;
-  theme: Theme;
-  currentStyle: Partial<SectionStyle>;
+  theme: ThemeType;
+  currentStyle: Partial<SectionStyleType>;
   onUpdateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
-  onStyleChange: (blockId: string, newStyles: Partial<SectionStyle>) => void;
+  onStyleChange: (blockId: string, newStyles: Partial<SectionStyleType>) => void;
 }
 
 export const TextInspector: React.FC<TextInspectorProps> = ({ block, theme, currentStyle, onUpdateTextBlock, onStyleChange }) => {
   const deleteTextBlock = useStore(s => s.deleteTextBlock);
   const setElementLocked_text = useStore(s => s.setElementLocked_text);
-  const handleStyleChange = (property: keyof SectionStyle, value: string | number) => {
+  const handleStyleChange = (property: keyof SectionStyleType, value: string | number) => {
     onStyleChange(block.id, { [property]: value });
   };
 

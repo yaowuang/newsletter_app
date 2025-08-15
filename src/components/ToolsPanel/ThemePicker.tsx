@@ -1,7 +1,7 @@
 import React from 'react';
 import { PastelRotateText } from '@/components/common/PastelRotateText';
 import { RainbowRotateText } from '@/components/common/RainbowRotateText';
-import { Theme, allThemes } from '@/lib/themes';
+import { ThemeType, allThemes } from '@/lib/themes';
 import { ThemePickerProps } from './interfaces/picker-interfaces';
 import { cn } from '@/lib/utils';
 
@@ -24,9 +24,9 @@ export const ThemePicker: React.FC<ThemePickerProps> = ({
 
 // Extracted theme grid component
 const ThemeGrid: React.FC<{
-  themes: Theme[];
-  currentTheme: Theme;
-  onThemeChange: (theme: Theme) => void;
+  themes: ThemeType[];
+  currentTheme: ThemeType;
+  onThemeChange: (theme: ThemeType) => void;
 }> = ({ themes, currentTheme, onThemeChange }) => (
   <div className="grid grid-cols-2 gap-4 place-items-center pb-2">
     {themes.map(theme => (
@@ -42,7 +42,7 @@ const ThemeGrid: React.FC<{
 
 // Extracted theme preview card component
 const ThemePreviewCard: React.FC<{
-  theme: Theme;
+  theme: ThemeType;
   isSelected: boolean;
   onClick: () => void;
 }> = ({ theme, isSelected, onClick }) => (
@@ -53,7 +53,7 @@ const ThemePreviewCard: React.FC<{
 
 // Refactored theme preview component with better organization
 const ThemePreview: React.FC<{ 
-  theme: Theme; 
+  theme: ThemeType; 
   isSelected: boolean; 
 }> = ({ theme, isSelected }) => {
   const borderColor = theme.styles.section.borderColor || 
@@ -79,7 +79,7 @@ const ThemePreview: React.FC<{
 
 // Extracted preview tile component
 const ThemePreviewTile: React.FC<{
-  theme: Theme;
+  theme: ThemeType;
   borderColor: string;
   isSelected: boolean;
 }> = ({ theme, borderColor, isSelected }) => {
@@ -114,7 +114,7 @@ const ThemePreviewTile: React.FC<{
 
 // Extracted section miniature component
 const ThemePreviewSection: React.FC<{
-  section: Theme['styles']['section'];
+  section: ThemeType['styles']['section'];
   borderColor: string;
   isSelected: boolean;
 }> = ({ section, borderColor, isSelected }) => (
@@ -147,8 +147,8 @@ const ThemePreviewSection: React.FC<{
 
 // Extracted theme name label component
 const ThemePreviewLabel: React.FC<{
-  theme: Theme;
-  title: Theme['styles']['title'];
+  theme: ThemeType;
+  title: ThemeType['styles']['title'];
 }> = ({ theme, title }) => {
   // Handle rainbow gradient styles
   const isPastelRotate = title.textEffectId === 'pastel-rotate';

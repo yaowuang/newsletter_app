@@ -1,47 +1,17 @@
+
 import { StateCreator } from 'zustand';
-import { TextBlock, HorizontalLineElement } from '@/features/newsletter/types';
-import { Theme } from '@/lib/themes';
+import type { LayoutType, NewsletterSliceType } from '@/types/newsletterSliceTypes';
+
+import { HorizontalLineElementType } from '@/features/newsletter/types';
+import { ThemeType } from '@/lib/themes';
 import { horizontalLineLibrary, resolveThemedLine } from '@/lib/horizontalLines';
 import type { HorizontalLineStyle } from '@/lib/horizontalLines';
 import { nanoid } from 'nanoid';
 import { applyTextEffect } from '@/lib/textEffects';
+import { RootStore } from '.';
+import { LayoutDecorationType } from '@/features/newsletter/utils/layouts';
 
-export interface NewsletterSlice {
-  title: string;
-  date: string;
-  textBlockMap: Record<string, TextBlock>; // All blocks ever created, keyed by id
-  textBlockOrder: string[]; // IDs of blocks currently visible on canvas
-  sectionStyles: Record<string, any>;
-  theme: Theme;
-  layout: any; // Replace with actual layout type if available
-  denseMode: boolean;
-  setTitle: (title: string) => void;
-  setDate: (date: string) => void;
-  setTheme: (theme: Theme) => void;
-  setThemeTitleFont: (font: string) => void;
-  setThemeDateFont: (font: string) => void;
-  setThemeTitleColor: (color: string) => void;
-  setThemeDateColor: (color: string) => void;
-  setThemeTitleAlignment: (align: 'left' | 'center' | 'right') => void;
-  setThemeDateAlignment: (align: 'left' | 'center' | 'right') => void;
-  setThemeTitleTextEffect: (effectId: string | undefined) => void;
-  setThemePageBackgroundColor: (color: string) => void;
-  setThemePageBackgroundImage: (image: string) => void;
-  setThemePageBackgroundSize: (size: string) => void;
-  setThemePageBackgroundPosition: (position: string) => void;
-  setThemePageBackgroundRepeat: (repeat: string) => void;
-  setThemePageBackgroundImageOpacity: (opacity: number) => void;
-  setLayout: (layout: any) => void; // Replace with actual layout type if available
-  setSectionCount: (count: number) => void;
-  setDenseMode: (denseMode: boolean) => void;
-  updateStyle: (blockId: string, newStyles: Record<string, any>) => void;
-  deleteTextBlock: (id: string) => void;
-  addTextBlock: (id?: string) => void;
-  setElementLocked_text: (id: string, locked: boolean) => void;
-  updateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
-}
-
-export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], NewsletterSlice> = (set, get) => ({
+export const createNewsletterSlice: StateCreator<NewsletterSliceType, [], [], NewsletterSliceType> = (set, get) => ({
   addTextBlock: (id?: string) => {
     // Add a new text block with a unique id and default content, or restore by id
     const blockId = id || nanoid();
@@ -49,12 +19,14 @@ export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], Newsle
       // If block already exists in map, just add to order
       if (state.textBlockMap[blockId]) {
         return {
+          ...state,
           textBlockOrder: [...state.textBlockOrder, blockId],
           sectionStyles: { ...state.sectionStyles, [blockId]: state.sectionStyles[blockId] || {} },
         };
       }
       // Otherwise, create new block
       return {
+        ...state,
         textBlockMap: {
           ...state.textBlockMap,
           [blockId]: {
@@ -81,8 +53,8 @@ export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], Newsle
   textBlockMap: {}, // All blocks ever created
   textBlockOrder: [], // IDs of blocks currently visible
 		sectionStyles: {},
-		theme: {} as Theme, // Should be initialized in root store
-		layout: {}, // Should be initialized in root store
+		theme: {} as ThemeType, // Should be initialized in root store
+    layout: { base: { id: '' }, variant: { name: '' } }, // Should be initialized in root store
 		denseMode: false,
 		setTitle: (title) => set({ title }),
 		setDate: (date) => set({ date }),
@@ -175,7 +147,7 @@ export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], Newsle
       };
 
       set(state => {
-        const { base, variant } = layout;
+  const { base, variant } = layout as LayoutType;
         const theme = state.theme;
         // Auto-reorder content blocks to new layout's section sizing
         // Only when section counts match and we have targets on new layout.
@@ -211,9 +183,10 @@ export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], Newsle
             .map((idx: number) => assignment[idx].block);
         }
         const decorations = variant.decorations || [];
-        const newAutoLines = decorations.map((dec: any) => {
+  const newAutoLines = decorations.map((dec: LayoutDecorationType) => {
           const key = `${base.id}:${variant.name}:${dec.position}:${dec.sectionIndex ?? ''}`;
-          const existing: HorizontalLineElement | undefined = (state as any).horizontalLines.find((l: HorizontalLineElement) => l.autoGenerated && l.decorationKey === key);
+          // Use StoreState type to access horizontalLines from the global store
+          const existing: HorizontalLineElementType | undefined = (get() as RootStore).horizontalLines.find((l: HorizontalLineElementType) => l.autoGenerated && l.decorationKey === key);
           const libItem = dec.lineId === 'themed' ? resolveThemedLine(theme.name) : horizontalLineLibrary.find((l: HorizontalLineStyle) => l.id === dec.lineId);
           const color = libItem?.defaultColor || theme.styles.section.borderColor || '#888';
           // Calculate position based on layout alignment and grid structure
@@ -255,41 +228,29 @@ export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], Newsle
             return { x, width };
           };
           // Determine position and alignment based on decoration position
-          let y = titleEndY + 8; // default: after title
-          let x = canvasPadding;
-          let width = 200;
-          if (dec.position === 'afterTitle') {
-            y = titleEndY - 2;
-            const metrics = getLineMetrics(titleAlign, true);
-            x = metrics.x;
-            width = metrics.width;
-          } else if (dec.position === 'afterDate') {
-            y = dateEndY - 4;
-            const metrics = getLineMetrics(dateAlign, false);
-            x = metrics.x;
-            width = metrics.width;
-          } else if (dec.position === 'beforeSections') {
-            y = sectionsStartY - 8;
-            const metrics = getLineMetrics('center', false);
-            x = metrics.x;
-            width = metrics.width;
-          } else if (dec.position === 'betweenSections') {
-            y = sectionsStartY + 200;
-            const metrics = getLineMetrics('center', false);
-            x = metrics.x;
-            width = metrics.width;
-          } else if (dec.position === 'afterSections') {
-            y = 11 * 96 - canvasPadding - 80;
-            const metrics = getLineMetrics('center', false);
-            x = metrics.x;
-            width = metrics.width;
-          } else if (dec.position === 'afterSection' && typeof dec.sectionIndex === 'number') {
-            y = sectionsStartY + (dec.sectionIndex + 1) * 120 + 8;
-            const metrics = getLineMetrics('center', false);
-            x = metrics.x;
-            width = metrics.width;
-          }
-          let baseLine: HorizontalLineElement;
+                    let y = titleEndY + 8; // default: after title
+                    let x = canvasPadding;
+                    let width = 200;
+                    // Lookup table for position logic
+                    const positionLookup: Record<string, () => { y: number; metrics: { x: number; width: number } }> = {
+                      afterTitle: () => ({ y: titleEndY - 2, metrics: getLineMetrics(titleAlign, true) }),
+                      afterDate: () => ({ y: dateEndY - 4, metrics: getLineMetrics(dateAlign, false) }),
+                      beforeSections: () => ({ y: sectionsStartY - 8, metrics: getLineMetrics('center', false) }),
+                      betweenSections: () => ({ y: sectionsStartY + 200, metrics: getLineMetrics('center', false) }),
+                      afterSections: () => ({ y: 11 * 96 - canvasPadding - 80, metrics: getLineMetrics('center', false) }),
+                    };
+                    if (dec.position === 'afterSection' && typeof dec.sectionIndex === 'number') {
+                      y = sectionsStartY + (dec.sectionIndex + 1) * 120 + 8;
+                      const metrics = getLineMetrics('center', false);
+                      x = metrics.x;
+                      width = metrics.width;
+                    } else if (positionLookup[dec.position]) {
+                      const { y: newY, metrics } = positionLookup[dec.position]!();
+                      y = newY;
+                      x = metrics.x;
+                      width = metrics.width;
+                    }
+          let baseLine: HorizontalLineElementType;
           if (existing) {
             baseLine = existing;
           } else {
@@ -311,9 +272,9 @@ export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], Newsle
           // Update positions for all lines (existing and new) to match current layout
           return { ...baseLine, x, y, width, color };
         });
-  const keptManual = (state as any).horizontalLines.filter((l: HorizontalLineElement) => !l.autoGenerated);
+  const keptManual = (state as RootStore).horizontalLines.filter((l: HorizontalLineElementType) => !l.autoGenerated);
         // Apply layout-provided alignment to theme styles (non-destructive for unspecified fields)
-        const updatedTheme: Theme = {
+        const updatedTheme: ThemeType = {
           ...theme,
           styles: {
             ...theme.styles,
@@ -326,9 +287,50 @@ export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], Newsle
     },
 
 		setSectionCount: (count) => {
-			// The real logic for setSectionCount should be implemented in the root store to access textBlocks
-			set({});
-		},
+      set(state => {
+        const currentCount = state.textBlockOrder.length;
+        if (count > currentCount) {
+          // Add new blocks
+          let newState = { ...state };
+          for (let i = 0; i < count - currentCount; i++) {
+            const blockId = nanoid();
+            newState = {
+              ...newState,
+              textBlockMap: {
+                ...newState.textBlockMap,
+                [blockId]: {
+                  id: blockId,
+                  type: 'text',
+                  title: '',
+                  content: '',
+                  locked: false
+                }
+              },
+              textBlockOrder: [...newState.textBlockOrder, blockId],
+              sectionStyles: { ...newState.sectionStyles, [blockId]: {} },
+            };
+          }
+          return newState;
+        } else if (count < currentCount) {
+          // Remove blocks
+          const toRemove = state.textBlockOrder.slice(count);
+          const newTextBlockOrder = state.textBlockOrder.slice(0, count);
+          const newSectionStyles = { ...state.sectionStyles };
+          const newTextBlockMap = { ...state.textBlockMap };
+          toRemove.forEach(id => {
+            delete newSectionStyles[id];
+            delete newTextBlockMap[id];
+          });
+          return {
+            ...state,
+            textBlockOrder: newTextBlockOrder,
+            sectionStyles: newSectionStyles,
+            textBlockMap: newTextBlockMap,
+          };
+        }
+        return state;
+      });
+    },
 		setDenseMode: (denseMode) => set({ denseMode }),
     updateStyle: (blockId, newStyles) => {
       set(state => {

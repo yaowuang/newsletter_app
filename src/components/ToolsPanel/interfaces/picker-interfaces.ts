@@ -1,8 +1,8 @@
 // Abstract interfaces following Interface Segregation Principle
 // Each interface has a single, focused responsibility
 
-import { LayoutSelection } from '@/features/newsletter/types';
-import { Theme } from '@/lib/themes';
+import { LayoutSelectionType } from '@/features/newsletter/types';
+import { ThemeType } from '@/lib/themes';
 import { ImageSearchResult } from '@/components/stuff/services/image-search-service';
 
 // Base interface for all picker components
@@ -13,22 +13,22 @@ export interface BasePickerProps {
 
 // Layout-specific interface
 export interface LayoutPickerActions {
-  onLayoutChange: (layout: LayoutSelection) => void;
+  onLayoutChange: (layout: LayoutSelectionType) => void;
   onSetSectionCount: (count: number) => void;
 }
 
 export interface LayoutPickerState {
-  currentLayoutSelection: LayoutSelection;
+  currentLayoutSelection: LayoutSelectionType;
   sectionCount: number;
 }
 
 // Theme-specific interface
 export interface ThemePickerActions {
-  onThemeChange: (theme: Theme) => void;
+  onThemeChange: (theme: ThemeType) => void;
 }
 
 export interface ThemePickerState {
-  currentTheme: Theme;
+  currentTheme: ThemeType;
 }
 
 // Element creation interface

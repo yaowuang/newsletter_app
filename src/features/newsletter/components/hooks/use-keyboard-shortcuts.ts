@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import type { ElementSelection } from '@/features/newsletter/types';
+import type { ElementSelectionType } from '@/features/newsletter/types';
 
 interface UseKeyboardShortcutsProps {
-  selectedElement: ElementSelection | null;
-  onDeleteElement: (element: ElementSelection) => void;
+  selectedElement: ElementSelectionType | null;
+  onDeleteElement: (element: ElementSelectionType) => void;
 }
 
 /**

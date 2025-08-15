@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toPng, toSvg } from 'html-to-image';
 import { useStore } from '@/lib/store/index';
-import type { EditorSnapshot } from "@/features/newsletter/types";
+import type { EditorSnapshotType } from "@/features/newsletter/types";
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 
@@ -22,7 +22,7 @@ function encodeSnapshot(obj: Record<string, unknown>): Blob {
   return new Blob([bytes], { type: 'application/octet-stream' });
 }
 
-async function decodeSnapshot(file: File): Promise<EditorSnapshot> {
+async function decodeSnapshot(file: File): Promise<EditorSnapshotType> {
   const buffer = await file.arrayBuffer();
   const decoder = new TextDecoder();
   const json = decoder.decode(buffer);

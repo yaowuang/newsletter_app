@@ -1,11 +1,11 @@
 // Centralized type definitions for the newsletter editor store.
 // Keeping these separate avoids large monolithic store files and helps re-use across components.
 
-import { Theme } from '@/lib/themes';
-import { Layout, LayoutVariant } from '@/features/newsletter/utils/layouts';
+import { ThemeType } from '@/lib/themes';
+import { LayoutType, LayoutVariantType } from '@/features/newsletter/utils/layouts';
 import { CalendarData } from '@/features/calendar/types';
 
-export type TextBlock = {
+export type TextBlockType = {
   id: string;
   type: 'text';
   title: string;
@@ -13,7 +13,7 @@ export type TextBlock = {
   locked?: boolean; // when true, block cannot be edited or deleted until unlocked
 };
 
-export type ImageElement = {
+export type ImageElementType = {
   id: string;
   type: 'image';
   src: string;
@@ -24,7 +24,7 @@ export type ImageElement = {
   locked?: boolean;
 };
 
-export type HorizontalLineElement = {
+export type HorizontalLineElementType = {
   id: string;
   type: 'horizontalLine';
   x: number;
@@ -41,7 +41,7 @@ export type HorizontalLineElement = {
   decorationKey?: string; // stable key layoutId:variant:position:sectionIndex
 };
 
-export type SelectableElement = (TextBlock | ImageElement | HorizontalLineElement) & { type: 'text' | 'image' | 'horizontalLine' };
+export type SelectableElementType = (TextBlockType | ImageElementType | HorizontalLineElementType) & { type: 'text' | 'image' | 'horizontalLine' };
 
 export type CalendarDateElement = {
   id: string; // dateKey format: 'YYYY-MM-DD'
@@ -49,14 +49,14 @@ export type CalendarDateElement = {
   date: Date;
 };
 
-export type ExtendedSelectableElement = SelectableElement | CalendarDateElement;
+export type ExtendedSelectableElementType = SelectableElementType | CalendarDateElement;
 
-export type LayoutSelection = {
-  base: Layout;
-  variant: LayoutVariant;
+export type LayoutSelectionType = {
+  base: LayoutType;
+  variant: LayoutVariantType;
 };
 
-export type SectionStyle = {
+export type SectionStyleType = {
   backgroundColor?: string;
   textColor?: string;
   contentColor?: string;
@@ -70,36 +70,36 @@ export type SectionStyle = {
   borderRadius?: number;
 };
 
-export type SectionStyles = {
-  [blockId: string]: SectionStyle;
+export type SectionStylesType = {
+  [blockId: string]: SectionStyleType;
 };
 
-export type EditorSnapshot = {
+export type EditorSnapshotType = {
   version: number;
   title: string;
   date: string;
-  textBlocks: TextBlock[];
-  textBlockMap?: Record<string, TextBlock>;
+  textBlocks: TextBlockType[];
+  textBlockMap?: Record<string, TextBlockType>;
   textBlockOrder?: string[];
-  images: ImageElement[];
-  horizontalLines: HorizontalLineElement[];
-  sectionStyles: SectionStyles;
-  theme: Theme;
-  layout: LayoutSelection;
+  images: ImageElementType[];
+  horizontalLines: HorizontalLineElementType[];
+  sectionStyles: SectionStylesType;
+  theme: ThemeType;
+  layout: LayoutSelectionType;
   denseMode: boolean;
   // Calendar-specific data
   calendarData?: CalendarData;
 };
 
-export interface AppState {
-  textBlocks: TextBlock[];
-  textBlockMap: Record<string, TextBlock>;
+export interface AppStateType {
+  textBlocks: TextBlockType[];
+  textBlockMap: Record<string, TextBlockType>;
   textBlockOrder: string[];
-  horizontalLines: HorizontalLineElement[];
+  horizontalLines: HorizontalLineElementType[];
   selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' } | null;
-  sectionStyles: SectionStyles;
-  theme: Theme;
-  layout: LayoutSelection;
+  sectionStyles: SectionStylesType;
+  theme: ThemeType;
+  layout: LayoutSelectionType;
   denseMode: boolean;
   // Calendar-specific state
   calendarData: CalendarData;
@@ -115,8 +115,8 @@ export interface AppState {
   addTextBlock: () => void;
   updateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
   selectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate', subType?: 'title' | 'content') => void;
-  updateStyle: (blockId: string, newStyles: Partial<SectionStyle>) => void;
-  setTheme: (theme: Theme) => void;
+  updateStyle: (blockId: string, newStyles: Partial<SectionStyleType>) => void;
+  setTheme: (theme: ThemeType) => void;
   setThemeTitleFont?: (font: string) => void;
   setThemeDateFont?: (font: string) => void;
   setThemeTitleColor?: (color: string) => void;
@@ -131,26 +131,26 @@ export interface AppState {
   setThemePageBackgroundRepeat?: (repeat: string | null) => void;
   setThemePageBackgroundImageOpacity?: (opacity: number) => void;
   setSectionCount: (count: number) => void;
-  loadSnapshot: (snapshot: EditorSnapshot) => void;
+  loadSnapshot: (snapshot: EditorSnapshotType) => void;
   swapTextBlocks: (id1: string, id2: string) => void;
   setDenseMode: (denseMode: boolean) => void;
   
   setEditingCaret?: (blockId: string, field: 'title' | 'content', index: number) => void;
 }
 
-export interface ElementSelection {
+export interface ElementSelectionType {
   id: string;
   type: 'text' | 'image' | 'horizontalLine';
 }
 
-export interface ZoomControls {
+export interface ZoomControlsType {
   zoom: number;
   onZoomIn: () => void;
   onZoomOut: () => void;
   onResetZoom: () => void;
 }
 
-export interface CanvasConfig {
+export interface CanvasConfigType {
   width: string;
   height: string;
   scale: number;

@@ -1,8 +1,8 @@
 import { CSSProperties } from "react";
 
-export type TextAlign = 'left' | 'center' | 'right';
+export type TextAlignType = 'left' | 'center' | 'right';
 
-export type Theme = {
+export type ThemeType = {
   name: string;
   styles: {
     page: {
@@ -16,7 +16,7 @@ export type Theme = {
     title: {
       fontFamily: CSSProperties['fontFamily'];
       color: CSSProperties['color'];
-      textAlign?: TextAlign; // added
+      textAlign?: TextAlignType; // added
       backgroundImage?: CSSProperties['backgroundImage']; // for gradients
       backgroundColor?: CSSProperties['backgroundColor']; // for solid backgrounds
       backgroundSize?: CSSProperties['backgroundSize'];
@@ -32,7 +32,7 @@ export type Theme = {
     date: {
       fontFamily: CSSProperties['fontFamily'];
       color: CSSProperties['color'];
-      textAlign?: TextAlign; // added
+      textAlign?: TextAlignType; // added
     };
     section: {
       headingColor?: CSSProperties['color'];
@@ -50,7 +50,7 @@ export type Theme = {
   preferredLineIds?: string[];
 };
 
-export const allThemes: Theme[] = [
+export const allThemes: ThemeType[] = [
   {
     name: 'Default',
     styles: {

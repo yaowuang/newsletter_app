@@ -1,8 +1,8 @@
 import React from 'react';
-import type { Theme } from '@/lib/themes';
+import type { ThemeType } from '@/lib/themes';
 
 interface WatermarkProps {
-  theme: Theme;
+  theme: ThemeType;
 }
 
 /**

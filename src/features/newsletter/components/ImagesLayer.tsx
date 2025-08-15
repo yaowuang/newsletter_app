@@ -3,14 +3,14 @@ import { Rnd } from 'react-rnd';
 import { Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { UI_CONSTANTS } from '@/lib/ui-constants';
-import type { ImageElement } from '@/features/newsletter/types';
+import type { ImageElementType } from '@/features/newsletter/types';
 
 interface ImagesLayerProps {
-  images: ImageElement[];
+  images: ImageElementType[];
   selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
   zoom: number;
   onSelectElement: (id: string, type: 'image') => void;
-  onUpdateImage: (id: string, newProps: Partial<ImageElement>) => void;
+  onUpdateImage: (id: string, newProps: Partial<ImageElementType>) => void;
 }
 
 /**

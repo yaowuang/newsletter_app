@@ -1,6 +1,6 @@
 
 import { create } from 'zustand';
-import { createNewsletterSlice, NewsletterSlice } from './newsletterSlice';
+import { createNewsletterSlice } from './newsletterSlice';
 import { createImageSlice, ImageSlice } from './imageSlice';
 import { createHorizontalLineSlice, HorizontalLineSlice } from './horizontalLineSlice';
 import { createCalendarSlice, CalendarSlice } from './calendarSlice';
@@ -10,15 +10,41 @@ import { createMetaSlice, MetaSlice } from './metaSlice';
 // Import any initializers needed for state
 import { buildInitialBlocks,  } from '../initialData';
 import { allLayouts } from '@/features/newsletter/utils/layouts';
-import { allThemes } from '@/lib/themes';
+import { allThemes, ThemeType as ThemeType } from '@/lib/themes';
 import { initializeCalendarData } from './calendarSlice';
+import { ImageElementType, SectionStylesType, TextBlockType } from '@/features/newsletter/types';
+import { CalendarData as CalendarDataType } from '../calendar';
 
-type StoreState = NewsletterSlice & ImageSlice & HorizontalLineSlice & CalendarSlice & SelectionSlice & MetaSlice & {
-  textBlockMap: Record<string, import('@/features/newsletter/types').TextBlock>;
+import type { LayoutType, LayoutVariantType } from '@/features/newsletter/utils/layouts';
+import { NewsletterSliceType } from '@/types/newsletterSliceTypes';
+
+export type SelectedElementType =
+  | { id: string; type: 'text'; subType?: 'title' | 'content' }
+  | { id: string; type: 'image' }
+  | { id: string; type: 'horizontalLine' }
+  | { id: string; type: 'calendarDate' }
+  | null;
+
+export type RootStore = NewsletterSliceType & ImageSlice & HorizontalLineSlice & CalendarSlice & SelectionSlice & MetaSlice & {
+  textBlockMap: Record<string, TextBlockType>;
   textBlockOrder: string[];
+  textBlocks: TextBlockType[];
+  images: ImageElementType[];
+  sectionStyles: SectionStylesType;
+  layout: {
+    base: LayoutType;
+    variant: LayoutVariantType;
+  };
+  theme: ThemeType;
+  denseMode: boolean;
+  calendarData: CalendarDataType;
+  selectedElement: SelectedElementType;
+  title: string;
+  date: string;
+  selectElement?: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate', subType?: 'title' | 'content') => void;
 };
 
-export const useStore = create<StoreState>()((set, get, store) => ({
+export const useStore = create<RootStore>()((set, get, store) => ({
   // NewsletterSlice initial state
   ...createNewsletterSlice(set, get, store),
   ...createImageSlice(set, get, store),
@@ -31,7 +57,7 @@ export const useStore = create<StoreState>()((set, get, store) => ({
   textBlocks: buildInitialBlocks(),
   textBlockMap: (() => {
     const arr = buildInitialBlocks();
-    const map: Record<string, import('@/features/newsletter/types').TextBlock> = {};
+    const map: Record<string, TextBlockType> = {};
     for (const block of arr) {
       map[block.id] = block;
     }
@@ -44,6 +70,7 @@ export const useStore = create<StoreState>()((set, get, store) => ({
     const variant = base.variants[0];
     return { base, variant };
   })(),
+  sectionStyles: {},
   theme: allThemes[0],
   calendarData: initializeCalendarData(),
   setElementLocked: (id: string, type: 'text' | 'image' | 'horizontalLine', locked: boolean) => {

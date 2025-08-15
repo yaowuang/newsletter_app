@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { LayoutSelection } from '@/features/newsletter/types';
+import type { LayoutSelectionType } from '@/features/newsletter/types';
 import { TabRegistry } from './config/tab-registry';
 import { LayoutPicker } from './LayoutPicker';
 import { ThemePicker } from './ThemePicker';
@@ -21,8 +21,8 @@ interface StuffPanelProps {
   className?: string;
   
   // Legacy props (will be ignored but kept for backwards compatibility)
-  currentLayoutSelection?: LayoutSelection;
-  onLayoutChange?: (layout: LayoutSelection) => void;
+  currentLayoutSelection?: LayoutSelectionType;
+  onLayoutChange?: (layout: LayoutSelectionType) => void;
   currentTheme?: string;
   onThemeChange?: (theme: string) => void;
   onAddTextBlock?: () => void;

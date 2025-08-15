@@ -12,7 +12,7 @@ import {
 import { useStore } from '@/lib/store/index';
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import type { TextBlock, ImageElement } from '@/features/newsletter/types';
+import type { TextBlock, ImageElementType } from '@/features/newsletter/types';
 
 export default function BuilderPage() {
   // Fix selectElement type to accept 'horizontalLine'
@@ -63,7 +63,7 @@ export default function BuilderPage() {
   const validSubType: 'title' | 'content' | undefined = subType === 'title' || subType === 'content' ? subType : undefined;
   return base ? { ...base, subType: validSubType } as typeof base & { subType?: 'title' | 'content' } : undefined;
     } else if (selectedElement.type === 'image') {
-      return images.find((i: ImageElement) => i.id === selectedElement.id);
+      return images.find((i: ImageElementType) => i.id === selectedElement.id);
     } else if (selectedElement.type === 'horizontalLine') {
       return { id: selectedElement.id, type: 'horizontalLine' as const };
     } else if (selectedElement.type === 'calendarDate') {

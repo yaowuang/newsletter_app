@@ -2,18 +2,18 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { UI_CONSTANTS } from '@/lib/ui-constants';
 import { TextBlock as TextBlockComponent } from './TextBlock';
-import type { TextBlock, SectionStyles, LayoutSelection } from '@/features/newsletter/types';
-import type { Theme } from '@/lib/themes';
+import type { TextBlock, SectionStylesType, LayoutSelectionType } from '@/features/newsletter/types';
+import type { ThemeType } from '@/lib/themes';
 import { CSSProperties } from 'react';
 
 interface SectionsContainerProps {
   textBlocks: TextBlock[];
-  sectionStyles: SectionStyles;
-  theme: Theme;
+  sectionStyles: SectionStylesType;
+  theme: ThemeType;
   denseMode: boolean;
   selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
   onSelectElement: (id: string, type: 'text', subType?: 'title' | 'content') => void;
-  layoutSelection: LayoutSelection; // Add this to know how many sections the layout supports
+  layoutSelection: LayoutSelectionType; // Add this to know how many sections the layout supports
 }
 
 /**

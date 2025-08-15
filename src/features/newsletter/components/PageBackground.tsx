@@ -1,10 +1,10 @@
 import React from 'react';
-import type { Theme } from '@/lib/themes';
+import type { ThemeType } from '@/lib/themes';
 
 /**
  * Generates background image styles
  */
-function createBackgroundImageStyle(theme: Theme) {
+function createBackgroundImageStyle(theme: ThemeType) {
   if (!theme.styles.page.backgroundImage) return {};
   
   return {
@@ -19,7 +19,7 @@ function createBackgroundImageStyle(theme: Theme) {
 }
 
 interface PageBackgroundProps {
-  theme: Theme;
+  theme: ThemeType;
 }
 
 /**

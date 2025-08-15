@@ -1,10 +1,10 @@
-import type { Theme } from '@/lib/themes';
-import type { LayoutSelection } from '@/features/newsletter/types';
+import type { ThemeType } from '@/lib/themes';
+import type { LayoutSelectionType } from '@/features/newsletter/types';
 import { CSSProperties } from 'react';
 
 interface StyleConfig {
-  theme: Theme;
-  layoutSelection: LayoutSelection;
+  theme: ThemeType;
+  layoutSelection: LayoutSelectionType;
   denseMode: boolean;
 }
 
@@ -61,7 +61,7 @@ export function createDateStyle({ theme, layoutSelection, denseMode }: StyleConf
 /**
  * Generates background image styles
  */
-export function createBackgroundImageStyle(theme: Theme): CSSProperties {
+export function createBackgroundImageStyle(theme: ThemeType): CSSProperties {
   if (!theme.styles.page.backgroundImage) return {};
   
   return {

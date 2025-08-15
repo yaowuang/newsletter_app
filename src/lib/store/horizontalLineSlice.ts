@@ -1,12 +1,13 @@
 import { StateCreator } from 'zustand';
 import { nanoid } from 'nanoid';
-import { HorizontalLineElement } from '@/features/newsletter/types';
+import { HorizontalLineElementType } from '@/features/newsletter/types';
 import { horizontalLineLibrary } from '../horizontalLines';
+import { RootStore } from '.';
 
 export interface HorizontalLineSlice {
-	horizontalLines: HorizontalLineElement[];
-	addHorizontalLine: (props?: Partial<HorizontalLineElement>) => void;
-	updateHorizontalLine: (id: string, newProps: Partial<HorizontalLineElement>) => void;
+	horizontalLines: HorizontalLineElementType[];
+	addHorizontalLine: (props?: Partial<HorizontalLineElementType>) => void;
+	updateHorizontalLine: (id: string, newProps: Partial<HorizontalLineElementType>) => void;
 	deleteHorizontalLine: (id: string) => void;
 	setElementLocked_horizontalLine: (id: string, locked: boolean) => void;
 }
@@ -15,9 +16,9 @@ export const createHorizontalLineSlice: StateCreator<HorizontalLineSlice, [], []
   horizontalLines: [],
   addHorizontalLine: (props = {}) => {
     const defaultLibItem = horizontalLineLibrary.find(item => item.id === 'classic-solid');
-    const theme = (get() as { theme: string }).theme;
+    const theme = (get() as RootStore).theme;
     const defaultColor = props.color || defaultLibItem?.defaultColor || theme?.styles?.section?.borderColor || '#888';
-    const newLine: HorizontalLineElement = {
+    const newLine: HorizontalLineElementType = {
       id: nanoid(),
       type: 'horizontalLine',
       x: 40,

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Theme } from '@/lib/themes';
+import type { ThemeType } from '@/lib/themes';
 import { CSSProperties } from 'react';
 import { PastelRotateText } from '@/components/common/PastelRotateText';
 import { RainbowRotateText } from '@/components/common/RainbowRotateText';
@@ -7,7 +7,7 @@ import { RainbowRotateText } from '@/components/common/RainbowRotateText';
 interface NewsletterHeaderProps {
   title: string;
   date: string;
-  theme: Theme;
+  theme: ThemeType;
   denseMode: boolean;
 }
 

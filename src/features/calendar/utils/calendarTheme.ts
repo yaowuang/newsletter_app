@@ -1,4 +1,4 @@
-import { Theme } from '@/lib/themes';
+import { ThemeType } from '@/lib/themes';
 import { CalendarStyles } from './calendar';
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
@@ -54,7 +54,7 @@ function normalizeColorCandidate(candidate?: string): string | undefined {
   if (candidate === 'transparent') return undefined;
   return candidate;
 }
-function pickAccent(theme: Theme): string {
+function pickAccent(theme: ThemeType): string {
   const { title, section } = theme.styles;
   const candidates = [
     normalizeColorCandidate(title.color),
@@ -80,7 +80,7 @@ function weekendTint(accent: string, darkMode: boolean): string {
   }
   return base + (darkMode ? '30' : '20');
 }
-export function deriveCalendarStyles(theme: Theme): Partial<CalendarStyles> {
+export function deriveCalendarStyles(theme: ThemeType): Partial<CalendarStyles> {
   const pageBg = normalizeColorCandidate(theme.styles.page.backgroundColor) || '#FFFFFF';
   const sectionBg = normalizeColorCandidate(theme.styles.section.backgroundColor) || '#FFFFFF';
   const contentColor = normalizeColorCandidate(theme.styles.section.contentColor) || '#111827';
@@ -144,7 +144,7 @@ export function deriveCalendarStyles(theme: Theme): Partial<CalendarStyles> {
   }
   return base;
 }
-export function mergeDerivedCalendarStyles(theme: Theme, overrides?: CalendarStyles): CalendarStyles {
+export function mergeDerivedCalendarStyles(theme: ThemeType, overrides?: CalendarStyles): CalendarStyles {
   const derived = deriveCalendarStyles(theme);
   if (!overrides) return derived as CalendarStyles;
   const merged: Partial<CalendarStyles> = { ...derived };

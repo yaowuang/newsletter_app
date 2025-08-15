@@ -23,10 +23,6 @@ interface SplitCalendarCellProps {
 
 const SplitCalendarCell: React.FC<SplitCalendarCellProps> = (props) => {
   const {
-    dayIndex,
-    rowTop,
-    cellWidth,
-    cellHeight,
     calendarStyles,
     topCell,
     bottomCell,

@@ -87,21 +87,68 @@ export interface CalendarSlice {
 	resetCalendarStylesToDefaults: () => void;
 }
 
-export const export const createCalendarSlice: StateCreator<CalendarSlice, [], [], CalendarSlice> = (set) => ({
+export const createCalendarSlice: StateCreator<CalendarSlice, [], [], CalendarSlice> = (set) => ({
   calendarData: initializeCalendarData(),
   setCalendarDate: (date: Date) => set(state => ({
     calendarData: { ...state.calendarData, selectedDate: date }
   })),
   setEditingDateKey: (key: string | null) => set(state => ({
-    editingDateKey: key
+    calendarData: { ...state.calendarData, editingDateKey: key }
   })),
-  setCalendarStyle: (styleKey: keyof CalendarStyles, value: string | number | undefined) => set(state => ({
-    calendarStyles: { ...state.calendarStyles, [styleKey]: value }
+  setDraftContent: (content: string) => set(state => ({
+    calendarData: { ...state.calendarData, draftContent: content }
   })),
-  setCalendarStyles: (styles: Partial<CalendarStyles>) => set(state => ({
-    calendarStyles: { ...state.calendarStyles, ...styles }
+  setCellContent: (dateKey: string, content: string) => set(state => ({
+    calendarData: {
+      ...state.calendarData,
+      cellContents: {
+        ...state.calendarData.cellContents,
+        [dateKey]: content
+      }
+    }
+  })),
+  addCalendarEvent: (event) => set(state => ({
+    calendarData: {
+      ...state.calendarData,
+      customEvents: [...(state.calendarData.customEvents || []), event]
+    }
+  })),
+  updateCalendarEvent: (id, updates) => set(state => ({
+    calendarData: {
+      ...state.calendarData,
+      customEvents: (state.calendarData.customEvents || []).map((event) =>
+        event.id === id ? { ...event, ...updates } : event
+      )
+    }
+  })),
+  deleteCalendarEvent: (id) => set(state => ({
+    calendarData: {
+      ...state.calendarData,
+      customEvents: (state.calendarData.customEvents || []).filter((event) => event.id !== id)
+    }
+  })),
+  setCalendarStyle: (styleKey, value) => set(state => ({
+    calendarData: {
+      ...state.calendarData,
+      calendarStyles: {
+        ...state.calendarData.calendarStyles,
+        [styleKey]: value
+      }
+    }
+  })),
+  setCalendarStyles: (styles) => set(state => ({
+    calendarData: {
+      ...state.calendarData,
+      calendarStyles: {
+        ...state.calendarData.calendarStyles,
+        ...styles
+      }
+    }
   })),
   resetCalendarStylesToDefaults: () => set(state => ({
-    calendarStyles: getDefaultCalendarStyles()
-  }))
-});;;
+    calendarData: {
+      ...state.calendarData,
+      calendarStyles: initializeCalendarData().calendarStyles
+    }
+  })),
+});;

@@ -2,13 +2,13 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ImageSourceDialog from '@/components/common/ImageSourceDialog';
-import { Theme } from '@/lib/themes';
+import { ThemeType } from '@/lib/themes';
 import InspectorSection from '@/components/ui/InspectorSection';
 import FormGroup from '@/components/ui/FormGroup';
 
 interface PageBackgroundSectionProps {
   ids: { color: string; size: string; position: string; repeat: string };
-  themeStyles: Theme['styles']['page'];
+  themeStyles: ThemeType['styles']['page'];
   setBgColor?: (v: string) => void;
   setBgImage?: (v: string | null) => void;
   setBgSize?: (v: string | null) => void;

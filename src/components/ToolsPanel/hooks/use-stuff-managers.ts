@@ -3,8 +3,8 @@
 
 import { useState } from 'react';
 import { useStore } from '@/lib/store/index';
-import { LayoutSelection } from '@/features/newsletter/types';
-import { Theme } from '@/lib/themes';
+import { LayoutSelectionType } from '@/features/newsletter/types';
+import { ThemeType } from '@/lib/themes';
 import type { TextBlock } from '@/features/newsletter/types';
 
 // Layout management hook
@@ -15,7 +15,7 @@ export const useLayoutManager = () => {
   const addTextBlock = useStore(state => state.addTextBlock);
   const deleteTextBlock = useStore(state => state.deleteTextBlock);
   
-  const handleLayoutChange = (layout: LayoutSelection) => {
+  const handleLayoutChange = (layout: LayoutSelectionType) => {
     setLayout(layout);
     
     // Automatically adjust section count to match layout
@@ -66,7 +66,7 @@ export const useThemeManager = () => {
   const currentTheme = useStore(state => state.theme);
   const setTheme = useStore(state => state.setTheme);
 
-  const handleThemeChange = (theme: Theme) => {
+  const handleThemeChange = (theme: ThemeType) => {
     setTheme(theme);
   };
 

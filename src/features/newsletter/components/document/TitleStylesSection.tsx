@@ -5,7 +5,7 @@ import { FontSelect } from '@/features/newsletter/components/FontSelect';
 import { TextEffectPicker } from '@/components/ui/TextEffectPicker';
 import InspectorSection from '@/components/ui/InspectorSection';
 import FormGroup from '@/components/ui/FormGroup';
-import { TextAlign } from '@/lib/themes';
+import { TextAlignType } from '@/lib/themes';
 
 interface TitleStylesSectionProps {
   titleColorId: string;
@@ -15,7 +15,7 @@ interface TitleStylesSectionProps {
   value: { 
     color?: string; 
     fontFamily?: string; 
-    textAlign?: TextAlign;
+    textAlign?: TextAlignType;
     backgroundImage?: string;
     backgroundColor?: string;
     WebkitBackgroundClip?: string;
@@ -24,7 +24,7 @@ interface TitleStylesSectionProps {
   };
   setColor?: (v: string) => void;
   setFont?: (v: string) => void;
-  setAlign?: (v: TextAlign) => void;
+  setAlign?: (v: TextAlignType) => void;
   setTextEffect?: (effectId: string | undefined) => void;
 }
 
@@ -69,7 +69,7 @@ export const TitleStylesSection: React.FC<TitleStylesSectionProps> = ({
         <FontSelect id={titleFontId} value={value.fontFamily} onChange={val => setFont?.(val)} />
       </FormGroup>
       <FormGroup label="Title Align" id={titleAlignId} inline>
-        <Select value={value.textAlign || 'center'} onValueChange={v => setAlign?.(v as TextAlign)}>
+        <Select value={value.textAlign || 'center'} onValueChange={v => setAlign?.(v as TextAlignType)}>
           <SelectTrigger id={titleAlignId}><SelectValue placeholder="Alignment" /></SelectTrigger>
           <SelectContent>
             {(['left','center','right'] as const).map(a => <SelectItem key={a} value={a}>{a.charAt(0).toUpperCase()+a.slice(1)}</SelectItem>)}

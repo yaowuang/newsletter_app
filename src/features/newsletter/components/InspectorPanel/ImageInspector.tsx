@@ -1,6 +1,6 @@
 import React from "react";
 import { useStore } from '@/lib/store/index';
-import type { ImageElement } from "@/features/newsletter/types";
+import type { ImageElementType } from "@/features/newsletter/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import InspectorSection from '@/components/ui/InspectorSection';
@@ -8,8 +8,8 @@ import FormGroup from '@/components/ui/FormGroup';
 import LockButton from '@/components/ui/LockButton';
 
 interface ImageInspectorProps {
-  image: ImageElement;
-  onUpdateImage: (id: string, newProps: Partial<ImageElement>) => void;
+  image: ImageElementType;
+  onUpdateImage: (id: string, newProps: Partial<ImageElementType>) => void;
 }
 
 export const ImageInspector: React.FC<ImageInspectorProps> = ({ image, onUpdateImage }) => {

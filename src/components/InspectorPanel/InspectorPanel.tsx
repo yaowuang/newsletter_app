@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import type { TextBlock, ImageElement, SectionStyle } from "@/features/newsletter/types";
+import type { TextBlock, ImageElementType, SectionStyleType } from "@/features/newsletter/types";
 import { HorizontalLineInspector } from '@/features/newsletter/components/InspectorPanel/HorizontalLineInspector';
 import { TextInspector } from '@/features/newsletter/components/InspectorPanel/TextInspector';
 import { DocumentInspector } from '@/features/newsletter/components/InspectorPanel/DocumentInspector';
@@ -10,13 +10,13 @@ import { DateInspector } from '@/features/calendar/components/DateInspector';
 import { useStore } from '@/lib/store/index';
 import { ImageInspector } from '@/features/newsletter/components/InspectorPanel/ImageInspector';
 
-type SelectableElement = (TextBlock & { subType?: 'title' | 'content' }) | ImageElement | { id: string; type: 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' };
+type SelectableElement = (TextBlock & { subType?: 'title' | 'content' }) | ImageElementType | { id: string; type: 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' };
 
 interface InspectorPanelProps {
   selectedElement?: SelectableElement;
   onUpdateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
-  onUpdateImage: (id: string, newProps: Partial<ImageElement>) => void;
-  onStyleChange: (blockId: string, newStyles: Partial<SectionStyle>) => void;
+  onUpdateImage: (id: string, newProps: Partial<ImageElementType>) => void;
+  onStyleChange: (blockId: string, newStyles: Partial<SectionStyleType>) => void;
   title: string;
   date: string;
   onTitleChange: (title: string) => void;
@@ -173,7 +173,7 @@ export function InspectorPanel({
       );
     } else if (selectedElement.type === 'image') {
       return <ImageInspector 
-        image={selectedElement as ImageElement}
+        image={selectedElement as ImageElementType}
         onUpdateImage={onUpdateImage}
       />;
     } else if (selectedElement.type === 'horizontalLine') {

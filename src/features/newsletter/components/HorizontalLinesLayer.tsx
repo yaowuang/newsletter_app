@@ -4,20 +4,20 @@ import { cn } from '@/lib/utils';
 import { UI_CONSTANTS } from '@/lib/ui-constants';
 import { horizontalLineLibrary } from '@/lib/horizontalLines';
 import HorizontalLine from '@/components/ui/HorizontalLine';
-import type { HorizontalLineElement } from '@/features/newsletter/types';
+import type { HorizontalLineElementType } from '@/features/newsletter/types';
 
 interface HorizontalLinesLayerProps {
-  horizontalLines: HorizontalLineElement[];
+  horizontalLines: HorizontalLineElementType[];
   selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
   zoom: number;
   onSelectElement: (id: string, type: 'horizontalLine') => void;
-  onUpdateHorizontalLine: (id: string, updates: Partial<HorizontalLineElement>) => void;
+  onUpdateHorizontalLine: (id: string, updates: Partial<HorizontalLineElementType>) => void;
 }
 
 /**
  * Helper function to get the effective color for a horizontal line
  */
-function getEffectiveLineColor(line: HorizontalLineElement): string {
+function getEffectiveLineColor(line: HorizontalLineElementType): string {
   // Find the library item for this line
   const libItem = horizontalLineLibrary.find(item => {
     if (line.style === 'clipart' && line.clipartSrc) {

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStore } from '@/lib/store/index';
-import type { LayoutSelection, TextBlock, ImageElement, SectionStyles } from '@/features/newsletter/types';
-import type { Theme } from '@/lib/themes';
+import type { LayoutSelectionType, TextBlock, ImageElementType, SectionStylesType } from '@/features/newsletter/types';
+import type { ThemeType } from '@/lib/themes';
 import { CSSProperties } from 'react';
 import { updateHorizontalLinePositions } from '@/features/newsletter/components/utils/positionUtils';
 
@@ -19,13 +19,13 @@ interface CanvasPanelProps {
   title: string;
   date: string;
   textBlocks: TextBlock[];
-  images: ImageElement[];
-  layoutSelection: LayoutSelection;
+  images: ImageElementType[];
+  layoutSelection: LayoutSelectionType;
   onSelectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate', subType?: 'title' | 'content') => void;
   selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' } | null;
-  sectionStyles: SectionStyles;
-  theme: Theme;
-  onUpdateImage: (id: string, newProps: Partial<ImageElement>) => void;
+  sectionStyles: SectionStylesType;
+  theme: ThemeType;
+  onUpdateImage: (id: string, newProps: Partial<ImageElementType>) => void;
 }
 
 /**

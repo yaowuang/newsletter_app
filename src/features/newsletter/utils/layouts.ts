@@ -2,7 +2,7 @@
 // without the user manually inserting it. For now we support horizontal line
 // separators placed relative to structural blocks. Rendering code can inspect
 // these and create / position HorizontalLineElements intelligently.
-export type LayoutDecoration = {
+export type LayoutDecorationType = {
   kind: 'separator';
   // Reference to a horizontal line style id (from horizontalLineLibrary) OR
   // the special value 'themed' meaning pick the first matching themed style.
@@ -15,7 +15,7 @@ export type LayoutDecoration = {
   sectionIndex?: number;
 };
 
-export type LayoutVariant = {
+export type LayoutVariantType = {
   name: string;
   gridTemplateColumns: string;
   gridTemplateRows: string;
@@ -24,7 +24,7 @@ export type LayoutVariant = {
   titleAlign?: 'left' | 'center' | 'right';
   dateAlign?: 'left' | 'center' | 'right';
   // Optional decorative helpers
-  decorations?: LayoutDecoration[];
+  decorations?: LayoutDecorationType[];
   // Approximate recommended character counts per section (title+content) for this variant.
   // Length must equal parent layout's sections. Used to auto-map existing content
   // to best-fitting section sizes when the user switches variants/layouts.
@@ -33,13 +33,13 @@ export type LayoutVariant = {
   orientation?: 'portrait' | 'landscape';
 };
 
-export type Layout = {
+export type LayoutType = {
   id: string;            // stable id for persistence (new)
   name: string;          // display name
   legacyName?: string;   // previous name (for migration / reference)
   sections: number;
   gridTemplateAreas: string;
-  variants: LayoutVariant[]; // each variant can tailor alignments & decorations
+  variants: LayoutVariantType[]; // each variant can tailor alignments & decorations
   category?: string;     // optional grouping category
   notes?: string;        // optional notes
   type?: 'newsletter' | 'calendar'; // layout type for special handling
@@ -51,7 +51,7 @@ function areas(lines: string[]): string {
   return lines.map(l => `"${l}"`).join(' ');
 }
 
-export const newsletterLayouts: Layout[] = [
+export const newsletterLayouts: LayoutType[] = [
   // 1 Section
   {
     id: 'one-single', legacyName: 'Single', name: 'One Column', sections: 1, category: 'Basic',
