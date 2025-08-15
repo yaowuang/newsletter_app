@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface UseInlineEditOptions<T = string> {
   initialValue: T;
@@ -52,7 +52,10 @@ export function useInlineEdit<T = string>({
   }, []);
 
   // Reset draft value if initialValue changes
-  // (optional: can add useEffect if needed)
+  useEffect(() => {
+    setDraftValue(initialValue);
+    setOriginalValue(initialValue);
+  }, [initialValue]);
 
   return {
     isEditing,

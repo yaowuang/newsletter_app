@@ -23,13 +23,17 @@ export const createMetaSlice: StateCreator<RootStore, [], [], MetaSlice> = (set,
   loadSnapshot: (snapshot) => {
     try {
       if (!snapshot || typeof snapshot !== 'object') return;
-      // Rebuild textBlockMap and textBlockOrder from textBlocks array if present
-      let textBlockMap: Record<string, import('@/features/newsletter/types').TextBlock> | undefined = undefined;
-      let textBlockOrder: string[] | undefined = undefined;
-      if (Array.isArray(snapshot.textBlocks)) {
-        textBlockMap = {};
-        textBlockOrder = [];
-        for (const block of snapshot.textBlocks) {
+      // Always set textBlocks, textBlockMap, and textBlockOrder in sync
+      let textBlocks: import('@/features/newsletter/types').TextBlock[] = Array.isArray(snapshot.textBlocks) ? [...snapshot.textBlocks] : [...get().textBlocks];
+      let textBlockMap: Record<string, import('@/features/newsletter/types').TextBlock> = {};
+      let textBlockOrder: string[] = [];
+      if (snapshot.textBlockMap && snapshot.textBlockOrder) {
+        textBlockMap = { ...snapshot.textBlockMap };
+        textBlockOrder = [...snapshot.textBlockOrder];
+        // Optionally, sync textBlocks array to match order
+        textBlocks = textBlockOrder.map(id => textBlockMap[id]).filter(Boolean);
+      } else {
+        for (const block of textBlocks) {
           if (block && block.id) {
             textBlockMap[block.id] = block;
             textBlockOrder.push(block.id);
@@ -37,17 +41,17 @@ export const createMetaSlice: StateCreator<RootStore, [], [], MetaSlice> = (set,
         }
       }
       set((state: RootStore) => ({
-        title: snapshot.title ?? state.title,
-        date: snapshot.date ?? state.date,
-        textBlocks: Array.isArray(snapshot.textBlocks) ? snapshot.textBlocks : state.textBlocks,
-        textBlockMap: textBlockMap ?? state.textBlockMap,
-        textBlockOrder: textBlockOrder ?? state.textBlockOrder,
-        images: Array.isArray(snapshot.images) ? snapshot.images : state.images,
-        sectionStyles: snapshot.sectionStyles ?? state.sectionStyles,
-        theme: snapshot.theme ?? state.theme,
-        layout: snapshot.layout ?? state.layout,
-        denseMode: snapshot.denseMode ?? state.denseMode,
-        calendarData: snapshot.calendarData ?? state.calendarData,
+        title: snapshot.title !== undefined ? ('' + snapshot.title) : state.title,
+        date: snapshot.date !== undefined ? ('' + snapshot.date) : state.date,
+        textBlocks,
+        textBlockMap,
+        textBlockOrder,
+        images: Array.isArray(snapshot.images) ? [...snapshot.images] : [...state.images],
+        sectionStyles: snapshot.sectionStyles ? { ...snapshot.sectionStyles } : { ...state.sectionStyles },
+        theme: snapshot.theme ? { ...snapshot.theme } : { ...state.theme },
+        layout: snapshot.layout ? { ...snapshot.layout } : { ...state.layout },
+        denseMode: snapshot.denseMode !== undefined ? !!snapshot.denseMode : state.denseMode,
+        calendarData: snapshot.calendarData ? { ...snapshot.calendarData } : { ...state.calendarData },
         selectedElement: null,
       }));
     } catch (e) {

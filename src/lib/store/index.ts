@@ -13,7 +13,10 @@ import { allLayouts } from '@/features/newsletter/utils/layouts';
 import { allThemes } from '@/lib/themes';
 import { initializeCalendarData } from './calendarSlice';
 
-type StoreState = NewsletterSlice & ImageSlice & HorizontalLineSlice & CalendarSlice & SelectionSlice & MetaSlice;
+type StoreState = NewsletterSlice & ImageSlice & HorizontalLineSlice & CalendarSlice & SelectionSlice & MetaSlice & {
+  textBlockMap: Record<string, import('@/features/newsletter/types').TextBlock>;
+  textBlockOrder: string[];
+};
 
 export const useStore = create<StoreState>()((set, get, store) => ({
   // NewsletterSlice initial state
