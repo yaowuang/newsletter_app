@@ -65,17 +65,18 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
     return `${y}-${m}-${da}`;
   }, []);
   const computeBusinessWeekRange = React.useCallback((iso: string) => {
-    const [y, m, d] = iso.split('-').map(Number);
-    const base = new Date(y, m - 1, d);
-    if (isNaN(base.getTime())) return iso;
-    const day = base.getDay();
-    const offsetToMonday = (day + 6) % 7;
-    const monday = new Date(base);
-    monday.setDate(base.getDate() - offsetToMonday);
-    const friday = new Date(monday);
-    friday.setDate(monday.getDate() + 4);
-    return `${formatISO(monday)} to ${formatISO(friday)}`;
-  }, [formatISO]);
+  const [y, m, d] = iso.split('-').map(Number);
+  const base = new Date(y, m - 1, d);
+  if (isNaN(base.getTime())) return iso;
+  // Always use Monday as the start of the business week (ISO week)
+  const day = base.getDay(); // 0 (Sun) - 6 (Sat)
+  const offsetToMonday = (day + 6) % 7; // 0 (Mon), 1 (Tue), ..., 6 (Sun)
+  const monday = new Date(base);
+  monday.setDate(base.getDate() - offsetToMonday);
+  const friday = new Date(monday);
+  friday.setDate(monday.getDate() + 4);
+  return `${formatISO(monday)} to ${formatISO(friday)}`;
+}, [formatISO]);
 
   // If in week mode but date is a plain single date, convert to a business week range
   React.useEffect(() => {

@@ -22,12 +22,49 @@ interface TitleDateSectionProps {
 export const TitleDateSection: React.FC<TitleDateSectionProps> = ({ title, date, dateMode, onTitleChange, onDateChange, onDateModeChange, computeBusinessWeekRange, toDateInputValue, formatISO }) => {
   const titleInputId = React.useId();
   const dateInputId = React.useId();
-  const dateInputValue = toDateInputValue(date);
 
-  const handleDateChange = (newIso: string) => {
-    if (dateMode === 'single') onDateChange(newIso);
-    else if (dateMode === 'week') onDateChange(computeBusinessWeekRange(newIso));
-    else onDateChange(newIso);
+  // --- Local date helpers ---
+  // Converts ISO string (UTC or local) to YYYY-MM-DD in local time
+  function isoToLocalDateString(iso: string): string {
+    if (!iso) return '';
+    // If iso is already YYYY-MM-DD, just return it
+    if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
+    // Parse as local date if possible
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const da = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${da}`;
+  }
+  // Converts YYYY-MM-DD (from input) to YYYY-MM-DD (no time)
+  function localDateStringToISO(localStr: string): string {
+    if (!localStr) return '';
+    // Just return the string, don't convert to ISO
+    return localStr;
+  }
+
+  // Use local date string for input value
+  const dateInputValue = isoToLocalDateString(date);
+
+  const handleDateChange = (newVal: string) => {
+    if (!newVal) return;
+    if (dateMode === 'single') {
+      // Store and display as YYYY-MM-DD only
+      onDateChange(newVal);
+    } else if (dateMode === 'week') {
+      // Parse newVal as local date (not UTC) to avoid off-by-one errors
+      const [y, m, d] = newVal.split('-').map(Number);
+      const localDate = new Date(y, m - 1, d);
+      const day = localDate.getDay();
+      const offsetToMonday = (day + 6) % 7;
+      const monday = new Date(localDate);
+      monday.setDate(localDate.getDate() - offsetToMonday);
+      const mondayStr = `${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, '0')}-${String(monday.getDate()).padStart(2, '0')}`;
+      onDateChange(mondayStr);
+    } else {
+      onDateChange(newVal);
+    }
   };
 
   const titleInputRef = React.useRef<HTMLInputElement | null>(null);
@@ -78,9 +115,31 @@ export const TitleDateSection: React.FC<TitleDateSectionProps> = ({ title, date,
       </FormGroup>
       {dateMode !== 'month' && (
         <FormGroup label={dateMode === 'week' ? 'Week Start' : 'Date'} id={`${dateInputId}-date`}>
-          <Input id={dateInputId} name="newsletterDate" type="date" value={dateMode === 'week' ? (dateInputValue || '') : (dateInputValue)} onChange={e => handleDateChange(e.target.value)} />
+          <Input
+            id={dateInputId}
+            name="newsletterDate"
+            type="date"
+            value={(() => {
+              if (dateMode === 'week' && date) {
+                // If date is a week range, extract the Monday
+                const match = date.match(/^(\d{4}-\d{2}-\d{2}) to/);
+                if (match) return match[1];
+                // If date is just a YYYY-MM-DD, use it
+                if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+              }
+              return dateInputValue;
+            })()}
+            onChange={e => handleDateChange(e.target.value)}
+          />
           {dateMode === 'week' && dateInputValue && (
-            <p className="text-[11px] text-gray-500 dark:text-gray-400">Week: {computeBusinessWeekRange(dateInputValue)}</p>
+            <p className="text-[11px] text-gray-500 dark:text-gray-400">Week: {computeBusinessWeekRange((() => {
+              if (dateMode === 'week' && date) {
+                const match = date.match(/^(\d{4}-\d{2}-\d{2}) to/);
+                if (match) return match[1];
+                if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+              }
+              return dateInputValue;
+            })())}</p>
           )}
         </FormGroup>
       )}

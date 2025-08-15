@@ -34,15 +34,19 @@ function formatDisplayDate(raw: string): string {
   const isoRange = /^(\d{4}-\d{2}-\d{2})\s*(?:to|–|-)\s*(\d{4}-\d{2}-\d{2})$/;
   
   if (isoSingle.test(raw)) {
-    const d = new Date(raw);
-    if (!isNaN(d.getTime())) return fmt.format(d);
+    // Parse as local date to avoid UTC offset issues
+    const [y, m, d] = raw.split('-').map(Number);
+    const localDate = new Date(y, m - 1, d);
+    if (!isNaN(localDate.getTime())) return fmt.format(localDate);
     return raw;
   }
   
   const rangeMatch = raw.match(isoRange);
   if (rangeMatch) {
-    const start = new Date(rangeMatch[1]);
-    const end = new Date(rangeMatch[2]);
+    const [sy, sm, sd] = rangeMatch[1].split('-').map(Number);
+    const [ey, em, ed] = rangeMatch[2].split('-').map(Number);
+    const start = new Date(sy, sm - 1, sd);
+    const end = new Date(ey, em - 1, ed);
     if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
       return `${fmt.format(start)} - ${fmt.format(end)}`;
     }
