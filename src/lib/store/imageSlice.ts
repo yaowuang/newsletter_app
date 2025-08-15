@@ -10,7 +10,7 @@ export interface ImageSlice {
 	setElementLocked_image: (id: string, locked: boolean) => void;
 }
 
-export const createImageSlice: StateCreator<ImageSlice, [], [], ImageSlice> = (set, get) => ({
+export const export const createImageSlice: StateCreator<ImageSlice, [], [], ImageSlice> = (set) => ({
   images: [],
   addImage: () => {
     const newImage: ImageElement = { id: nanoid(), type: 'image', src: '', x: 50, y: 50, width: 200, height: 150 };
@@ -18,24 +18,15 @@ export const createImageSlice: StateCreator<ImageSlice, [], [], ImageSlice> = (s
   },
   updateImage: (id, newProps) => {
     set(state => ({
-      images: state.images.map(img => {
-        if (img.id !== id) return img;
-        if (img.locked && !('locked' in newProps)) return img;
-        return { ...img, ...newProps };
-      })
+      images: state.images.map(img => img.id === id ? { ...img, ...newProps } : img)
     }));
   },
-  deleteImage: (id) => {
-  set(state => {
-    if (state.images.find(i => i.id === id && i.locked)) return { ...state };
-    return {
-      images: state.images.filter(i => i.id !== id)
-    };
-  });
-},
-  setElementLocked_image: (id, locked) => {
+  removeImage: (id) => {
+    set(state => ({ images: state.images.filter(img => img.id !== id) }));
+  },
+  setElementLocked_image: (id: string, locked: boolean) => {
     set(state => ({
       images: state.images.map(img => img.id === id ? { ...img, locked } : img)
     }));
-  },
-});;
+  }
+});;;

@@ -1,5 +1,4 @@
 import React from 'react';
-import { basicMarkdownToHtml } from '@/lib/markdown';
 import { MarkdownModalEditor } from '@/components/common/MarkdownModalEditor';
 import { MarkdownRenderer } from '@/components/common/MarkdownRenderer';
 

@@ -5,11 +5,11 @@ import ColorInputWithReset from '@/components/ui/ColorInputWithReset';
 import type { CalendarStyles } from '@/features/calendar/types';
 
 interface WeekendSectionProps {
-  userCalendarStyles: any;
-  theme: any;
+  userCalendarStyles: Record<string, unknown>;
+  theme: Record<string, unknown>;
   setCalendarStyle: (key: keyof CalendarStyles, value: string | number | undefined) => void;
   ids: Record<string, string>;
-  effective: any;
+  effective: Record<string, unknown>;
 }
 
 const WeekendSection: React.FC<WeekendSectionProps> = ({ userCalendarStyles, theme, setCalendarStyle, ids, effective }) => (

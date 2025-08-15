@@ -6,12 +6,12 @@ import ColorInputWithReset from '@/components/ui/ColorInputWithReset';
 import type { CalendarStyles } from '@/features/calendar/types';
 
 interface CellSectionProps {
-  userCalendarStyles: any;
-  derived: any;
-  theme: any;
+  userCalendarStyles: Record<string, unknown>;
+  derived: Record<string, unknown>;
+  theme: Record<string, unknown>;
   setCalendarStyle: (key: keyof CalendarStyles, value: string | number | undefined) => void;
   ids: Record<string, string>;
-  effective: any;
+  effective: Record<string, unknown>;
 }
 
 const CellSection: React.FC<CellSectionProps> = ({ userCalendarStyles, derived, theme, setCalendarStyle, ids, effective }) => (

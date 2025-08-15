@@ -6,32 +6,47 @@ import { HorizontalLineSlice } from './horizontalLineSlice';
 import { CalendarSlice } from './calendarSlice';
 import { SelectionSlice } from './selectionSlice';
 
+import type { TextBlock, ImageElement, SectionStyles, EditorSnapshot } from '@/features/newsletter/types';
+import type { Theme } from '@/lib/themes';
+import type { Layout } from '@/features/newsletter/utils/layouts';
+import type { CalendarData } from '@/features/calendar/types';
+
+
 
 export interface MetaSlice {
-  loadSnapshot: (snapshot: any) => void;
+  loadSnapshot: (snapshot: EditorSnapshot) => void;
   setSectionCount: (count: number) => void;
   setDenseMode: (denseMode: boolean) => void;
 }
 
-// Use the root store type for set/get
+
 type RootStore = NewsletterSlice & ImageSlice & HorizontalLineSlice & CalendarSlice & SelectionSlice & MetaSlice & {
-  textBlockMap: Record<string, any>;
+  textBlockMap: Record<string, TextBlock>;
   textBlockOrder: string[];
+  textBlocks: TextBlock[];
+  images: ImageElement[];
+  sectionStyles: SectionStyles;
+  theme: Theme;
+  layout: Layout;
+  denseMode: boolean;
+  calendarData: CalendarData;
+  selectedElement: string | null;
+  title: string;
+  date: string;
+  selectElement?: (el: string | null) => void;
 };
 
 export const createMetaSlice: StateCreator<RootStore, [], [], MetaSlice> = (set, get) => ({
   loadSnapshot: (snapshot) => {
     try {
       if (!snapshot || typeof snapshot !== 'object') return;
-      // Always set textBlocks, textBlockMap, and textBlockOrder in sync
-      let textBlocks: import('@/features/newsletter/types').TextBlock[] = Array.isArray(snapshot.textBlocks) ? [...snapshot.textBlocks] : [...get().textBlocks];
-      let textBlockMap: Record<string, import('@/features/newsletter/types').TextBlock> = {};
+      let textBlocks = Array.isArray(snapshot.textBlocks) ? [...snapshot.textBlocks] : [...get().textBlocks];
+      let textBlockMap: Record<string, TextBlock> = {};
       let textBlockOrder: string[] = [];
       if (snapshot.textBlockMap && snapshot.textBlockOrder) {
         textBlockMap = { ...snapshot.textBlockMap };
         textBlockOrder = [...snapshot.textBlockOrder];
-        // Optionally, sync textBlocks array to match order
-        textBlocks = textBlockOrder.map(id => textBlockMap[id]).filter(Boolean);
+        textBlocks = textBlockOrder.map(id => textBlockMap[id]).filter((b): b is TextBlock => Boolean(b));
       } else {
         for (const block of textBlocks) {
           if (block && block.id) {
@@ -41,8 +56,8 @@ export const createMetaSlice: StateCreator<RootStore, [], [], MetaSlice> = (set,
         }
       }
       set((state: RootStore) => ({
-        title: snapshot.title !== undefined ? ('' + snapshot.title) : state.title,
-        date: snapshot.date !== undefined ? ('' + snapshot.date) : state.date,
+        title: snapshot.title !== undefined ? String(snapshot.title) : state.title,
+        date: snapshot.date !== undefined ? String(snapshot.date) : state.date,
         textBlocks,
         textBlockMap,
         textBlockOrder,
@@ -59,20 +74,20 @@ export const createMetaSlice: StateCreator<RootStore, [], [], MetaSlice> = (set,
     }
   },
   setSectionCount: (count) => {
-    const state = get() as RootStore;
+    const state = get();
     const currentBlocks = state.textBlocks;
     if (count === currentBlocks.length) return;
     if (count > currentBlocks.length) {
       const newBlocks = Array.from({ length: count - currentBlocks.length }, (_, i) =>
         createUserTextBlock(currentBlocks.length + i)
       );
-      set({ textBlocks: [...currentBlocks, ...newBlocks] } as Partial<RootStore>);
+      set({ textBlocks: [...currentBlocks, ...newBlocks] });
     } else {
-      set({ textBlocks: currentBlocks.slice(0, count) } as Partial<RootStore>);
+      set({ textBlocks: currentBlocks.slice(0, count) });
     }
     if (typeof state.selectElement === 'function') {
       state.selectElement(null);
     }
   },
-  setDenseMode: (denseMode) => set({ denseMode } as Partial<RootStore>),
+  setDenseMode: (denseMode) => set({ denseMode }),
 });

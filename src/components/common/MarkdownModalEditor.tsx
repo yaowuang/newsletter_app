@@ -27,6 +27,8 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
   // Ref for focusing
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
   const modalRef = React.useRef<HTMLDivElement | null>(null);
+  // Track if modal is already closing to avoid double-calls
+  const closingRef = React.useRef(false);
 
   React.useEffect(() => {
     if (textareaRef.current) {
@@ -109,9 +111,6 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
   };
 
   if (typeof window === 'undefined' || typeof document === 'undefined') return null;
-
-  // Track if modal is already closing to avoid double-calls
-  const closingRef = React.useRef(false);
 
   // Accept and close modal on blur
   const handleBlur = () => {

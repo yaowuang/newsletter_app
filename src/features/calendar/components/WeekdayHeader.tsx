@@ -5,7 +5,7 @@ interface WeekdayHeaderProps {
   cellWidth: number;
   titleHeight: number;
   headerHeight: number;
-  calendarStyles: any;
+  calendarStyles: Record<string, unknown>;
   getWeekdayStyles: () => React.CSSProperties;
 }
 

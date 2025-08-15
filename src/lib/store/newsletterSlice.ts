@@ -44,7 +44,7 @@ export interface NewsletterSlice {
 export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], NewsletterSlice> = (set, get) => ({
   addTextBlock: (id?: string) => {
     // Add a new text block with a unique id and default content, or restore by id
-    let blockId = id || nanoid();
+    const blockId = id || nanoid();
     set(state => {
       // If block already exists in map, just add to order
       if (state.textBlockMap[blockId]) {

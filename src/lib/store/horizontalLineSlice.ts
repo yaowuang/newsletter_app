@@ -15,7 +15,7 @@ export const createHorizontalLineSlice: StateCreator<HorizontalLineSlice, [], []
   horizontalLines: [],
   addHorizontalLine: (props = {}) => {
     const defaultLibItem = horizontalLineLibrary.find(item => item.id === 'classic-solid');
-    const theme = (get() as any).theme;
+    const theme = (get() as { theme: string }).theme;
     const defaultColor = props.color || defaultLibItem?.defaultColor || theme?.styles?.section?.borderColor || '#888';
     const newLine: HorizontalLineElement = {
       id: nanoid(),

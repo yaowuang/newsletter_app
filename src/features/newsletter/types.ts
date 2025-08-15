@@ -3,7 +3,7 @@
 
 import { Theme } from '@/lib/themes';
 import { Layout, LayoutVariant } from '@/features/newsletter/utils/layouts';
-import { CalendarData, CalendarEvent, CalendarStyles } from '@/features/calendar/types';
+import { CalendarData } from '@/features/calendar/types';
 
 export type TextBlock = {
   id: string;

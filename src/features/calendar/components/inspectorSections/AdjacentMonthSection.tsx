@@ -6,10 +6,10 @@ import { Input } from '@/components/ui/input';
 import type { CalendarStyles } from '@/features/calendar/types';
 
 interface AdjacentMonthSectionProps {
-  userCalendarStyles: any;
+  userCalendarStyles: Record<string, unknown>;
   setCalendarStyle: (key: keyof CalendarStyles, value: string | number | undefined) => void;
   ids: Record<string, string>;
-  effective: any;
+  effective: Record<string, unknown>;
 }
 
 const AdjacentMonthSection: React.FC<AdjacentMonthSectionProps> = ({ userCalendarStyles, setCalendarStyle, ids, effective }) => (

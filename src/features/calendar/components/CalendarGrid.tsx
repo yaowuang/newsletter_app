@@ -1,12 +1,8 @@
 import React from 'react';
-import { MarkdownModalEditor } from '@/components/common/MarkdownModalEditor';
-import { PastelRotateText } from '@/components/common/PastelRotateText';
-import { RainbowRotateText } from '@/components/common/RainbowRotateText';
 import { useStore } from '@/lib/store/index';
 import { generateCalendarGrid, getWeekdayNames, formatCalendarTitle } from '../utils/calendar';
 import { mergeDerivedCalendarStyles } from '../utils/calendarTheme';
 import type { CalendarCell as CalendarCellType } from '../utils/calendar';
-import { basicMarkdownToHtml } from '@/lib/markdown';
 
 interface CalendarGridProps {
   containerWidth: number;
@@ -23,8 +19,8 @@ import SplitCalendarCell from './SplitCalendarCell';
 
 
 export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, containerHeight, onSelectElement }) => {
-  const { calendarData, theme, setCellContent, setEditingDateKey, setDraftContent } = useStore();
-  const { selectedDate, cellContents, calendarStyles: userCalendarStyles = {}, editingDateKey, draftContent } = calendarData;
+  const { calendarData, theme, setEditingDateKey, setDraftContent } = useStore();
+  const { selectedDate, cellContents, calendarStyles: userCalendarStyles = {} } = calendarData;
   const calendarStyles = mergeDerivedCalendarStyles(theme, userCalendarStyles);
 
   // Generate calendar grid for selected month
@@ -148,7 +144,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
         cellWidth={cellWidth}
         titleHeight={titleHeight}
         headerHeight={headerHeight}
-        calendarStyles={calendarStyles}
+        calendarStyles={calendarStyles as Record<string, unknown>}
         getWeekdayStyles={getWeekdayStyles}
       />
       {calendarGrid.weeks.slice(0, 4).map((week: CalendarCellType[], weekIndex: number) => (
@@ -233,7 +229,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
               rowTop={rowTop}
               cellWidth={cellWidth}
               cellHeight={cellHeight}
-              calendarStyles={calendarStyles}
+              calendarStyles={calendarStyles as Record<string, unknown>}
               topCell={topCell}
               bottomCell={bottomCell}
               topCellContent={getCellContent(topCell.date)}

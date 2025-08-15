@@ -7,13 +7,13 @@ import ColorInputWithReset from '@/components/ui/ColorInputWithReset';
 import type { CalendarStyles } from '@/features/calendar/types';
 
 interface HeaderSectionProps {
-  userCalendarStyles: any;
-  derived: any;
-  theme: any;
+  userCalendarStyles: Record<string, unknown>;
+  derived: Record<string, unknown>;
+  theme: Record<string, unknown>;
   setCalendarStyle: (key: keyof CalendarStyles, value: string | number | undefined) => void;
   setThemeTitleTextEffect?: (id: string | undefined) => void;
   ids: Record<string, string>;
-  effective: any;
+  effective: Record<string, unknown>;
 }
 
 const HeaderSection: React.FC<HeaderSectionProps> = ({ userCalendarStyles, derived, theme, setCalendarStyle, setThemeTitleTextEffect, ids, effective }) => (

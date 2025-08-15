@@ -8,7 +8,7 @@ import { createSelectionSlice, SelectionSlice } from './selectionSlice';
 import { createMetaSlice, MetaSlice } from './metaSlice';
 
 // Import any initializers needed for state
-import { buildInitialBlocks, createUserTextBlock } from '../initialData';
+import { buildInitialBlocks,  } from '../initialData';
 import { allLayouts } from '@/features/newsletter/utils/layouts';
 import { allThemes } from '@/lib/themes';
 import { initializeCalendarData } from './calendarSlice';

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import CalendarCellContent from './CalendarCellContent';
 import type { CalendarCell as CalendarCellType } from '../utils/calendar';
 import { useStore } from '@/lib/store/index';
@@ -9,7 +9,7 @@ interface SplitCalendarCellProps {
   rowTop: number;
   cellWidth: number;
   cellHeight: number;
-  calendarStyles: any;
+  calendarStyles: Record<string, unknown>;
   topCell: CalendarCellType;
   bottomCell?: CalendarCellType;
   topCellContent: string;
@@ -18,11 +18,25 @@ interface SplitCalendarCellProps {
   bottomStyles: React.CSSProperties;
   toDateKey: (d: Date) => string;
   onClick: (date: Date) => void;
-  onDoubleClick: (date: Date) => void;
+
 }
 
 const SplitCalendarCell: React.FC<SplitCalendarCellProps> = (props) => {
-  const { dayIndex, rowTop, cellWidth, cellHeight, calendarStyles, topCell, bottomCell, topCellContent, bottomCellContent, topStyles, bottomStyles, toDateKey, onClick, onDoubleClick } = props;
+  const {
+    dayIndex,
+    rowTop,
+    cellWidth,
+    cellHeight,
+    calendarStyles,
+    topCell,
+    bottomCell,
+    topCellContent,
+    bottomCellContent,
+    topStyles,
+    bottomStyles,
+    toDateKey,
+    onClick
+  } = props;
 
   const editingDateKey = useStore(s => s.calendarData.editingDateKey);
   const draftContent = useStore(s => s.calendarData.draftContent) ?? '';
@@ -64,20 +78,8 @@ const SplitCalendarCell: React.FC<SplitCalendarCellProps> = (props) => {
   };
 
   return (
+    <>
     <div
-      style={{
-        position: 'absolute',
-        left: dayIndex * cellWidth,
-        top: rowTop,
-        width: cellWidth,
-        height: cellHeight,
-        display: 'flex',
-        flexDirection: 'column',
-        border: `1px solid ${calendarStyles.cellBorderColor || '#e5e7eb'}`,
-        boxSizing: 'border-box'
-      }}
-    >
-      <div
         onClick={e => {
           e.stopPropagation();
           onClick(topCell.date);
@@ -157,7 +159,7 @@ const SplitCalendarCell: React.FC<SplitCalendarCellProps> = (props) => {
           </>
         )}
       </div>
-    </div>
+      </>
   );
 }
 

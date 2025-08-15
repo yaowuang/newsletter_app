@@ -22,7 +22,7 @@ export default function BuilderPage() {
     }
   };
   const {
-    title, date, textBlockMap, textBlockOrder, images, layout, theme, selectedElement, sectionStyles,
+    title, date, textBlocks, images, layout, theme, selectedElement, sectionStyles,
     setTitle, setDate, updateTextBlock, updateImage, selectElement, updateStyle,
     deleteTextBlock, deleteImage, deleteHorizontalLine,
   } = useStore();
@@ -58,10 +58,10 @@ export default function BuilderPage() {
   const selectedBlock = useMemo(() => {
     if (!selectedElement) return undefined;
     if (selectedElement.type === 'text') {
-      const base = textBlockMap[selectedElement.id];
-      const subType = (selectedElement as { subType?: string }).subType;
-      const validSubType: 'title' | 'content' | undefined = subType === 'title' || subType === 'content' ? subType : undefined;
-      return base ? { ...base, subType: validSubType } as typeof base & { subType?: 'title' | 'content' } : undefined;
+      const base = textBlocks.find((b: TextBlock) => b.id === selectedElement.id);
+  const subType = (selectedElement as { subType?: string }).subType;
+  const validSubType: 'title' | 'content' | undefined = subType === 'title' || subType === 'content' ? subType : undefined;
+  return base ? { ...base, subType: validSubType } as typeof base & { subType?: 'title' | 'content' } : undefined;
     } else if (selectedElement.type === 'image') {
       return images.find((i: ImageElement) => i.id === selectedElement.id);
     } else if (selectedElement.type === 'horizontalLine') {
@@ -70,7 +70,7 @@ export default function BuilderPage() {
       return { id: selectedElement.id, type: 'calendarDate' as const };
     }
     return undefined;
-  }, [textBlockMap, images, selectedElement]);
+  }, [textBlocks, images, selectedElement]);
 
   return (
     <div className="flex flex-col h-screen min-h-0 relative">
@@ -109,7 +109,7 @@ export default function BuilderPage() {
             <CanvasPanel
               title={title}
               date={date}
-              textBlocks={textBlockOrder.map(id => textBlockMap[id])}
+              textBlocks={textBlocks}
               images={images}
               layoutSelection={layout}
               onSelectElement={handleSelectElement}

@@ -20,22 +20,29 @@ export interface SelectionSlice {
   editingCaret: { blockId: string; field: string; index: number } | null;
 }
 
-export const createSelectionSlice: StateCreator<NewsletterSlice & SelectionSlice, [], [], SelectionSlice> = (set, get) => ({
+export const createSelectionSlice: StateCreator<NewsletterSlice & SelectionSlice, [], [], SelectionSlice> = (set) => ({
   selectedElement: null,
   editingCaret: null,
   selectElement: (id, type, subType) => {
     if (!id || !type) set({ selectedElement: null });
-    else set({ selectedElement: { id, type, subType } as any });
+    else if (type === "text") set({ selectedElement: { id, type, subType } });
+    else set({ selectedElement: { id, type } });
   },
   setEditingCaret: (blockId, field, index) => set({ editingCaret: { blockId, field, index } }),
   swapTextBlocks: (id1, id2) => {
-    set((state) => {
-      const i1 = state.textBlocks.findIndex((b: any) => b.id === id1);
-      const i2 = state.textBlocks.findIndex((b: any) => b.id === id2);
+    set(state => {
+      const blocks = Object.values(state.textBlockMap) as import('@/features/newsletter/types').TextBlock[];
+      const i1 = blocks.findIndex((b) => b.id === id1);
+      const i2 = blocks.findIndex((b) => b.id === id2);
       if (i1 === -1 || i2 === -1 || i1 === i2) return {};
-      const newBlocks = [...state.textBlocks];
+      const newBlocks = [...blocks];
       [newBlocks[i1], newBlocks[i2]] = [newBlocks[i2], newBlocks[i1]];
-      return { textBlocks: newBlocks };
+      // Rebuild textBlockMap with the new order
+      const newTextBlockMap: Record<string, import('@/features/newsletter/types').TextBlock> = {};
+      newBlocks.forEach((block) => {
+        newTextBlockMap[block.id] = block;
+      });
+      return { textBlockMap: newTextBlockMap };
     });
   },
 });
