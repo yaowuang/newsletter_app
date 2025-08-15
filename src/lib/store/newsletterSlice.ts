@@ -7,66 +7,79 @@ import { nanoid } from 'nanoid';
 import { applyTextEffect } from '@/lib/textEffects';
 
 export interface NewsletterSlice {
-	title: string;
-	date: string;
-	textBlocks: TextBlock[];
-	sectionStyles: Record<string, any>;
-	theme: Theme;
-	layout: any; // Replace with actual layout type if available
-	denseMode: boolean;
-	setTitle: (title: string) => void;
-	setDate: (date: string) => void;
-	setTheme: (theme: Theme) => void;
-	setThemeTitleFont: (font: string) => void;
-	setThemeDateFont: (font: string) => void;
-	setThemeTitleColor: (color: string) => void;
-	setThemeDateColor: (color: string) => void;
+  title: string;
+  date: string;
+  textBlockMap: Record<string, TextBlock>; // All blocks ever created, keyed by id
+  textBlockOrder: string[]; // IDs of blocks currently visible on canvas
+  sectionStyles: Record<string, any>;
+  theme: Theme;
+  layout: any; // Replace with actual layout type if available
+  denseMode: boolean;
+  setTitle: (title: string) => void;
+  setDate: (date: string) => void;
+  setTheme: (theme: Theme) => void;
+  setThemeTitleFont: (font: string) => void;
+  setThemeDateFont: (font: string) => void;
+  setThemeTitleColor: (color: string) => void;
+  setThemeDateColor: (color: string) => void;
   setThemeTitleAlignment: (align: 'left' | 'center' | 'right') => void;
   setThemeDateAlignment: (align: 'left' | 'center' | 'right') => void;
-   setThemeTitleTextEffect: (effectId: string | undefined) => void;
-	setThemePageBackgroundColor: (color: string) => void;
-	setThemePageBackgroundImage: (image: string) => void;
-	setThemePageBackgroundSize: (size: string) => void;
-	setThemePageBackgroundPosition: (position: string) => void;
-	setThemePageBackgroundRepeat: (repeat: string) => void;
-	setThemePageBackgroundImageOpacity: (opacity: number) => void;
-	setLayout: (layout: any) => void; // Replace with actual layout type if available
-	setSectionCount: (count: number) => void;
-	setDenseMode: (denseMode: boolean) => void;
-	updateStyle: (blockId: string, newStyles: Record<string, any>) => void;
+  setThemeTitleTextEffect: (effectId: string | undefined) => void;
+  setThemePageBackgroundColor: (color: string) => void;
+  setThemePageBackgroundImage: (image: string) => void;
+  setThemePageBackgroundSize: (size: string) => void;
+  setThemePageBackgroundPosition: (position: string) => void;
+  setThemePageBackgroundRepeat: (repeat: string) => void;
+  setThemePageBackgroundImageOpacity: (opacity: number) => void;
+  setLayout: (layout: any) => void; // Replace with actual layout type if available
+  setSectionCount: (count: number) => void;
+  setDenseMode: (denseMode: boolean) => void;
+  updateStyle: (blockId: string, newStyles: Record<string, any>) => void;
   deleteTextBlock: (id: string) => void;
-  addTextBlock: () => void;
+  addTextBlock: (id?: string) => void;
   setElementLocked_text: (id: string, locked: boolean) => void;
   updateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
 }
 
 export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], NewsletterSlice> = (set, get) => ({
-  addTextBlock: () => {
-    // Add a new text block with a unique id and default content
-    const id = nanoid();
-    set(state => ({
-      textBlocks: [
-        ...state.textBlocks,
-        {
-          id,
-          type: 'text',
-          title: '',
-          content: '',
-          locked: false
-        }
-      ],
-      sectionStyles: { ...state.sectionStyles, [id]: {} }
-    }));
+  addTextBlock: (id?: string) => {
+    // Add a new text block with a unique id and default content, or restore by id
+    let blockId = id || nanoid();
+    set(state => {
+      // If block already exists in map, just add to order
+      if (state.textBlockMap[blockId]) {
+        return {
+          textBlockOrder: [...state.textBlockOrder, blockId],
+          sectionStyles: { ...state.sectionStyles, [blockId]: state.sectionStyles[blockId] || {} },
+        };
+      }
+      // Otherwise, create new block
+      return {
+        textBlockMap: {
+          ...state.textBlockMap,
+          [blockId]: {
+            id: blockId,
+            type: 'text',
+            title: '',
+            content: '',
+            locked: false
+          }
+        },
+        textBlockOrder: [...state.textBlockOrder, blockId],
+        sectionStyles: { ...state.sectionStyles, [blockId]: {} },
+      };
+    });
   },
   deleteTextBlock: (id) => {
     set(state => ({
-      textBlocks: state.textBlocks.filter(b => b.id !== id),
-      sectionStyles: Object.fromEntries(Object.entries(state.sectionStyles).filter(([k]) => k !== id))
+      textBlockOrder: state.textBlockOrder.filter(blockId => blockId !== id),
+      sectionStyles: Object.fromEntries(Object.entries(state.sectionStyles).filter(([k]) => k !== id)),
     }));
   },
 		title: 'Newsletter Title',
 		date: 'August 6, 2025',
-		textBlocks: [], // Should be initialized in root store
+  textBlockMap: {}, // All blocks ever created
+  textBlockOrder: [], // IDs of blocks currently visible
 		sectionStyles: {},
 		theme: {} as Theme, // Should be initialized in root store
 		layout: {}, // Should be initialized in root store
@@ -166,10 +179,13 @@ export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], Newsle
         const theme = state.theme;
         // Auto-reorder content blocks to new layout's section sizing
         // Only when section counts match and we have targets on new layout.
-        let reorderedBlocks = state.textBlocks;
-        if (variant.sectionCharTargets && variant.sectionCharTargets.length === state.textBlocks.length) {
+        let reorderedBlocks = state.textBlockOrder.map(id => state.textBlockMap[id]);
+        if (variant.sectionCharTargets && variant.sectionCharTargets.length === state.textBlockOrder.length) {
           // Greedy best-fit: iterate targets largest->smallest, pick remaining block with closest length.
-          const blocksWithLen = state.textBlocks.map((b: TextBlock) => ({ block: b, len: (b.title + ' ' + b.content).trim().length }));
+          const blocksWithLen = state.textBlockOrder.map((id: string) => {
+            const b = state.textBlockMap[id];
+            return { block: b, len: (b.title + ' ' + b.content).trim().length };
+          });
           const targets = variant.sectionCharTargets.map((t: number, idx: number) => ({ idx, target: t }));
           targets.sort((a: {target: number}, b: {target: number})=> b.target - a.target); // largest spaces first
           const remaining = [...blocksWithLen];
@@ -314,25 +330,35 @@ export const createNewsletterSlice: StateCreator<NewsletterSlice, [], [], Newsle
 			set({});
 		},
 		setDenseMode: (denseMode) => set({ denseMode }),
-		updateStyle: (blockId, newStyles) => {
-			set(state => ({
-				sectionStyles: (() => {
-					const blk = state.textBlocks.find(b => b.id === blockId);
-					if (blk?.locked) return state.sectionStyles;
-					return { ...state.sectionStyles, [blockId]: { ...(state.sectionStyles[blockId] || {}), ...newStyles } };
-				})()
-			}));
-		},
+    updateStyle: (blockId, newStyles) => {
+      set(state => {
+        const blk = state.textBlockMap[blockId];
+        if (blk?.locked) return { sectionStyles: state.sectionStyles };
+        return {
+          sectionStyles: { ...state.sectionStyles, [blockId]: { ...(state.sectionStyles[blockId] || {}), ...newStyles } }
+        };
+      });
+    },
   updateTextBlock: (id: string, property: 'title' | 'content', value: string) => {
     set(state => ({
-      textBlocks: state.textBlocks.map((block: TextBlock) =>
-        block.id === id ? { ...block, [property]: value } : block
-      )
+      textBlockMap: {
+        ...state.textBlockMap,
+        [id]: {
+          ...state.textBlockMap[id],
+          [property]: value,
+        },
+      },
     }));
   },
   setElementLocked_text: (id, locked) => {
     set(state => ({
-      textBlocks: state.textBlocks.map(block => block.id === id ? { ...block, locked } : block)
+      textBlockMap: {
+        ...state.textBlockMap,
+        [id]: {
+          ...state.textBlockMap[id],
+          locked,
+        },
+      },
     }));
   },
 });

@@ -110,6 +110,18 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
 
   if (typeof window === 'undefined' || typeof document === 'undefined') return null;
 
+  // Track if modal is already closing to avoid double-calls
+  const closingRef = React.useRef(false);
+
+  // Accept and close modal on blur
+  const handleBlur = () => {
+    if (!closingRef.current) {
+      closingRef.current = true;
+      onAccept();
+      onCancel();
+    }
+  };
+
   return createPortal(
   <div className="fixed inset-0 z-[9999] flex items-start justify-end pt-12 pr-12">
       {/* Removed backdrop-blur-sm to eliminate blur. Positioned modal top-right with pt-12 pr-12, items-start justify-end. */}
@@ -182,12 +194,16 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
             onKeyDown={e => {
               if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                 e.preventDefault();
+                closingRef.current = true;
                 onAccept();
+                onCancel();
               } else if (e.key === 'Escape') {
                 e.preventDefault();
+                closingRef.current = true;
                 onCancel();
               }
             }}
+            onBlur={handleBlur}
             className="resize-none w-full h-[240px] min-h-[120px] max-h-[48vh] px-4 py-3 text-[16px] font-mono text-blue-900 dark:text-blue-100 bg-white dark:bg-neutral-900 border border-blue-200/60 dark:border-blue-800/60 rounded-lg leading-relaxed shadow-inner whitespace-pre-wrap focus:ring-2 focus:ring-blue-400 focus:outline-none placeholder:text-blue-400/70 dark:placeholder:text-blue-300/50"
             style={{
               fontFamily:

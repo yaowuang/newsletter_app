@@ -46,6 +46,8 @@ export function Header() {
       sectionStyles: state.sectionStyles,
       theme: state.theme,
       layout: state.layout,
+      denseMode: state.denseMode,
+      calendarData: state.calendarData,
     };
   };
 

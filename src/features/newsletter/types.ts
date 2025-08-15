@@ -79,6 +79,8 @@ export type EditorSnapshot = {
   title: string;
   date: string;
   textBlocks: TextBlock[];
+  textBlockMap?: Record<string, TextBlock>;
+  textBlockOrder?: string[];
   images: ImageElement[];
   horizontalLines: HorizontalLineElement[];
   sectionStyles: SectionStyles;
@@ -91,6 +93,8 @@ export type EditorSnapshot = {
 
 export interface AppState {
   textBlocks: TextBlock[];
+  textBlockMap: Record<string, TextBlock>;
+  textBlockOrder: string[];
   horizontalLines: HorizontalLineElement[];
   selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' } | null;
   sectionStyles: SectionStyles;

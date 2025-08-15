@@ -98,8 +98,8 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
       const isEnter = e.key === 'Enter';
       if (!isPrintable && !isBackspace && !isEnter) return;
       let targetField: 'title' | 'content';
-      if (selectedElement?.subType === 'title') targetField = 'title';
-      else if (selectedElement?.subType === 'content') targetField = 'content';
+      if (selectedElement?.type === 'text' && selectedElement?.subType === 'title') targetField = 'title';
+      else if (selectedElement?.type === 'text' && selectedElement?.subType === 'content') targetField = 'content';
       else targetField = (!block.title || block.title.trim() === '') ? 'title' : 'content';
       e.preventDefault();
       const currentValue = targetField === 'title' ? (block.title || '') : (block.content || '');
@@ -131,7 +131,7 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isThisBlockSelected, block.locked, isEditingTitle, isEditingContent, selectedElement?.subType, block.title, block.content, setOriginalTitle, setDraftTitle, setIsEditingTitle, setOriginalContent, setDraftContent, setIsEditingContent]);
+  }, [isThisBlockSelected, block.locked, isEditingTitle, isEditingContent, selectedElement && selectedElement.type === 'text' ? selectedElement.subType : undefined, block.title, block.content, setOriginalTitle, setDraftTitle, setIsEditingTitle, setOriginalContent, setDraftContent, setIsEditingContent]);
 
   // Styles
   const headingStyle: CSSProperties = {
@@ -228,14 +228,14 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
               ref={titleInputRef}
               value={draftTitle}
               onChange={e => handleTitleChange(e.target.value)}
-              onBlur={commitEditTitle}
+              onBlur={e => {
+                if (isEditingTitle) commitEditTitle();
+              }}
               onKeyDown={e => {
-                if (e.key === 'Enter') {
+                if (e.key === 'Enter' || e.key === 'Escape') {
                   e.preventDefault();
-                  commitEditTitle();
-                } else if (e.key === 'Escape') {
-                  e.preventDefault();
-                  cancelEditTitle();
+                  e.stopPropagation();
+                  e.currentTarget.blur();
                 }
               }}
               data-inline-edit-block={block.id}

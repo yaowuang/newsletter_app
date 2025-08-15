@@ -26,6 +26,15 @@ export const useStore = create<StoreState>()((set, get, store) => ({
 
   // Overwrite initial state for newsletter/calendar as needed
   textBlocks: buildInitialBlocks(),
+  textBlockMap: (() => {
+    const arr = buildInitialBlocks();
+    const map: Record<string, import('@/features/newsletter/types').TextBlock> = {};
+    for (const block of arr) {
+      map[block.id] = block;
+    }
+    return map;
+  })(),
+  textBlockOrder: (() => buildInitialBlocks().map(b => b.id))(),
   layout: (() => {
     const blocks = buildInitialBlocks();
     const base = allLayouts.find(l => l.sections === blocks.length) || allLayouts[0];

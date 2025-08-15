@@ -3,8 +3,18 @@ import { StateCreator } from 'zustand';
 import { NewsletterSlice } from './newsletterSlice';
 
 export interface SelectionSlice {
-  selectedElement: { id: string; type: string; subType?: string } | null;
-  selectElement: (id: string | null, type?: string, subType?: string) => void;
+  selectedElement: (
+  | { id: string; type: "text"; subType?: "title" | "content" }
+  | { id: string; type: "image" }
+  | { id: string; type: "horizontalLine" }
+  | { id: string; type: "calendarDate" }
+  | null
+);
+  selectElement: (
+  id: string | null,
+  type?: "text" | "image" | "horizontalLine" | "calendarDate",
+  subType?: "title" | "content"
+) => void;
   setEditingCaret: (blockId: string, field: string, index: number) => void;
   swapTextBlocks: (id1: string, id2: string) => void;
   editingCaret: { blockId: string; field: string; index: number } | null;
@@ -15,7 +25,7 @@ export const createSelectionSlice: StateCreator<NewsletterSlice & SelectionSlice
   editingCaret: null,
   selectElement: (id, type, subType) => {
     if (!id || !type) set({ selectedElement: null });
-    else set({ selectedElement: { id, type, subType } });
+    else set({ selectedElement: { id, type, subType } as any });
   },
   setEditingCaret: (blockId, field, index) => set({ editingCaret: { blockId, field, index } }),
   swapTextBlocks: (id1, id2) => {

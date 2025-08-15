@@ -14,16 +14,34 @@ export interface MetaSlice {
 }
 
 // Use the root store type for set/get
-type RootStore = NewsletterSlice & ImageSlice & HorizontalLineSlice & CalendarSlice & SelectionSlice & MetaSlice;
+type RootStore = NewsletterSlice & ImageSlice & HorizontalLineSlice & CalendarSlice & SelectionSlice & MetaSlice & {
+  textBlockMap: Record<string, any>;
+  textBlockOrder: string[];
+};
 
 export const createMetaSlice: StateCreator<RootStore, [], [], MetaSlice> = (set, get) => ({
   loadSnapshot: (snapshot) => {
     try {
       if (!snapshot || typeof snapshot !== 'object') return;
+      // Rebuild textBlockMap and textBlockOrder from textBlocks array if present
+      let textBlockMap: Record<string, import('@/features/newsletter/types').TextBlock> | undefined = undefined;
+      let textBlockOrder: string[] | undefined = undefined;
+      if (Array.isArray(snapshot.textBlocks)) {
+        textBlockMap = {};
+        textBlockOrder = [];
+        for (const block of snapshot.textBlocks) {
+          if (block && block.id) {
+            textBlockMap[block.id] = block;
+            textBlockOrder.push(block.id);
+          }
+        }
+      }
       set((state: RootStore) => ({
         title: snapshot.title ?? state.title,
         date: snapshot.date ?? state.date,
         textBlocks: Array.isArray(snapshot.textBlocks) ? snapshot.textBlocks : state.textBlocks,
+        textBlockMap: textBlockMap ?? state.textBlockMap,
+        textBlockOrder: textBlockOrder ?? state.textBlockOrder,
         images: Array.isArray(snapshot.images) ? snapshot.images : state.images,
         sectionStyles: snapshot.sectionStyles ?? state.sectionStyles,
         theme: snapshot.theme ?? state.theme,
