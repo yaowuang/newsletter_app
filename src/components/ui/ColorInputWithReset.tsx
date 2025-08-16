@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { RefreshCcw } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { RefreshCcw } from "lucide-react";
+import type * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 interface ColorInputWithResetProps {
   id: string;
@@ -10,20 +10,28 @@ interface ColorInputWithResetProps {
   onChange: (v: string) => void;
   onReset?: () => void;
   disabled?: boolean;
-  size?: 'sm' | 'md';
+  size?: "sm" | "md";
   className?: string;
 }
 
-export const ColorInputWithReset: React.FC<ColorInputWithResetProps> = ({ id, value, onChange, onReset, disabled, size='md', className }) => {
+export const ColorInputWithReset: React.FC<ColorInputWithResetProps> = ({
+  id,
+  value,
+  onChange,
+  onReset,
+  disabled,
+  size = "md",
+  className,
+}) => {
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       <Input
         id={id}
         type="color"
         value={value}
-        onChange={e => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        className={cn('p-0 border-none cursor-pointer', size === 'sm' ? 'w-8 h-8' : 'w-10 h-10')}
+        className={cn("p-0 border-none cursor-pointer", size === "sm" ? "w-8 h-8" : "w-10 h-10")}
         aria-label="Color picker"
       />
       {onReset && (

@@ -1,6 +1,6 @@
-import React from 'react';
-import { MarkdownModalEditor } from '@/components/common/MarkdownModalEditor';
-import { MarkdownRenderer } from '@/components/common/MarkdownRenderer';
+import type React from "react";
+import { MarkdownModalEditor } from "@/components/common/MarkdownModalEditor";
+import { MarkdownRenderer } from "@/components/common/MarkdownRenderer";
 
 interface CalendarCellContentProps {
   date: Date;
@@ -31,7 +31,7 @@ const CalendarCellContent: React.FC<CalendarCellContentProps> = ({
   placeholder,
   useModalEditor = true,
   style = {},
-  fontSize = '12px',
+  fontSize = "12px",
   fontFamily,
   color,
 }) => {
@@ -44,30 +44,35 @@ const CalendarCellContent: React.FC<CalendarCellContentProps> = ({
           onAccept={onAccept}
           onCancel={onCancel}
           label={label || `Edit content for ${date.toISOString().slice(0, 10)}`}
-          placeholder={placeholder || 'Enter Markdown for this date...'}
+          placeholder={placeholder || "Enter Markdown for this date..."}
         />
       );
     }
     // Inline textarea for split cell
     return (
-      <div style={{ position: 'relative', flex: 1, width: '100%' }} data-calendar-inline-editor="true">
+      <div style={{ position: "relative", flex: 1, width: "100%" }} data-calendar-inline-editor="true">
         <textarea
           value={draftContent}
-          onChange={e => onChange(e.target.value)}
-          onKeyDown={e => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); onAccept(); }
-            else if (e.key === 'Escape') { e.preventDefault(); onCancel(); }
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={(e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+              e.preventDefault();
+              onAccept();
+            } else if (e.key === "Escape") {
+              e.preventDefault();
+              onCancel();
+            }
           }}
           style={{
-            position: 'absolute',
+            position: "absolute",
             inset: 0,
-            resize: 'none',
-            background: 'white',
-            border: '1px solid #60a5fa',
+            resize: "none",
+            background: "white",
+            border: "1px solid #60a5fa",
             fontSize,
             lineHeight: 1.2,
-            padding: '2px 2px',
-            outline: 'none',
+            padding: "2px 2px",
+            outline: "none",
             fontFamily,
             color,
             borderRadius: 2,
@@ -80,7 +85,16 @@ const CalendarCellContent: React.FC<CalendarCellContentProps> = ({
   }
   if (content) {
     return (
-      <div className="calendar-cell-content" style={{ fontSize, flex: 1, overflow: 'hidden', wordWrap: 'break-word', ...style }}>
+      <div
+        className="calendar-cell-content"
+        style={{
+          fontSize,
+          flex: 1,
+          overflow: "hidden",
+          wordWrap: "break-word",
+          ...style,
+        }}
+      >
         <MarkdownRenderer markdown={content} />
       </div>
     );

@@ -1,24 +1,32 @@
-import { ThemeType } from '@/lib/themes';
-import { CalendarStyles } from './calendar';
+import type { ThemeType } from "@/lib/themes";
+import type { CalendarStylesType } from "../types";
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-  const normalized = hex.replace('#', '');
-  if (![3,6].includes(normalized.length)) return null;
-  const full = normalized.length === 3 ? normalized.split('').map(c => c + c).join('') : normalized;
+  const normalized = hex.replace("#", "");
+  if (![3, 6].includes(normalized.length)) return null;
+  const full =
+    normalized.length === 3
+      ? normalized
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : normalized;
   const int = parseInt(full, 16);
   return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 };
 }
 function rgbToHex(r: number, g: number, b: number): string {
-  return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+  return "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
 }
 function relativeLuminance(hex: string): number {
   const rgb = hexToRgb(hex);
   if (!rgb) return 0;
   const toLinear = (c: number) => {
     const cs = c / 255;
-    return cs <= 0.03928 ? cs / 12.92 : Math.pow((cs + 0.055) / 1.055, 2.4);
+    return cs <= 0.03928 ? cs / 12.92 : ((cs + 0.055) / 1.055) ** 2.4;
   };
-  const r = toLinear(rgb.r), g = toLinear(rgb.g), b = toLinear(rgb.b);
+  const r = toLinear(rgb.r),
+    g = toLinear(rgb.g),
+    b = toLinear(rgb.b);
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 function contrastRatio(fg: string, bg: string): number {
@@ -29,12 +37,13 @@ function contrastRatio(fg: string, bg: string): number {
   return (light + 0.05) / (dark + 0.05);
 }
 function mix(hex: string, withHex: string, ratio: number): string {
-  const a = hexToRgb(hex); const b = hexToRgb(withHex);
+  const a = hexToRgb(hex);
+  const b = hexToRgb(withHex);
   if (!a || !b) return hex;
-  const r = Math.round(a.r * (1-ratio) + b.r * ratio);
-  const g = Math.round(a.g * (1-ratio) + b.g * ratio);
-  const bl = Math.round(a.b * (1-ratio) + b.b * ratio);
-  return rgbToHex(r,g,bl);
+  const r = Math.round(a.r * (1 - ratio) + b.r * ratio);
+  const g = Math.round(a.g * (1 - ratio) + b.g * ratio);
+  const bl = Math.round(a.b * (1 - ratio) + b.b * ratio);
+  return rgbToHex(r, g, bl);
 }
 function ensureContrast(color: string, bg: string, target: number): string {
   if (!/^#([0-9a-fA-F]{3}){1,2}$/.test(color) || !/^#([0-9a-fA-F]{3}){1,2}$/.test(bg)) return color;
@@ -43,7 +52,7 @@ function ensureContrast(color: string, bg: string, target: number): string {
   let iterations = 0;
   while (ratio < target && iterations < 12) {
     const bgLum = relativeLuminance(bg);
-    current = mix(current, bgLum > 0.5 ? '#000000' : '#FFFFFF', 0.2);
+    current = mix(current, bgLum > 0.5 ? "#000000" : "#FFFFFF", 0.2);
     ratio = contrastRatio(current, bg);
     iterations++;
   }
@@ -51,7 +60,7 @@ function ensureContrast(color: string, bg: string, target: number): string {
 }
 function normalizeColorCandidate(candidate?: string): string | undefined {
   if (!candidate) return undefined;
-  if (candidate === 'transparent') return undefined;
+  if (candidate === "transparent") return undefined;
   return candidate;
 }
 function pickAccent(theme: ThemeType): string {
@@ -61,31 +70,33 @@ function pickAccent(theme: ThemeType): string {
     normalizeColorCandidate(section.headingBackgroundColor),
     normalizeColorCandidate(section.borderColor),
     normalizeColorCandidate(section.headingColor),
-    '#3B82F6'
+    "#3B82F6",
   ].filter(Boolean) as string[];
   const hexRegex = /^#([0-9a-fA-F]{3}){1,2}$/;
-  const found = candidates.find(c => hexRegex.test(c));
-  return found || '#3B82F6';
+  const found = candidates.find((c) => hexRegex.test(c));
+  return found || "#3B82F6";
 }
 function weekendTint(accent: string, darkMode: boolean): string {
   const hexRegex = /^#([0-9a-fA-F]{6})$/;
   let base = accent;
   if (!hexRegex.test(accent)) {
-    const rgb = hexToRgb(accent.replace('#',''));
-    if (!rgb) return '#3B82F620';
+    const rgb = hexToRgb(accent.replace("#", ""));
+    if (!rgb) return "#3B82F620";
   }
   if (accent.length === 4) {
-    const r = accent[1]; const g = accent[2]; const b = accent[3];
-    base = '#' + r + r + g + g + b + b;
+    const r = accent[1];
+    const g = accent[2];
+    const b = accent[3];
+    base = "#" + r + r + g + g + b + b;
   }
-  return base + (darkMode ? '30' : '20');
+  return base + (darkMode ? "30" : "20");
 }
-export function deriveCalendarStyles(theme: ThemeType): Partial<CalendarStyles> {
-  const pageBg = normalizeColorCandidate(theme.styles.page.backgroundColor) || '#FFFFFF';
-  const sectionBg = normalizeColorCandidate(theme.styles.section.backgroundColor) || '#FFFFFF';
-  const contentColor = normalizeColorCandidate(theme.styles.section.contentColor) || '#111827';
+export function deriveCalendarStyles(theme: ThemeType): Partial<CalendarStylesType> {
+  const pageBg = normalizeColorCandidate(theme.styles.page.backgroundColor) || "#FFFFFF";
+  const sectionBg = normalizeColorCandidate(theme.styles.section.backgroundColor) || "#FFFFFF";
+  const contentColor = normalizeColorCandidate(theme.styles.section.contentColor) || "#111827";
   const headingBg = normalizeColorCandidate(theme.styles.section.headingBackgroundColor) || sectionBg;
-  const sectionBorder = normalizeColorCandidate(theme.styles.section.borderColor) || '#D1D5DB';
+  const sectionBorder = normalizeColorCandidate(theme.styles.section.borderColor) || "#D1D5DB";
   const accent = pickAccent(theme);
   const darkMode = relativeLuminance(pageBg) < 0.35;
   let headerColor = normalizeColorCandidate(theme.styles.title.color) || accent;
@@ -99,14 +110,14 @@ export function deriveCalendarStyles(theme: ThemeType): Partial<CalendarStyles> 
   weekdayColor = ensureContrast(weekdayColor, weekdayBackground, 4.5);
   let cellBackground = sectionBg;
   if (contrastRatio(sectionBg, pageBg) < 1.2) {
-    cellBackground = '#FFFFFF';
-    if (darkMode) cellBackground = mix(pageBg, '#FFFFFF', 0.1);
+    cellBackground = "#FFFFFF";
+    if (darkMode) cellBackground = mix(pageBg, "#FFFFFF", 0.1);
   }
   const cellText = ensureContrast(contentColor, cellBackground, 4.5);
   const weekendBackground = weekendTint(accent, darkMode);
-  const nonCurrentText = darkMode ? '#94A3B8' : '#6B7280';
+  const nonCurrentText = darkMode ? "#94A3B8" : "#6B7280";
   const nonCurrentBg = cellBackground;
-  const base: Partial<CalendarStyles> = {
+  const base: Partial<CalendarStylesType> = {
     headerFontFamily: theme.styles.title.fontFamily,
     headerColor,
     weekdayFontFamily: theme.styles.section.headingFontFamily || theme.styles.title.fontFamily,
@@ -120,23 +131,23 @@ export function deriveCalendarStyles(theme: ThemeType): Partial<CalendarStyles> 
     weekendCellTextColor: cellText,
     nonCurrentMonthCellTextColor: nonCurrentText,
     nonCurrentMonthCellBackgroundColor: nonCurrentBg,
-    nonCurrentMonthOpacity: 0.5
+    nonCurrentMonthOpacity: 0.5,
   };
-  if (theme.name === 'Default') {
-    const boardBg = '#1f362b';
-    const chalk = '#F4F6F3';
-    const chalkMuted = '#B8C4BC';
-    const chalkAccent = '#F8F9F3';
+  if (theme.name === "Default") {
+    const boardBg = "#1f362b";
+    const chalk = "#F4F6F3";
+    const chalkMuted = "#B8C4BC";
+    const chalkAccent = "#F8F9F3";
     base.headerFontFamily = theme.styles.section.headingFontFamily || base.headerFontFamily;
     base.headerColor = theme.styles.section.headingColor || chalkAccent;
-    base.headerBackgroundColor = theme.styles.section.headingBackgroundColor || '#C8A978';
-    base.weekdayBackgroundColor = theme.styles.section.headingBackgroundColor || '#C8A978';
-    base.weekdayColor = theme.styles.section.headingColor || '#1F3D2E';
+    base.headerBackgroundColor = theme.styles.section.headingBackgroundColor || "#C8A978";
+    base.weekdayBackgroundColor = theme.styles.section.headingBackgroundColor || "#C8A978";
+    base.weekdayColor = theme.styles.section.headingColor || "#1F3D2E";
     base.weekdayFontFamily = theme.styles.section.headingFontFamily || base.weekdayFontFamily;
     base.cellBackgroundColor = boardBg;
     base.cellTextColor = ensureContrast(chalk, boardBg, 4.5);
-    base.cellBorderColor = '#ffffff22';
-    base.weekendCellBackgroundColor = '#2a493a';
+    base.cellBorderColor = "#ffffff22";
+    base.weekendCellBackgroundColor = "#2a493a";
     base.weekendCellTextColor = base.cellTextColor;
     base.nonCurrentMonthCellTextColor = chalkMuted;
     base.nonCurrentMonthCellBackgroundColor = boardBg;
@@ -144,14 +155,14 @@ export function deriveCalendarStyles(theme: ThemeType): Partial<CalendarStyles> 
   }
   return base;
 }
-export function mergeDerivedCalendarStyles(theme: ThemeType, overrides?: CalendarStyles): CalendarStyles {
+export function mergeDerivedCalendarStyles(theme: ThemeType, overrides?: CalendarStylesType): CalendarStylesType {
   const derived = deriveCalendarStyles(theme);
-  if (!overrides) return derived as CalendarStyles;
-  const merged: Partial<CalendarStyles> = { ...derived };
-  (Object.entries(overrides) as [keyof CalendarStyles, unknown][]) .forEach(([k, v]) => {
+  if (!overrides) return derived as CalendarStylesType;
+  const merged: Partial<CalendarStylesType> = { ...derived };
+  (Object.entries(overrides) as [keyof CalendarStylesType, unknown][]).forEach(([k, v]) => {
     if (v !== undefined) {
       (merged as Record<string, unknown>)[k as string] = v;
     }
   });
-  return merged as CalendarStyles;
+  return merged as CalendarStylesType;
 }

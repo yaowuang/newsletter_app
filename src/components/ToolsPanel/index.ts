@@ -1,47 +1,43 @@
 // Main exports for the refactored stuff panel components
 // This follows the barrel export pattern for cleaner imports
 
-// Main component exports - Production Ready
-export { StuffPanel } from './StuffPanel';
-export { LayoutPicker } from './LayoutPicker';
-export { ThemePicker } from './ThemePicker';
-export { ElementAdder } from './ElementAdder';
-export { ClipartSearch } from './ClipartSearch';
-
+export { ClipartSearch } from "./ClipartSearch";
+export type { TabConfig, TabRegistryEntry } from "./config/tab-registry";
 // Configuration and utilities
-export { TabRegistry } from './config/tab-registry';
-export type { TabConfig, TabRegistryEntry } from './config/tab-registry';
-
+export { TabRegistry } from "./config/tab-registry";
+export { ElementAdder } from "./ElementAdder";
+// Hooks
+export {
+  useElementCreator,
+  useImageUpload,
+  useLayoutManager,
+  useThemeManager,
+} from "./hooks/use-stuff-managers";
 // Interfaces
 export type {
   BasePickerProps,
-  LayoutPickerProps,
-  ThemePickerProps,
-  ElementAdderProps,
   ClipartSearchProps,
-  LayoutPickerActions,
-  LayoutPickerState,
-  ThemePickerActions,
-  ThemePickerState,
+  ElementAdderProps,
   ElementCreatorActions,
-  SearchActions
-} from './interfaces/picker-interfaces';
-
+  LayoutPickerActions,
+  LayoutPickerProps,
+  LayoutPickerState,
+  SearchActions,
+  ThemePickerActions,
+  ThemePickerProps,
+  ThemePickerState,
+} from "./interfaces/picker-interfaces";
+export { LayoutPicker } from "./LayoutPicker";
+// Main component exports - Production Ready
+export { StuffPanel } from "./StuffPanel";
+export type {
+  ImageSearchResult,
+  ImageSearchService,
+  SearchOptions,
+} from "./services/image-search-service";
 // Services
 export {
   ImageSearchServiceFactory,
-  PixabayImageSearchService
-} from './services/image-search-service';
-export type {
-  ImageSearchService,
-  ImageSearchResult,
-  SearchOptions
-} from './services/image-search-service';
-
-// Hooks
-export {
-  useLayoutManager,
-  useThemeManager,
-  useElementCreator,
-  useImageUpload
-} from './hooks/use-stuff-managers';
+  PixabayImageSearchService,
+} from "./services/image-search-service";
+export { ThemePicker } from "./ThemePicker";

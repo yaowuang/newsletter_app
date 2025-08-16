@@ -1,8 +1,6 @@
-import React from 'react';
-import CalendarCellContent from './CalendarCellContent';
-
-
-import { useStore } from '@/lib/store/index';
+import type React from "react";
+import { useStore } from "@/lib/store/index";
+import CalendarCellContent from "./CalendarCellContent";
 
 interface CalendarCellProps {
   date: Date;
@@ -20,17 +18,24 @@ interface CalendarCellProps {
   onDoubleClick: (date: Date) => void;
 }
 
-
-
-
-
 const CalendarCell: React.FC<CalendarCellProps> = (props) => {
-  const { date, rowIndex, colIndex, cellWidth, cellHeight, cellStyles, cellContent, toDateKey, onClick, onDoubleClick } = props;
-  const editingDateKey = useStore(s => s.calendarData.editingDateKey);
-  const draftContent = useStore(s => s.calendarData.draftContent) ?? '';
-  const setEditingDateKey = useStore(s => s.setEditingDateKey);
-  const setDraftContent = useStore(s => s.setDraftContent);
-  const setCellContent = useStore(s => s.setCellContent);
+  const {
+    date,
+    rowIndex,
+    colIndex,
+    cellWidth,
+    cellHeight,
+    cellStyles,
+    cellContent,
+    toDateKey,
+    onClick,
+    onDoubleClick,
+  } = props;
+  const editingDateKey = useStore((s) => s.calendarData.editingDateKey);
+  const draftContent = useStore((s) => s.calendarData.draftContent) ?? "";
+  const setEditingDateKey = useStore((s) => s.setEditingDateKey);
+  const setDraftContent = useStore((s) => s.setDraftContent);
+  const setCellContent = useStore((s) => s.setCellContent);
 
   const isEditing = editingDateKey === toDateKey(date);
   const handleBeginEdit = () => {
@@ -38,46 +43,56 @@ const CalendarCell: React.FC<CalendarCellProps> = (props) => {
     setDraftContent?.(cellContent);
   };
   const handleCommitEdit = () => {
-    setCellContent(toDateKey(date), draftContent || '');
+    setCellContent(toDateKey(date), draftContent || "");
     setEditingDateKey?.(null);
-    setDraftContent?.('');
+    setDraftContent?.("");
   };
   const handleCancelEdit = () => {
     setEditingDateKey?.(null);
-    setDraftContent?.('');
+    setDraftContent?.("");
   };
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: canvaspanel item
     <div
-      onClick={e => {
+      onClick={(e) => {
         e.stopPropagation();
         onClick(date);
       }}
-      onDoubleClick={e => {
+      onDoubleClick={(e) => {
         e.stopPropagation();
         onDoubleClick(date);
         handleBeginEdit();
       }}
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: colIndex * cellWidth,
-        top: 60 + 40 + (rowIndex * cellHeight),
+        top: 60 + 40 + rowIndex * cellHeight,
         width: cellWidth,
         height: cellHeight,
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '8px',
-        fontSize: '14px',
-        cursor: 'pointer',
-        ...cellStyles
+        display: "flex",
+        flexDirection: "column",
+        padding: "8px",
+        fontSize: "14px",
+        cursor: "pointer",
+        ...cellStyles,
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'flex-end', fontWeight: 'normal', marginBottom: '4px' }}>{date.getDate()}</div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          fontWeight: "normal",
+          marginBottom: "4px",
+        }}
+      >
+        {date.getDate()}
+      </div>
       <CalendarCellContent
         date={date}
         content={cellContent}
         isEditing={isEditing}
-        draftContent={draftContent || ''}
+        draftContent={draftContent || ""}
         onChange={setDraftContent ?? (() => {})}
         onAccept={handleCommitEdit}
         onCancel={handleCancelEdit}

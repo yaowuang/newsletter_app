@@ -4,12 +4,12 @@ export interface CalendarData {
   selectedDate: Date;
   customEvents?: CalendarEvent[];
   cellContents?: { [dateKey: string]: string };
-  calendarStyles?: CalendarStyles;
+  calendarStyles?: CalendarStylesType;
   editingDateKey?: string | null;
   draftContent?: string;
 }
 
-export interface CalendarStyles {
+export interface CalendarStylesType {
   headerFontFamily?: string;
   headerColor?: string;
   headerBackgroundColor?: string;

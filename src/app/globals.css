@@ -1,4 +1,4 @@
-@import '../app/emoji-dropdown-fix.css';
+@import "../app/emoji-dropdown-fix.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -162,15 +162,31 @@
   margin: 0 0 2px 0;
   line-height: 1.15;
 }
-.calendar-cell-content strong { font-weight: 600; }
-.calendar-cell-content em { font-style: italic; }
+.calendar-cell-content strong {
+  font-weight: 600;
+}
+.calendar-cell-content em {
+  font-style: italic;
+}
 .calendar-cell-content a {
   text-decoration: underline;
   color: inherit;
 }
-.calendar-cell-content table { width:100%; border-collapse: collapse; font-size:10px; }
-.calendar-cell-content th, .calendar-cell-content td { border:1px solid rgba(0,0,0,0.15); padding:2px 4px; }
-.calendar-cell-content hr { border:0; border-top:1px solid rgba(0,0,0,0.2); margin:2px 0; }
+.calendar-cell-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+}
+.calendar-cell-content th,
+.calendar-cell-content td {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 2px 4px;
+}
+.calendar-cell-content hr {
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  margin: 2px 0;
+}
 
 /* Newsletter title text effects */
 .newsletter-title-effect {
@@ -179,10 +195,12 @@
 }
 
 /* Pastel rotate per-character static styling (no animation) */
-.pastel-rotate-char { display: inline-block; }
+.pastel-rotate-char {
+  display: inline-block;
+}
 
 /* Disable typography styling inside inline editing container so raw markdown shows plainly */
-.prose-disable :where(p,ul,ol,li,table,thead,tbody,tr,th,td,code,pre,h1,h2,h3,h4,h5,h6,blockquote) {
+.prose-disable :where(p, ul, ol, li, table, thead, tbody, tr, th, td, code, pre, h1, h2, h3, h4, h5, h6, blockquote) {
   all: unset;
   font: inherit;
   color: inherit;

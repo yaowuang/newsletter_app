@@ -1,6 +1,6 @@
-import React from 'react';
-import { PastelRotateText } from '@/components/common/PastelRotateText';
-import { RainbowRotateText } from '@/components/common/RainbowRotateText';
+import type React from "react";
+import { PastelRotateText } from "@/components/common/PastelRotateText";
+import { RainbowRotateText } from "@/components/common/RainbowRotateText";
 
 interface CalendarTitleProps {
   width: number;
@@ -11,30 +11,37 @@ interface CalendarTitleProps {
   headerTextStyle: React.CSSProperties;
 }
 
-const CalendarTitle: React.FC<CalendarTitleProps> = ({ width, height, title, textEffectId, headerStyles, headerTextStyle }) => {
+const CalendarTitle: React.FC<CalendarTitleProps> = ({
+  width,
+  height,
+  title,
+  textEffectId,
+  headerStyles,
+  headerTextStyle,
+}) => {
   let renderedTitle: React.ReactNode = title;
-  if (textEffectId === 'pastel-rotate') {
+  if (textEffectId === "pastel-rotate") {
     renderedTitle = <PastelRotateText text={title} />;
-  } else if (textEffectId === 'rainbow-rotate') {
+  } else if (textEffectId === "rainbow-rotate") {
     renderedTitle = <RainbowRotateText text={title} />;
   }
   return (
     <div
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: 0,
         top: 0,
         width,
         height,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '32px',
-        fontWeight: 'bold',
-        background: 'transparent',
-        pointerEvents: 'none',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "32px",
+        fontWeight: "bold",
+        background: "transparent",
+        pointerEvents: "none",
         zIndex: 2,
-        ...headerStyles
+        ...headerStyles,
       }}
     >
       <span style={headerTextStyle}>{renderedTitle}</span>

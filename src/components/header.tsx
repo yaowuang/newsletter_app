@@ -1,6 +1,9 @@
 "use client";
-import React from 'react';
-import { Sun, Moon, Download } from "lucide-react";
+import { saveAs } from "file-saver";
+import { toPng, toSvg } from "html-to-image";
+import jsPDF from "jspdf";
+import { Download, Moon, Sun } from "lucide-react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,18 +11,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toPng, toSvg } from 'html-to-image';
-import { useStore } from '@/lib/store/index';
 import type { EditorSnapshotType } from "@/features/newsletter/types";
-import { saveAs } from 'file-saver';
-import jsPDF from 'jspdf';
+import { useStore } from "@/lib/store/index";
 
 function encodeSnapshot(obj: Record<string, unknown>): Blob {
   const json = JSON.stringify(obj);
   // Simple binary encoding (UTF-8 bytes)
   const encoder = new TextEncoder();
   const bytes = encoder.encode(json);
-  return new Blob([bytes], { type: 'application/octet-stream' });
+  return new Blob([bytes], { type: "application/octet-stream" });
 }
 
 async function decodeSnapshot(file: File): Promise<EditorSnapshotType> {
@@ -31,9 +31,9 @@ async function decodeSnapshot(file: File): Promise<EditorSnapshotType> {
 
 export function Header() {
   // Removed unused storeTitle subscription to avoid unnecessary re-renders
-  const storeDate = useStore(state => state.date);
+  const storeDate = useStore((state) => state.date);
   // Removed stateForSnapshot subscription to avoid creating new object each render.
-  const loadSnapshot = useStore(state => state.loadSnapshot);
+  const loadSnapshot = useStore((state) => state.loadSnapshot);
 
   const buildSnapshot = () => {
     const state = useStore.getState();
@@ -53,109 +53,121 @@ export function Header() {
 
   // Format date for filename based on the date format
   const formatDateForFilename = (dateStr: string) => {
-    if (!dateStr) return '';
-    
+    if (!dateStr) return "";
+
     // Check if it's a month format (YYYY-MM)
     if (/^\d{4}-\d{2}$/.test(dateStr)) {
-      const [year, month] = dateStr.split('-');
-      const monthNames = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-      ];
+      const [year, month] = dateStr.split("-");
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       return `${monthNames[parseInt(month) - 1]}-${year}`;
     }
-    
+
     // Check if it's a business week range (e.g., "2025-08-04 to 2025-08-08")
-    if (dateStr.includes(' to ')) {
-      const mondayDate = dateStr.split(' to ')[0];
+    if (dateStr.includes(" to ")) {
+      const mondayDate = dateStr.split(" to ")[0];
       // Monday should be in YYYY-MM-DD format, convert to YYYYMMDD
       if (/^\d{4}-\d{2}-\d{2}$/.test(mondayDate)) {
-        return mondayDate.replace(/-/g, '');
+        return mondayDate.replace(/-/g, "");
       }
     }
-    
+
     // Check if it's a single date in YYYY-MM-DD format
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-      return dateStr.replace(/-/g, '');
+      return dateStr.replace(/-/g, "");
     }
-    
+
     // Try to parse other date formats as fallback
     const date = new Date(dateStr);
     if (!isNaN(date.getTime())) {
       const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const day = date.getDate().toString().padStart(2, "0");
       return `${year}${month}${day}`;
     }
-    
-    return '';
+
+    return "";
   };
 
   // Sanitize the newsletter title for use as a filename: remove emojis / pictographs,
   // strip accents, keep alphanumerics, collapse to dashes, lowercase.
   const sanitizeTitleForFilename = (raw: string | undefined | null): string => {
-    if (!raw) return 'newsletter';
-    let t = raw.normalize('NFKD');
+    if (!raw) return "newsletter";
+    let t = raw.normalize("NFKD");
     // Remove combining marks from accents
-    t = t.replace(/\p{M}+/gu, '');
+    t = t.replace(/\p{M}+/gu, "");
     // Attempt to remove extended pictographic (emoji) characters
-    try { t = t.replace(/\p{Extended_Pictographic}/gu, ''); } catch { /* property may not be supported */ }
+    try {
+      t = t.replace(/\p{Extended_Pictographic}/gu, "");
+    } catch {
+      /* property may not be supported */
+    }
     // Fallback: remove surrogate pairs (most emojis)
-    t = t.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '');
+    t = t.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "");
     // Remove any remaining symbols except basic ascii letters/numbers
-    t = t.replace(/[^a-zA-Z0-9]+/g, '-');
-    t = t.replace(/^-+|-+$/g, '');
+    t = t.replace(/[^a-zA-Z0-9]+/g, "-");
+    t = t.replace(/^-+|-+$/g, "");
     t = t.toLowerCase();
-    return t || 'newsletter';
+    return t || "newsletter";
   };
 
-  const handleDownload = async (format: 'enl' | 'png' | 'svg' | 'pdf') => {
+  const handleDownload = async (format: "enl" | "png" | "svg" | "pdf") => {
     try {
       const snapshot = buildSnapshot();
-  const dateFormatted = formatDateForFilename(storeDate);
-  const titlePart = sanitizeTitleForFilename(snapshot.title);
-  const safeTitle = dateFormatted ? `${titlePart}-${dateFormatted}` : titlePart;
+      const dateFormatted = formatDateForFilename(storeDate);
+      const titlePart = sanitizeTitleForFilename(snapshot.title);
+      const safeTitle = dateFormatted ? `${titlePart}-${dateFormatted}` : titlePart;
 
-      if (format === 'enl') {
+      if (format === "enl") {
         const blob = encodeSnapshot(snapshot);
         saveAs(blob, `${safeTitle}.enl`);
         return;
       }
-  const inner = document.getElementById('newsletter-canvas');
-  if (!inner) return;
-  // IMPORTANT: Do NOT capture the parent wrapper because it has a CSS transform (zoom scaling)
-  // applied in CanvasPanel. html-to-image miscalculates the bounding box for transformed
-  // elements which was causing a horizontal shift and right-side cropping in the export.
-  // Capturing just the untransformed inner canvas fixes the alignment.
-  const captureTarget = inner; 
+      const inner = document.getElementById("newsletter-canvas");
+      if (!inner) return;
+      // IMPORTANT: Do NOT capture the parent wrapper because it has a CSS transform (zoom scaling)
+      // applied in CanvasPanel. html-to-image miscalculates the bounding box for transformed
+      // elements which was causing a horizontal shift and right-side cropping in the export.
+      // Capturing just the untransformed inner canvas fixes the alignment.
+      const captureTarget = inner;
 
-      const selectedBorders = captureTarget.querySelectorAll('.border-blue-500');
-      selectedBorders.forEach(el => el.classList.remove('border-blue-500', 'border-2'));
+      const selectedBorders = captureTarget.querySelectorAll(".border-blue-500");
+      selectedBorders.forEach((el) => el.classList.remove("border-blue-500", "border-2"));
 
       // Hide lock icons during capture
       const lockIcons = captureTarget.querySelectorAll('[title="Locked"]');
-      lockIcons.forEach(el => (el as HTMLElement).style.display = 'none');
+      lockIcons.forEach((el) => ((el as HTMLElement).style.display = "none"));
 
-      if (format === 'png') {
-        const dataUrl = await toPng(captureTarget, { cacheBust: true, pixelRatio: 3 });
-        const link = document.createElement('a');
+      if (format === "png") {
+        const dataUrl = await toPng(captureTarget, {
+          cacheBust: true,
+          pixelRatio: 3,
+        });
+        const link = document.createElement("a");
         link.download = `${safeTitle}.png`;
         link.href = dataUrl;
         link.click();
-      } else if (format === 'svg') {
+      } else if (format === "svg") {
         const dataUrl = await toSvg(captureTarget, { cacheBust: true });
         const res = await fetch(dataUrl);
         const svgText = await res.text();
-        const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+        const blob = new Blob([svgText], {
+          type: "image/svg+xml;charset=utf-8",
+        });
         saveAs(blob, `${safeTitle}.svg`);
-      } else if (format === 'pdf') {
+      } else if (format === "pdf") {
         // Use PNG for maximum quality
-        const dataUrl = await toPng(captureTarget, { cacheBust: true, pixelRatio: 1, quality: 1 });
+        const dataUrl = await toPng(captureTarget, {
+          cacheBust: true,
+          pixelRatio: 1,
+          quality: 1,
+        });
         const img = new Image();
         img.src = dataUrl;
-        await new Promise(res => { img.onload = () => res(null); });
-        const orientation = img.width > img.height ? 'landscape' : 'portrait';
-        const pdf = new jsPDF({ orientation, unit: 'pt', format: 'letter' });
+        await new Promise((res) => {
+          img.onload = () => res(null);
+        });
+        const orientation = img.width > img.height ? "landscape" : "portrait";
+        const pdf = new jsPDF({ orientation, unit: "pt", format: "letter" });
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
         const ratio = Math.min(pageWidth / img.width, pageHeight / img.height);
@@ -163,15 +175,15 @@ export function Header() {
         const imgHeight = img.height * ratio;
         const x = (pageWidth - imgWidth) / 2;
         const y = (pageHeight - imgHeight) / 2;
-        pdf.addImage(dataUrl, 'PNG', x, y, imgWidth, imgHeight);
+        pdf.addImage(dataUrl, "PNG", x, y, imgWidth, imgHeight);
         pdf.save(`${safeTitle}.pdf`);
       }
 
       // Restore selection borders and lock icons
-      selectedBorders.forEach(el => el.classList.add('border-blue-500', 'border-2'));
-      lockIcons.forEach(el => (el as HTMLElement).style.display = '');
+      selectedBorders.forEach((el) => el.classList.add("border-blue-500", "border-2"));
+      lockIcons.forEach((el) => ((el as HTMLElement).style.display = ""));
     } catch (e) {
-      console.error('Download failed', e);
+      console.error("Download failed", e);
     }
   };
 
@@ -182,36 +194,36 @@ export function Header() {
       const snapshot = await decodeSnapshot(file);
       loadSnapshot(snapshot);
     } catch (err) {
-      console.error('Import failed', err);
+      console.error("Import failed", err);
     } finally {
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
   const [isDark, setIsDark] = React.useState(false);
   React.useEffect(() => {
     try {
-      const stored = localStorage.getItem('theme');
-      const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const enable = stored ? stored === 'dark' : prefers;
+      const stored = localStorage.getItem("theme");
+      const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const enable = stored ? stored === "dark" : prefers;
       if (enable) {
-        document.documentElement.classList.add('dark');
+        document.documentElement.classList.add("dark");
         setIsDark(true);
       } else {
-        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.remove("dark");
         setIsDark(false);
       }
     } catch {}
   }, []);
   const toggleTheme = () => {
-    setIsDark(prev => {
+    setIsDark((prev) => {
       const next = !prev;
       if (next) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme','dark');
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("theme", "dark");
       } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme','light');
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("theme", "light");
       }
       return next;
     });
@@ -221,7 +233,11 @@ export function Header() {
     <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-2 border-b bg-white/80 dark:bg-gray-900/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-gray-900/60 shadow-sm">
       <div className="flex items-center gap-3 min-w-0">
         <div className="relative flex items-center justify-center">
-          <svg viewBox="0 0 64 64" className="h-8 w-8 text-blue-600 dark:text-blue-400 drop-shadow-sm" aria-hidden="true">
+          <svg
+            viewBox="0 0 64 64"
+            className="h-8 w-8 text-blue-600 dark:text-blue-400 drop-shadow-sm"
+            aria-hidden="true"
+          >
             <rect x="6" y="14" width="16" height="36" rx="2" className="fill-blue-500/90 dark:fill-blue-500" />
             <rect x="24" y="10" width="16" height="40" rx="2" className="fill-purple-500/90 dark:fill-purple-500" />
             <rect x="42" y="18" width="16" height="32" rx="2" className="fill-pink-500/90 dark:fill-pink-500" />
@@ -231,26 +247,32 @@ export function Header() {
           </svg>
         </div>
         <div className="flex flex-col leading-tight">
-          <span className="font-semibold tracking-tight text-sm sm:text-base bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">Elementary School Newsletters</span>
+          <span className="font-semibold tracking-tight text-sm sm:text-base bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
+            Elementary School Newsletters
+          </span>
         </div>
       </div>
       <div className="flex items-center gap-2">
         {/* Unified Download dropdown: ENL (project), PNG, SVG */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline"><Download className="h-4 w-4 mr-2" /> Download</Button>
+            <Button variant="outline">
+              <Download className="h-4 w-4 mr-2" /> Download
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => handleDownload('enl')}>Download Project (.enl)</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDownload('png')}>Download PNG</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDownload('svg')}>Download SVG</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDownload('pdf')}>Download PDF</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDownload("enl")}>Download Project (.enl)</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDownload("png")}>Download PNG</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDownload("svg")}>Download SVG</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDownload("pdf")}>Download PDF</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         {/* Load project */}
         <div>
           <input id="import-file" type="file" accept=".enl" className="hidden" onChange={handleImport} />
-          <Button variant="outline" onClick={() => document.getElementById('import-file')?.click()}>Load</Button>
+          <Button variant="outline" onClick={() => document.getElementById("import-file")?.click()}>
+            Load
+          </Button>
         </div>
         {/* Theme toggle */}
         <Button variant="ghost" size="icon" aria-label="Toggle theme" onClick={toggleTheme} aria-pressed={isDark}>

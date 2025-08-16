@@ -1,51 +1,63 @@
 import React from "react";
-import { ThemeType } from "@/lib/themes";
-import { useStore } from '@/lib/store/index';
-import TitleDateSection, { DateMode } from '../document/TitleDateSection';
-import TitleStylesSection from '../document/TitleStylesSection';
-import DateStylesSection from '../document/DateStylesSection';
-import PageBackgroundSection from '../document/PageBackgroundSection';
-import DenseModeSection from '../document/DenseModeSection';
+import { useStore } from "@/lib/store/index";
+import type { ThemeType } from "@/lib/themes";
+import DateStylesSection from "../document/DateStylesSection";
+import DenseModeSection from "../document/DenseModeSection";
+import PageBackgroundSection from "../document/PageBackgroundSection";
+import TitleDateSection, { type DateMode } from "../document/TitleDateSection";
+import TitleStylesSection from "../document/TitleStylesSection";
 
-interface DocumentInspectorProps { title: string; date: string; theme: ThemeType; onTitleChange: (title: string) => void; onDateChange: (date: string) => void; }
+interface DocumentInspectorProps {
+  title: string;
+  date: string;
+  theme: ThemeType;
+  onTitleChange: (title: string) => void;
+  onDateChange: (date: string) => void;
+}
 
-export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, date, theme, onTitleChange, onDateChange }) => {
+export const DocumentInspector: React.FC<DocumentInspectorProps> = ({
+  title,
+  date,
+  theme,
+  onTitleChange,
+  onDateChange,
+}) => {
   // store getters
-  const denseMode = useStore(s => s.denseMode);
-  
+  const denseMode = useStore((s) => s.denseMode);
+
   // store setters
-  const setDenseMode = useStore(s => s.setDenseMode);
-  const setThemeTitleFont = useStore(s => s.setThemeTitleFont);
-  const setThemeDateFont = useStore(s => s.setThemeDateFont);
-  const setThemeTitleColor = useStore(s => s.setThemeTitleColor);
-  const setThemeDateColor = useStore(s => s.setThemeDateColor);
-  const setThemeTitleAlignment = useStore(s => s.setThemeTitleAlignment);
-  const setThemeDateAlignment = useStore(s => s.setThemeDateAlignment);
-  const setThemeTitleTextEffect = useStore(s => s.setThemeTitleTextEffect);
-  const setThemePageBackgroundColor = useStore(s => s.setThemePageBackgroundColor);
-  const setThemePageBackgroundImage = useStore(s => s.setThemePageBackgroundImage);
-  const setThemePageBackgroundSize = useStore(s => s.setThemePageBackgroundSize);
-  const setThemePageBackgroundPosition = useStore(s => s.setThemePageBackgroundPosition);
-  const setThemePageBackgroundRepeat = useStore(s => s.setThemePageBackgroundRepeat);
-  const setThemePageBackgroundImageOpacity = useStore(s => s.setThemePageBackgroundImageOpacity);
+  const setDenseMode = useStore((s) => s.setDenseMode);
+  const setThemeTitleFont = useStore((s) => s.setThemeTitleFont);
+  const setThemeDateFont = useStore((s) => s.setThemeDateFont);
+  const setThemeTitleColor = useStore((s) => s.setThemeTitleColor);
+  const setThemeDateColor = useStore((s) => s.setThemeDateColor);
+  const setThemeTitleAlignment = useStore((s) => s.setThemeTitleAlignment);
+  const setThemeDateAlignment = useStore((s) => s.setThemeDateAlignment);
+  const setThemeTitleTextEffect = useStore((s) => s.setThemeTitleTextEffect);
+  const setThemePageBackgroundColor = useStore((s) => s.setThemePageBackgroundColor);
+  const setThemePageBackgroundImage = useStore((s) => s.setThemePageBackgroundImage);
+  const setThemePageBackgroundSize = useStore((s) => s.setThemePageBackgroundSize);
+  const setThemePageBackgroundPosition = useStore((s) => s.setThemePageBackgroundPosition);
+  const setThemePageBackgroundRepeat = useStore((s) => s.setThemePageBackgroundRepeat);
+  const setThemePageBackgroundImageOpacity = useStore((s) => s.setThemePageBackgroundImageOpacity);
 
   // Date helpers
   const toDateInputValue = React.useCallback((val: string): string => {
-    if (!val) return '';
+    if (!val) return "";
     if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val;
     const rangeMatch = val.match(/(\d{4}-\d{2}-\d{2}).+(\d{4}-\d{2}-\d{2})/);
     if (rangeMatch) return rangeMatch[1];
     const parsed = new Date(val);
-    if (isNaN(parsed.getTime())) return '';
+    if (isNaN(parsed.getTime())) return "";
     const y = parsed.getFullYear();
-    const m = String(parsed.getMonth() + 1).padStart(2, '0');
-    const d = String(parsed.getDate()).padStart(2, '0');
+    const m = String(parsed.getMonth() + 1).padStart(2, "0");
+    const d = String(parsed.getDate()).padStart(2, "0");
     return `${y}-${m}-${d}`;
   }, []);
   const inferModeFromDate = (d: string): DateMode => {
-    if (/^\d{4}-\d{2}$/.test(d)) return 'month';
-    if (/\d{4}-\d{2}-\d{2}.*(to|–).*/.test(d)) return 'week';
-    return 'single';
+    if (/^\d{4}-\d{2}$/.test(d)) return "month";
+    if (/\d{4}-\d{2}-\d{2}.*(to|–).*/.test(d)) return "week";
+    return "single";
   };
 
   // Track if user explicitly chose a mode (so we don't auto override)
@@ -60,26 +72,29 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
 
   const formatISO = React.useCallback((d: Date) => {
     const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const da = String(d.getDate()).padStart(2, '0');
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const da = String(d.getDate()).padStart(2, "0");
     return `${y}-${m}-${da}`;
   }, []);
-  const computeBusinessWeekRange = React.useCallback((iso: string) => {
-    const [y, m, d] = iso.split('-').map(Number);
-    const base = new Date(y, m - 1, d);
-    if (isNaN(base.getTime())) return iso;
-    const day = base.getDay();
-    const offsetToMonday = (day + 6) % 7;
-    const monday = new Date(base);
-    monday.setDate(base.getDate() - offsetToMonday);
-    const friday = new Date(monday);
-    friday.setDate(monday.getDate() + 4);
-    return `${formatISO(monday)} to ${formatISO(friday)}`;
-  }, [formatISO]);
+  const computeBusinessWeekRange = React.useCallback(
+    (iso: string) => {
+      const [y, m, d] = iso.split("-").map(Number);
+      const base = new Date(y, m - 1, d);
+      if (isNaN(base.getTime())) return iso;
+      const day = base.getDay();
+      const offsetToMonday = (day + 6) % 7;
+      const monday = new Date(base);
+      monday.setDate(base.getDate() - offsetToMonday);
+      const friday = new Date(monday);
+      friday.setDate(monday.getDate() + 4);
+      return `${formatISO(monday)} to ${formatISO(friday)}`;
+    },
+    [formatISO],
+  );
 
   // If in week mode but date is a plain single date, convert to a business week range
   React.useEffect(() => {
-    if (dateMode === 'week' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    if (dateMode === "week" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
       onDateChange(computeBusinessWeekRange(date));
     }
   }, [dateMode, date, computeBusinessWeekRange, onDateChange]);
@@ -102,10 +117,7 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
         toDateInputValue={toDateInputValue}
         formatISO={formatISO}
       />
-      <DenseModeSection
-        denseMode={denseMode}
-        onDenseModeChange={setDenseMode}
-      />
+      <DenseModeSection denseMode={denseMode} onDenseModeChange={setDenseMode} />
       <TitleStylesSection
         // fonts now sourced internally via FontSelect
         titleColorId={React.useId()}
@@ -132,14 +144,14 @@ export const DocumentInspector: React.FC<DocumentInspectorProps> = ({ title, dat
           color: React.useId(),
           size: React.useId(),
           position: React.useId(),
-          repeat: React.useId()
+          repeat: React.useId(),
         }}
         themeStyles={theme.styles.page}
         setBgColor={setThemePageBackgroundColor}
-        setBgImage={(v) => setThemePageBackgroundImage(v ?? '')}
-        setBgSize={(v) => setThemePageBackgroundSize(v ?? '')}
-        setBgPosition={(v) => setThemePageBackgroundPosition(v ?? '')}
-        setBgRepeat={(v) => setThemePageBackgroundRepeat(v ?? '')}
+        setBgImage={(v) => setThemePageBackgroundImage(v ?? "")}
+        setBgSize={(v) => setThemePageBackgroundSize(v ?? "")}
+        setBgPosition={(v) => setThemePageBackgroundPosition(v ?? "")}
+        setBgRepeat={(v) => setThemePageBackgroundRepeat(v ?? "")}
         setBgOpacity={setThemePageBackgroundImageOpacity}
       />
     </div>

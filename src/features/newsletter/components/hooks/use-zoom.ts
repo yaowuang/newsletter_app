@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import type { ZoomControlsType } from '@/features/newsletter/types';
+import { useCallback, useState } from "react";
+import type { ZoomControlsType } from "@/features/newsletter/types";
 
 const ZOOM_LIMITS = {
   MIN: 0.25,
@@ -14,11 +14,11 @@ export function useZoom(): ZoomControlsType {
   const [zoom, setZoom] = useState(1);
 
   const handleZoomIn = useCallback(() => {
-    setZoom(prev => Math.min(prev + ZOOM_LIMITS.STEP, ZOOM_LIMITS.MAX));
+    setZoom((prev) => Math.min(prev + ZOOM_LIMITS.STEP, ZOOM_LIMITS.MAX));
   }, []);
 
   const handleZoomOut = useCallback(() => {
-    setZoom(prev => Math.max(prev - ZOOM_LIMITS.STEP, ZOOM_LIMITS.MIN));
+    setZoom((prev) => Math.max(prev - ZOOM_LIMITS.STEP, ZOOM_LIMITS.MIN));
   }, []);
 
   const handleResetZoom = useCallback(() => {

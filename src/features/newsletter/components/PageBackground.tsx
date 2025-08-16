@@ -1,19 +1,19 @@
-import React from 'react';
-import type { ThemeType } from '@/lib/themes';
+import React from "react";
+import type { ThemeType } from "@/lib/themes";
 
 /**
  * Generates background image styles
  */
 function createBackgroundImageStyle(theme: ThemeType) {
   if (!theme.styles.page.backgroundImage) return {};
-  
+
   return {
     backgroundImage: theme.styles.page.backgroundImage,
-    backgroundSize: theme.styles.page.backgroundSize || 'cover',
-    backgroundPosition: theme.styles.page.backgroundPosition || 'center',
-    backgroundRepeat: theme.styles.page.backgroundRepeat || 'no-repeat',
+    backgroundSize: theme.styles.page.backgroundSize || "cover",
+    backgroundPosition: theme.styles.page.backgroundPosition || "center",
+    backgroundRepeat: theme.styles.page.backgroundRepeat || "no-repeat",
     opacity: theme.styles.page.backgroundImageOpacity ?? 1,
-    pointerEvents: 'none' as const,
+    pointerEvents: "none" as const,
     zIndex: 0,
   };
 }
@@ -31,11 +31,5 @@ export function PageBackground({ theme }: PageBackgroundProps) {
     return null;
   }
 
-  return (
-    <div
-      aria-hidden
-      className="absolute inset-0"
-      style={createBackgroundImageStyle(theme)}
-    />
-  );
+  return <div aria-hidden className="absolute inset-0" style={createBackgroundImageStyle(theme)} />;
 }

@@ -5,151 +5,150 @@ export type HorizontalLineStyle = {
   id: string;
   name: string;
   preview: string; // SVG string or CSS style
-  type: 'svg' | 'css';
+  type: "svg" | "css";
   themeTags: string[];
   repeat?: boolean; // whether svg should tile horizontally when stretched
   defaultColor?: string; // default color for the element
   colorCustomizable?: boolean; // whether the color can be changed by the user
-  weight?: 'light' | 'regular' | 'bold'; // optional semantic weight hint
+  weight?: "light" | "regular" | "bold"; // optional semantic weight hint
 };
 
 export const horizontalLineLibrary: HorizontalLineStyle[] = [
   {
-    id: 'classic-solid',
-    name: 'Classic Solid',
-    preview: '',
-    type: 'css',
-    themeTags: ['Default', 'Magazine', 'Storybook'],
-  colorCustomizable: true,
-  weight: 'regular'
+    id: "classic-solid",
+    name: "Classic Solid",
+    preview: "",
+    type: "css",
+    themeTags: ["Default", "Magazine", "Storybook"],
+    colorCustomizable: true,
+    weight: "regular",
   },
   {
-    id: 'classic-dashed',
-    name: 'Classic Dashed',
-    preview: '',
-    type: 'css',
-    themeTags: ['Default', 'Magazine', 'Storybook'],
-  colorCustomizable: true,
-  weight: 'light'
+    id: "classic-dashed",
+    name: "Classic Dashed",
+    preview: "",
+    type: "css",
+    themeTags: ["Default", "Magazine", "Storybook"],
+    colorCustomizable: true,
+    weight: "light",
   },
   {
-    id: 'classic-dotted',
-    name: 'Classic Dotted',
-    preview: '',
-    type: 'css',
-    themeTags: ['Default', 'Magazine', 'Storybook'],
-  colorCustomizable: true,
-  weight: 'light'
+    id: "classic-dotted",
+    name: "Classic Dotted",
+    preview: "",
+    type: "css",
+    themeTags: ["Default", "Magazine", "Storybook"],
+    colorCustomizable: true,
+    weight: "light",
   },
   {
-    id: 'shadow',
-    name: 'Shadow Line',
-    preview: '',
-    type: 'css',
-    themeTags: ['Magazine', 'Arcade'],
-  colorCustomizable: true,
-  weight: 'bold'
+    id: "shadow",
+    name: "Shadow Line",
+    preview: "",
+    type: "css",
+    themeTags: ["Magazine", "Arcade"],
+    colorCustomizable: true,
+    weight: "bold",
   },
   {
-    id: 'hearts',
-    name: 'Hearts',
-    preview: '/horizontal-lines/hearts.svg',
-    type: 'svg',
-    themeTags: ['Valentine\'s Day'],
+    id: "hearts",
+    name: "Hearts",
+    preview: "/horizontal-lines/hearts.svg",
+    type: "svg",
+    themeTags: ["Valentine's Day"],
     repeat: true,
-    defaultColor: '#ef4444', // Red
-    colorCustomizable: true
+    defaultColor: "#ef4444", // Red
+    colorCustomizable: true,
   },
   {
-    id: 'stars',
-    name: 'Stars',
-    preview: '/horizontal-lines/stars.svg',
-    type: 'svg',
-    themeTags: ['Galaxy Mission', 'Hollywood'],
+    id: "stars",
+    name: "Stars",
+    preview: "/horizontal-lines/stars.svg",
+    type: "svg",
+    themeTags: ["Galaxy Mission", "Hollywood"],
     repeat: true,
-    defaultColor: '#fbbf24', // Gold/Yellow
-    colorCustomizable: true
+    defaultColor: "#fbbf24", // Gold/Yellow
+    colorCustomizable: true,
   },
   {
-    id: 'patriotic-flags',
-    name: 'Patriotic Flags',
-    preview: '/horizontal-lines/patriotic-flags.svg',
-    type: 'svg',
-    themeTags: ['Patriotic'],
+    id: "patriotic-flags",
+    name: "Patriotic Flags",
+    preview: "/horizontal-lines/patriotic-flags.svg",
+    type: "svg",
+    themeTags: ["Patriotic"],
     repeat: true,
-    defaultColor: '#B22234', // Red (matches the SVG's primary color)
-    colorCustomizable: false
+    defaultColor: "#B22234", // Red (matches the SVG's primary color)
+    colorCustomizable: false,
   },
   {
-    id: 'clover',
-    name: 'Clover',
-    preview: '/horizontal-lines/clover.svg',
-    type: 'svg',
+    id: "clover",
+    name: "Clover",
+    preview: "/horizontal-lines/clover.svg",
+    type: "svg",
     themeTags: ["St. Patrick's Day"],
     repeat: true,
-  // Updated to a brighter Shamrock/St. Patrick's Day green
-  defaultColor: '#009E60', // Shamrock Green
-    colorCustomizable: true
+    // Updated to a brighter Shamrock/St. Patrick's Day green
+    defaultColor: "#009E60", // Shamrock Green
+    colorCustomizable: true,
   },
   {
-    id: 'snowflakes',
-    name: 'Snowflakes',
-    preview: '/horizontal-lines/snowflakes.svg',
-    type: 'svg',
-    themeTags: ['Winter Holiday', 'Christmas'],
+    id: "snowflakes",
+    name: "Snowflakes",
+    preview: "/horizontal-lines/snowflakes.svg",
+    type: "svg",
+    themeTags: ["Winter Holiday", "Christmas"],
     repeat: true,
-    defaultColor: '#FFFFFF', // White (matches the SVG's actual color)
-    colorCustomizable: true
+    defaultColor: "#FFFFFF", // White (matches the SVG's actual color)
+    colorCustomizable: true,
   },
   {
-    id: 'pumpkin',
-    name: 'Pumpkin',
-    preview: '/horizontal-lines/pumpkin.svg',
-    type: 'svg',
-    themeTags: ['Halloween', 'Thanksgiving'],
+    id: "pumpkin",
+    name: "Pumpkin",
+    preview: "/horizontal-lines/pumpkin.svg",
+    type: "svg",
+    themeTags: ["Halloween", "Thanksgiving"],
     repeat: true,
-    defaultColor: '#ea580c', // Orange
-    colorCustomizable: false
+    defaultColor: "#ea580c", // Orange
+    colorCustomizable: false,
   },
   {
-    id: 'comic-halftone',
-    name: 'Comic Halftone',
-    preview: '/horizontal-lines/comic-halftone.svg',
+    id: "comic-halftone",
+    name: "Comic Halftone",
+    preview: "/horizontal-lines/comic-halftone.svg",
     repeat: true,
-    type: 'svg',
-    themeTags: ['Comic Boom'],
-    defaultColor: '#7c3aed', // Purple
-    colorCustomizable: false
+    type: "svg",
+    themeTags: ["Comic Boom"],
+    defaultColor: "#7c3aed", // Purple
+    colorCustomizable: false,
   },
   {
-    id: 'arcade-pixel',
-    name: 'Arcade Pixel',
-    preview: '/horizontal-lines/arcade-pixel.svg',
-    type: 'svg',
-    themeTags: ['Arcade', 'Galaxy Mission'],
+    id: "arcade-pixel",
+    name: "Arcade Pixel",
+    preview: "/horizontal-lines/arcade-pixel.svg",
+    type: "svg",
+    themeTags: ["Arcade", "Galaxy Mission"],
     repeat: true,
-    defaultColor: '#08F7FE', // Cyan (primary color from arcade theme)
-    colorCustomizable: false // Fixed colors - cyan and neon green
-  }
-  ,
+    defaultColor: "#08F7FE", // Cyan (primary color from arcade theme)
+    colorCustomizable: false, // Fixed colors - cyan and neon green
+  },
   {
-    id: 'beachball',
-    name: 'Beach Ball',
-    preview: '/horizontal-lines/beachball.svg',
-    type: 'svg',
-    themeTags: ['Summer', 'Beach Day', 'Storybook'],
+    id: "beachball",
+    name: "Beach Ball",
+    preview: "/horizontal-lines/beachball.svg",
+    type: "svg",
+    themeTags: ["Summer", "Beach Day", "Storybook"],
     repeat: true, // tile multiple beach balls across the line
-    colorCustomizable: false // multi-colored asset; keep original colors
-  }
+    colorCustomizable: false, // multi-colored asset; keep original colors
+  },
 ];
 
 // Helper: Given a theme name, pick a suitable line id for 'themed' placeholder.
 // Strategy: prefer an exact theme tag match with a repeatable SVG for richer look; fall back to any match; finally default solid.
 export function resolveThemedLine(themeName: string): HorizontalLineStyle {
-  const candidates = horizontalLineLibrary.filter(l => l.themeTags.includes(themeName));
+  const candidates = horizontalLineLibrary.filter((l) => l.themeTags.includes(themeName));
   if (candidates.length) {
-    const svgRepeat = candidates.find(c => c.type === 'svg' && c.repeat);
+    const svgRepeat = candidates.find((c) => c.type === "svg" && c.repeat);
     return svgRepeat || candidates[0];
   }
-  return horizontalLineLibrary.find(l => l.id === 'classic-solid')!;
+  return horizontalLineLibrary.find((l) => l.id === "classic-solid")!;
 }

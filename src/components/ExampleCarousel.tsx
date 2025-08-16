@@ -1,34 +1,34 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const examples = [
   {
-    src: '/examples/default.png',
-    alt: 'Default newsletter template with clean layout',
-    title: 'Classic Template'
+    src: "/examples/default.png",
+    alt: "Default newsletter template with clean layout",
+    title: "Classic Template",
   },
   {
-    src: '/examples/mission_galaxy.png',
-    alt: 'Space-themed newsletter with galaxy background',
-    title: 'Mission Galaxy'
+    src: "/examples/mission_galaxy.png",
+    alt: "Space-themed newsletter with galaxy background",
+    title: "Mission Galaxy",
   },
   {
-    src: '/examples/patriotic.png',
-    alt: 'Patriotic theme with American flag elements',
-    title: 'Patriotic Theme'
+    src: "/examples/patriotic.png",
+    alt: "Patriotic theme with American flag elements",
+    title: "Patriotic Theme",
   },
   {
-    src: '/examples/retro3d.png',
-    alt: 'Retro 3D styled newsletter template',
-    title: 'Retro 3D'
+    src: "/examples/retro3d.png",
+    alt: "Retro 3D styled newsletter template",
+    title: "Retro 3D",
   },
   {
-    src: '/examples/valentines.png',
-    alt: 'Valentine\'s Day themed newsletter with hearts',
-    title: 'Valentine\'s Day'
-  }
+    src: "/examples/valentines.png",
+    alt: "Valentine's Day themed newsletter with hearts",
+    title: "Valentine's Day",
+  },
 ];
 
 export default function ExampleCarousel() {
@@ -37,7 +37,7 @@ export default function ExampleCarousel() {
 
   useEffect(() => {
     if (!isAutoPlaying) return;
-    
+
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % examples.length);
     }, 4000);
@@ -67,13 +67,16 @@ export default function ExampleCarousel() {
   return (
     <div className="relative group">
       {/* Frame & glow */}
-      <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-fuchsia-500/20 blur-xl opacity-40 group-hover:opacity-55 transition" aria-hidden />
-      
+      <div
+        className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-fuchsia-500/20 blur-xl opacity-40 group-hover:opacity-55 transition"
+        aria-hidden
+      />
+
       <div className="relative rounded-3xl ring-1 ring-white/12 bg-gradient-to-br from-slate-800/70 via-slate-900/70 to-slate-800/40 shadow-2xl overflow-hidden backdrop-blur-xl">
         {/* Carousel container */}
         <div className="relative w-full aspect-[21/9] md:aspect-[18/7] lg:aspect-[16/6] overflow-hidden">
           {/* Images */}
-          <div 
+          <div
             className="flex transition-transform duration-700 ease-in-out h-full"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
@@ -126,9 +129,7 @@ export default function ExampleCarousel() {
               key={index}
               onClick={() => goToSlide(index)}
               className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex 
-                  ? 'bg-white shadow-sm' 
-                  : 'bg-white/30 hover:bg-white/50'
+                index === currentIndex ? "bg-white shadow-sm" : "bg-white/30 hover:bg-white/50"
               }`}
               aria-label={`Go to example ${index + 1}`}
             />

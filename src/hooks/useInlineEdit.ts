@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 interface UseInlineEditOptions<T = string> {
   initialValue: T;
@@ -7,12 +7,7 @@ interface UseInlineEditOptions<T = string> {
   autoFocusRef?: React.RefObject<HTMLInputElement | HTMLTextAreaElement>;
 }
 
-export function useInlineEdit<T = string>({
-  initialValue,
-  onCommit,
-  onCancel,
-  autoFocusRef,
-}: UseInlineEditOptions<T>) {
+export function useInlineEdit<T = string>({ initialValue, onCommit, onCancel, autoFocusRef }: UseInlineEditOptions<T>) {
   const [isEditing, setIsEditing] = useState(false);
   const [draftValue, setDraftValue] = useState<T>(initialValue);
   const [originalValue, setOriginalValue] = useState<T>(initialValue);
@@ -24,7 +19,7 @@ export function useInlineEdit<T = string>({
     setTimeout(() => {
       if (autoFocusRef?.current) {
         autoFocusRef.current.focus();
-        if ('value' in autoFocusRef.current) {
+        if ("value" in autoFocusRef.current) {
           const len = (autoFocusRef.current as HTMLInputElement).value.length;
           autoFocusRef.current.selectionStart = len;
           autoFocusRef.current.selectionEnd = len;

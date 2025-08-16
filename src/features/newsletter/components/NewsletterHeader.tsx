@@ -1,8 +1,8 @@
-import React from 'react';
-import type { ThemeType } from '@/lib/themes';
-import { CSSProperties } from 'react';
-import { PastelRotateText } from '@/components/common/PastelRotateText';
-import { RainbowRotateText } from '@/components/common/RainbowRotateText';
+import type React from "react";
+import type { CSSProperties } from "react";
+import { PastelRotateText } from "@/components/common/PastelRotateText";
+import { RainbowRotateText } from "@/components/common/RainbowRotateText";
+import type { ThemeType } from "@/lib/themes";
 
 interface NewsletterHeaderProps {
   title: string;
@@ -15,30 +15,37 @@ interface NewsletterHeaderProps {
  * Formats a raw date string into a human-readable format
  */
 function formatDisplayDate(raw: string): string {
-  if (!raw) return '';
-  
+  if (!raw) return "";
+
   // Month-only (YYYY-MM)
   if (/^\d{4}-\d{2}$/.test(raw)) {
-    const [y, m] = raw.split('-').map(Number);
+    const [y, m] = raw.split("-").map(Number);
     const d = new Date(y, m - 1, 1);
-    return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(d);
+    return new Intl.DateTimeFormat("en-US", {
+      month: "long",
+      year: "numeric",
+    }).format(d);
   }
-  
+
   // If already looks like a long month name, assume formatted
   if (/January|February|March|April|May|June|July|August|September|October|November|December/.test(raw)) {
     return raw;
   }
-  
-  const fmt = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
   const isoSingle = /^\d{4}-\d{2}-\d{2}$/;
   const isoRange = /^(\d{4}-\d{2}-\d{2})\s*(?:to|–|-)\s*(\d{4}-\d{2}-\d{2})$/;
-  
+
   if (isoSingle.test(raw)) {
     const d = new Date(raw);
     if (!isNaN(d.getTime())) return fmt.format(d);
     return raw;
   }
-  
+
   const rangeMatch = raw.match(isoRange);
   if (rangeMatch) {
     const start = new Date(rangeMatch[1]);
@@ -48,7 +55,7 @@ function formatDisplayDate(raw: string): string {
     }
     return raw;
   }
-  
+
   return raw; // fallback
 }
 
@@ -56,19 +63,14 @@ function formatDisplayDate(raw: string): string {
  * Newsletter header component - renders title and date
  * Follows SRP by focusing only on header content
  */
-export function NewsletterHeader({ 
-  title, 
-  date, 
-  theme, 
-  denseMode 
-}: NewsletterHeaderProps) {
+export function NewsletterHeader({ title, date, theme, denseMode }: NewsletterHeaderProps) {
   // Create title style with proper text effect handling - explicit application
   const titleStyle: CSSProperties = {
-    gridArea: 'title',
+    gridArea: "title",
     fontFamily: theme.styles.title.fontFamily,
     color: theme.styles.title.color,
-    textAlign: theme.styles.title.textAlign || 'center',
-    marginBottom: denseMode ? '12px' : '0px',
+    textAlign: theme.styles.title.textAlign || "center",
+    marginBottom: denseMode ? "12px" : "0px",
   };
 
   // Apply text effect properties explicitly
@@ -98,24 +100,24 @@ export function NewsletterHeader({
   }
 
   const dateStyle: CSSProperties = {
-    gridArea: 'date',
+    gridArea: "date",
     fontFamily: theme.styles.date.fontFamily,
     color: theme.styles.date.color,
-    textAlign: theme.styles.date.textAlign || 'center',
-    marginBottom: denseMode ? '12px' : '0px',
+    textAlign: theme.styles.date.textAlign || "center",
+    marginBottom: denseMode ? "12px" : "0px",
   };
 
   const displayDate = formatDisplayDate(date);
 
   // Use simple classes without complex logic that might interfere
   const hasTextEffect = Boolean(theme.styles.title.textEffectId);
-  const titleClasses = hasTextEffect 
+  const titleClasses = hasTextEffect
     ? "text-4xl font-bold relative z-10 newsletter-title-effect"
     : "text-4xl font-bold relative z-10";
 
-  const isPastelRotate = theme.styles.title.textEffectId === 'pastel-rotate';
-  const isRainbowRotate = theme.styles.title.textEffectId === 'rainbow-rotate';
-  
+  const isPastelRotate = theme.styles.title.textEffectId === "pastel-rotate";
+  const isRainbowRotate = theme.styles.title.textEffectId === "rainbow-rotate";
+
   let renderedTitle: React.ReactNode = title;
   if (isPastelRotate) {
     renderedTitle = <PastelRotateText text={title} />;

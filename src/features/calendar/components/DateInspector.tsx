@@ -1,12 +1,12 @@
-import React, { useRef, useEffect } from 'react';
-import { useStore } from '@/lib/store/index';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import InspectorSection from '@/components/ui/InspectorSection';
-import FormGroup from '@/components/ui/FormGroup';
-import FormattingToolbar, { FormattingAction } from '@/components/common/FormattingToolbar';
-import EmojiToolbar from '@/components/common/EmojiIconToolbar';
-
+import type React from "react";
+import { useEffect, useRef } from "react";
+import EmojiToolbar from "@/components/common/EmojiIconToolbar";
+import FormattingToolbar, { type FormattingAction } from "@/components/common/FormattingToolbar";
+import { Button } from "@/components/ui/button";
+import FormGroup from "@/components/ui/FormGroup";
+import InspectorSection from "@/components/ui/InspectorSection";
+import { Textarea } from "@/components/ui/textarea";
+import { useStore } from "@/lib/store/index";
 
 /**
  * DateInspector displays and edits the content for a specific calendar date cell.
@@ -18,11 +18,10 @@ interface DateInspectorProps {
   onClose: () => void;
 }
 
-
 export const DateInspector: React.FC<DateInspectorProps> = ({ dateKey, date, onClose }) => {
   const { calendarData, setCellContent } = useStore();
   const { cellContents = {} } = calendarData;
-  const cellContent = cellContents[dateKey] || '';
+  const cellContent = cellContents[dateKey] || "";
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   // Prevent auto-focus: blur textarea on mount if not editing (so CalendarGrid can catch keydown)
@@ -31,7 +30,7 @@ export const DateInspector: React.FC<DateInspectorProps> = ({ dateKey, date, onC
   }, []);
 
   const handleInsertToken = (token: string) => {
-    const current = typeof cellContent === 'string' ? cellContent : '';
+    const current = typeof cellContent === "string" ? cellContent : "";
     const el = textareaRef.current;
     if (!el) {
       setCellContent(dateKey, current + token);
@@ -51,57 +50,65 @@ export const DateInspector: React.FC<DateInspectorProps> = ({ dateKey, date, onC
   };
 
   const handleApplyFormatting = (action: FormattingAction) => {
-    const current = typeof cellContent === 'string' ? cellContent : '';
+    const current = typeof cellContent === "string" ? cellContent : "";
     const el = textareaRef.current;
     if (!el) return;
     const start = el.selectionStart ?? 0;
     const end = el.selectionEnd ?? start;
     const selected = current.slice(start, end);
 
-    let replacement = '';
+    let replacement = "";
     let newStart = start;
     let newEnd = end;
-    const wrapOrInsert = (pre: string, post: string, placeholder: string) => selected ? pre + selected + post : pre + placeholder + post;
+    const wrapOrInsert = (pre: string, post: string, placeholder: string) =>
+      selected ? pre + selected + post : pre + placeholder + post;
 
     switch (action) {
-      case 'bold':
-        replacement = wrapOrInsert('**', '**', 'bold text');
+      case "bold":
+        replacement = wrapOrInsert("**", "**", "bold text");
         newStart = start + 2;
         newEnd = start + (selected ? selected.length : 9) + 2;
         break;
-      case 'italic':
-        replacement = wrapOrInsert('*', '*', 'italic text');
+      case "italic":
+        replacement = wrapOrInsert("*", "*", "italic text");
         newStart = start + 1;
         newEnd = start + (selected ? selected.length : 11) + 1;
         break;
-      case 'ul': {
-        const text = selected || 'List item';
-        replacement = text.split('\n').map((l) => l ? `- ${l}` : '- ').join('\n');
+      case "ul": {
+        const text = selected || "List item";
+        replacement = text
+          .split("\n")
+          .map((l) => (l ? `- ${l}` : "- "))
+          .join("\n");
         newStart = start + 2;
         newEnd = start + replacement.length;
         break;
       }
-      case 'ol': {
-        const text = selected || 'List item';
-        replacement = text.split('\n').map((l, i) => `${i + 1}. ${l || 'List item'}`).join('\n');
+      case "ol": {
+        const text = selected || "List item";
+        replacement = text
+          .split("\n")
+          .map((l, i) => `${i + 1}. ${l || "List item"}`)
+          .join("\n");
         newStart = start + 3;
         newEnd = start + replacement.length;
         break;
       }
-      case 'link': {
-        const placeholder = selected || 'link text';
+      case "link": {
+        const placeholder = selected || "link text";
         replacement = `[${placeholder}](https://)`;
         newStart = start + 1;
         newEnd = start + 1 + placeholder.length;
         break;
       }
-      case 'table':
-        replacement = '\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Value 1 | Value 2 | Value 3 |\n';
+      case "table":
+        replacement =
+          "\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Value 1 | Value 2 | Value 3 |\n";
         newStart = start + 2;
         newEnd = start + replacement.length;
         break;
-      case 'hr':
-        replacement = '\n---\n';
+      case "hr":
+        replacement = "\n---\n";
         newStart = start + 1;
         newEnd = newStart + 3;
         break;
@@ -123,11 +130,11 @@ export const DateInspector: React.FC<DateInspectorProps> = ({ dateKey, date, onC
   const handleContentChange = (content: string) => setCellContent(dateKey, content);
 
   const formatDateDisplay = (d: Date) =>
-    d.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    d.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
 
   return (

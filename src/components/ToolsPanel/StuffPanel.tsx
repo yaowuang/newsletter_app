@@ -1,17 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { LayoutSelectionType } from '@/features/newsletter/types';
-import { TabRegistry } from './config/tab-registry';
-import { LayoutPicker } from './LayoutPicker';
-import { ThemePicker } from './ThemePicker';
-import { ElementAdder } from './ElementAdder';
-import { ClipartSearch } from './ClipartSearch';
-import type { ImageSearchResult } from './services/image-search-service';
-import { 
-  useLayoutManager, 
-  useThemeManager, 
-  useElementCreator 
-} from './hooks/use-stuff-managers';
+import type { LayoutSelectionType } from "@/features/newsletter/types";
+import { ClipartSearch } from "./ClipartSearch";
+import { TabRegistry } from "./config/tab-registry";
+import { ElementAdder } from "./ElementAdder";
+import { useElementCreator, useLayoutManager, useThemeManager } from "./hooks/use-stuff-managers";
+import { LayoutPicker } from "./LayoutPicker";
+import type { ImageSearchResult } from "./services/image-search-service";
+import { ThemePicker } from "./ThemePicker";
 
 // Production-ready StuffPanel that can be used as a drop-in replacement
 // This component maintains the same interface as the original but uses the refactored architecture
@@ -19,7 +15,7 @@ interface StuffPanelProps {
   // Optional props for backwards compatibility
   defaultTab?: string;
   className?: string;
-  
+
   // Legacy props (will be ignored but kept for backwards compatibility)
   currentLayoutSelection?: LayoutSelectionType;
   onLayoutChange?: (layout: LayoutSelectionType) => void;
@@ -31,9 +27,9 @@ interface StuffPanelProps {
   sectionCount?: number;
 }
 
-export function StuffPanel({ 
-  defaultTab = 'layouts',
-  className = 'flex h-full flex-col p-4',
+export function StuffPanel({
+  defaultTab = "layouts",
+  className = "flex h-full flex-col p-4",
   // Legacy props are accepted but ignored (handled internally now)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ...legacyProps
@@ -46,61 +42,61 @@ export function StuffPanel({
   // Initialize tab registry with all components
   const tabEntries = useMemo(() => {
     const registry = TabRegistry.getInstance();
-    
+
     // Clear existing tabs to avoid duplicates
-    registry.unregister('layouts');
-    registry.unregister('themes');
-    registry.unregister('elements');
-    registry.unregister('clipart');
+    registry.unregister("layouts");
+    registry.unregister("themes");
+    registry.unregister("elements");
+    registry.unregister("clipart");
 
     // Register all tabs
     registry.register({
       config: {
-        id: 'layouts',
-        label: 'Layouts',
-        component: LayoutPicker
+        id: "layouts",
+        label: "Layouts",
+        component: LayoutPicker,
       },
       props: {
         ...layoutManager,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     registry.register({
       config: {
-        id: 'themes',
-        label: 'Themes',
-        component: ThemePicker
+        id: "themes",
+        label: "Themes",
+        component: ThemePicker,
       },
       props: {
         ...themeManager,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     registry.register({
       config: {
-        id: 'elements',
-        label: 'Elements',
-        component: ElementAdder
+        id: "elements",
+        label: "Elements",
+        component: ElementAdder,
       },
       props: {
         ...elementCreator,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     registry.register({
       config: {
-        id: 'clipart',
-        label: 'Clipart',
-        component: ClipartSearch
+        id: "clipart",
+        label: "Clipart",
+        component: ClipartSearch,
       },
       props: {
         // Adapt the picker contract (expects ImageSearchResult) to elementCreator (expects src string)
         onResultSelect: (result: ImageSearchResult) => elementCreator.onAddImage(result.fullSize),
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     return registry.getTabs();
@@ -119,11 +115,7 @@ export function StuffPanel({
         </TabsList>
 
         {tabEntries.map(({ config, props }) => (
-          <TabsContent 
-            key={config.id} 
-            value={config.id} 
-            className={getTabContentClassName(config.id)}
-          >
+          <TabsContent key={config.id} value={config.id} className={getTabContentClassName(config.id)}>
             <config.component {...props} />
           </TabsContent>
         ))}
@@ -134,12 +126,12 @@ export function StuffPanel({
 
 // Helper function for tab-specific styling
 function getTabContentClassName(tabId: string): string {
-  const baseClasses = 'mt-4';
-  
+  const baseClasses = "mt-4";
+
   switch (tabId) {
-    case 'themes':
+    case "themes":
       return `${baseClasses} flex flex-col min-h-0 flex-1`;
-    case 'clipart':
+    case "clipart":
       return `${baseClasses} space-y-4`;
     default:
       return baseClasses;

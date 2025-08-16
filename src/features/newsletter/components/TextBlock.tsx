@@ -1,25 +1,26 @@
-import React, { useRef, useEffect, useState, CSSProperties } from 'react';
-import { MarkdownModalEditor } from '@/components/common/MarkdownModalEditor';
-import { useStore } from '@/lib/store/index';
-import { MarkdownRenderer } from '@/components/common/MarkdownRenderer';
-import type { TextBlockType, SectionStylesType } from '@/features/newsletter/types';
-import type { ThemeType } from '@/lib/themes';
-import { useInlineEdit } from '@/hooks/useInlineEdit';
+import type React from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { MarkdownModalEditor } from "@/components/common/MarkdownModalEditor";
+import { MarkdownRenderer } from "@/components/common/MarkdownRenderer";
+import type { SectionStylesType, TextBlockType } from "@/features/newsletter/types";
+import { useInlineEdit } from "@/hooks/useInlineEdit";
+import { useStore } from "@/lib/store/index";
+import type { ThemeType } from "@/lib/themes";
 
 interface TextBlockProps {
   block: TextBlockType;
   style: SectionStylesType[string];
-  themeStyle: ThemeType['styles']['section'];
+  themeStyle: ThemeType["styles"]["section"];
   denseMode: boolean;
-  onSelectElement?: (id: string, type: 'text', subType?: 'title' | 'content') => void;
+  onSelectElement?: (id: string, type: "text", subType?: "title" | "content") => void;
 }
 
 // TextBlock: Renders a single text block with markdown support. SRP: only text block rendering.
 export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement }: TextBlockProps) {
   // Zustand store hooks
-  const editingCaret = useStore(s => s.editingCaret);
-  const updateTextBlock = useStore(s => s.updateTextBlock);
-  const selectedElement = useStore(s => s.selectedElement);
+  const editingCaret = useStore((s) => s.editingCaret);
+  const updateTextBlock = useStore((s) => s.updateTextBlock);
+  const selectedElement = useStore((s) => s.selectedElement);
 
   // Inline edit state (DRY via useInlineEdit)
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -34,23 +35,23 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
     setIsEditing: setIsEditingTitle,
     setOriginalValue: setOriginalTitle,
   } = useInlineEdit({
-    initialValue: block.title || '',
+    initialValue: block.title || "",
     onCommit: (v) => {
-      updateTextBlock(block.id, 'title', v);
-      if (onSelectElement) onSelectElement(block.id, 'text');
+      updateTextBlock(block.id, "title", v);
+      if (onSelectElement) onSelectElement(block.id, "text");
       requestAnimationFrame(() => {
-        const canvas = document.getElementById('newsletter-canvas');
+        const canvas = document.getElementById("newsletter-canvas");
         if (canvas) canvas.focus();
       });
     },
     onCancel: () => {
-      if (onSelectElement) onSelectElement(block.id, 'text');
+      if (onSelectElement) onSelectElement(block.id, "text");
       requestAnimationFrame(() => {
-        const canvas = document.getElementById('newsletter-canvas');
+        const canvas = document.getElementById("newsletter-canvas");
         if (canvas) canvas.focus();
       });
     },
-  autoFocusRef: titleInputRef as React.RefObject<HTMLInputElement | HTMLTextAreaElement>,
+    autoFocusRef: titleInputRef as React.RefObject<HTMLInputElement | HTMLTextAreaElement>,
   });
   const {
     isEditing: isEditingContent,
@@ -63,45 +64,45 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
     setIsEditing: setIsEditingContent,
     setOriginalValue: setOriginalContent,
   } = useInlineEdit({
-    initialValue: block.content || '',
+    initialValue: block.content || "",
     onCommit: (v) => {
-      updateTextBlock(block.id, 'content', v);
-      if (onSelectElement) onSelectElement(block.id, 'text');
+      updateTextBlock(block.id, "content", v);
+      if (onSelectElement) onSelectElement(block.id, "text");
       requestAnimationFrame(() => {
-        const canvas = document.getElementById('newsletter-canvas');
+        const canvas = document.getElementById("newsletter-canvas");
         if (canvas) canvas.focus();
       });
     },
     onCancel: () => {
-      if (onSelectElement) onSelectElement(block.id, 'text');
+      if (onSelectElement) onSelectElement(block.id, "text");
       requestAnimationFrame(() => {
-        const canvas = document.getElementById('newsletter-canvas');
+        const canvas = document.getElementById("newsletter-canvas");
         if (canvas) canvas.focus();
       });
     },
-  autoFocusRef: contentTextareaRef as React.RefObject<HTMLInputElement | HTMLTextAreaElement>,
+    autoFocusRef: contentTextareaRef as React.RefObject<HTMLInputElement | HTMLTextAreaElement>,
   });
 
   // Is this block selected?
-  const isThisBlockSelected = selectedElement?.id === block.id && selectedElement?.type === 'text';
+  const isThisBlockSelected = selectedElement?.id === block.id && selectedElement?.type === "text";
 
   // Extract subType for stable dependency
-  const selectedTextSubType = selectedElement && selectedElement.type === 'text' ? selectedElement.subType : undefined;
+  const selectedTextSubType = selectedElement && selectedElement.type === "text" ? selectedElement.subType : undefined;
 
   // Keyboard: start inline editing if selected (preserve original logic)
   useEffect(() => {
     if (!isThisBlockSelected || block.locked || isEditingTitle || isEditingContent) return;
 
     // Helper to determine which field to edit
-    const getTargetField = (): 'title' | 'content' => {
-      if (selectedElement?.type === 'text' && selectedElement?.subType === 'title') return 'title';
-      if (selectedElement?.type === 'text' && selectedElement?.subType === 'content') return 'content';
-      return (!block.title || block.title.trim() === '') ? 'title' : 'content';
+    const getTargetField = (): "title" | "content" => {
+      if (selectedElement?.type === "text" && selectedElement?.subType === "title") return "title";
+      if (selectedElement?.type === "text" && selectedElement?.subType === "content") return "content";
+      return !block.title || block.title.trim() === "" ? "title" : "content";
     };
 
     // Helper to update draft and editing state
-    const startInlineEdit = (field: 'title' | 'content', newValue: string, currentValue: string) => {
-      if (field === 'title') {
+    const startInlineEdit = (field: "title" | "content", newValue: string, currentValue: string) => {
+      if (field === "title") {
         setOriginalTitle(currentValue);
         setDraftTitle(newValue);
         setIsEditingTitle(true);
@@ -124,26 +125,26 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
 
     const handleKeyDown = (e: KeyboardEvent) => {
       const active = document.activeElement as HTMLElement | null;
-      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
+      if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable)) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const isPrintable = e.key.length === 1;
-      const isBackspace = e.key === 'Backspace';
-      const isEnter = e.key === 'Enter';
+      const isBackspace = e.key === "Backspace";
+      const isEnter = e.key === "Enter";
       if (!isPrintable && !isBackspace && !isEnter) return;
       const targetField = getTargetField();
       e.preventDefault();
-      const currentValue = targetField === 'title' ? (block.title || '') : (block.content || '');
+      const currentValue = targetField === "title" ? block.title || "" : block.content || "";
       let newValue = currentValue;
       if (isBackspace) newValue = currentValue.slice(0, -1);
-      else if (targetField === 'content' && isEnter) newValue = currentValue + '\n';
+      else if (targetField === "content" && isEnter) newValue = currentValue + "\n";
       else if (isPrintable) newValue = currentValue + e.key;
       startInlineEdit(targetField, newValue, currentValue);
       requestAnimationFrame(() => {
-        focusInputEnd(targetField === 'title' ? titleInputRef : contentTextareaRef);
+        focusInputEnd(targetField === "title" ? titleInputRef : contentTextareaRef);
       });
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
     isThisBlockSelected,
     block.locked,
@@ -158,7 +159,7 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
     setIsEditingTitle,
     setOriginalContent,
     setDraftContent,
-    setIsEditingContent
+    setIsEditingContent,
   ]);
 
   // Styles
@@ -166,45 +167,47 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
     color: style.headingColor || themeStyle.headingColor,
     backgroundColor: style.headingBackgroundColor || themeStyle.headingBackgroundColor,
     fontFamily: style.headingFontFamily || themeStyle.headingFontFamily,
-    padding: denseMode ? '0.25rem 0.75rem' : '0.5rem 1rem',
-    borderBottom: '1px solid',
+    padding: denseMode ? "0.25rem 0.75rem" : "0.5rem 1rem",
+    borderBottom: "1px solid",
     borderBottomColor: style.borderColor || themeStyle.borderColor,
   };
   const contentStyle: CSSProperties = {
     color: style.contentColor || themeStyle.contentColor,
     backgroundColor: style.backgroundColor || themeStyle.backgroundColor,
     fontFamily: style.fontFamily || style.contentFontFamily || themeStyle.contentFontFamily,
-    padding: denseMode ? '0.25rem 0.75rem' : '0.5rem 1rem',
+    padding: denseMode ? "0.25rem 0.75rem" : "0.5rem 1rem",
     flexGrow: 1,
-    overflowY: 'auto',
-    lineHeight: denseMode ? '1.3' : '1.5',
+    overflowY: "auto",
+    lineHeight: denseMode ? "1.3" : "1.5",
   };
-  const borderColor = style.borderColor || themeStyle.borderColor || '#ccc';
-  const tableHeaderBg = style.headingBackgroundColor || themeStyle.headingBackgroundColor || '#f5f5f5';
-  const tableHeaderColor = style.headingColor || themeStyle.headingColor || 'inherit';
-  const tableCellBg = style.backgroundColor || themeStyle.backgroundColor || 'transparent';
+  const borderColor = style.borderColor || themeStyle.borderColor || "#ccc";
+  const tableHeaderBg = style.headingBackgroundColor || themeStyle.headingBackgroundColor || "#f5f5f5";
+  const tableHeaderColor = style.headingColor || themeStyle.headingColor || "inherit";
+  const tableCellBg = style.backgroundColor || themeStyle.backgroundColor || "transparent";
   const linkColor = style.headingBackgroundColor || themeStyle.headingBackgroundColor;
 
   // Drag and drop handlers
   const handleDragStart = (e: React.DragEvent) => {
-    e.dataTransfer.setData('text/plain', block.id);
-    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData("text/plain", block.id);
+    e.dataTransfer.effectAllowed = "move";
   };
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    (e.currentTarget as HTMLElement).classList.add('ring-2', 'ring-blue-400');
+    e.dataTransfer.dropEffect = "move";
+    (e.currentTarget as HTMLElement).classList.add("ring-2", "ring-blue-400");
   };
   const handleDragLeave = (e: React.DragEvent) => {
-    (e.currentTarget as HTMLElement).classList.remove('ring-2', 'ring-blue-400');
+    (e.currentTarget as HTMLElement).classList.remove("ring-2", "ring-blue-400");
   };
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    (e.currentTarget as HTMLElement).classList.remove('ring-2', 'ring-blue-400');
-    const sourceId = e.dataTransfer.getData('text/plain');
+    (e.currentTarget as HTMLElement).classList.remove("ring-2", "ring-blue-400");
+    const sourceId = e.dataTransfer.getData("text/plain");
     const targetId = block.id;
     if (sourceId && targetId && sourceId !== targetId) {
-      const swapEvent = new CustomEvent('swap-text-blocks', { detail: { sourceId, targetId } });
+      const swapEvent = new CustomEvent("swap-text-blocks", {
+        detail: { sourceId, targetId },
+      });
       window.dispatchEvent(swapEvent);
     }
   };
@@ -212,9 +215,10 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
   return (
     <>
       <div
-        style={{ ...headingStyle, position: 'relative' }}
+        style={{ ...headingStyle, position: "relative" }}
         className={
-          'font-bold text-lg select-none ' + ((isEditingTitle || isEditingContent) ? '' : 'cursor-grab active:cursor-grabbing')
+          "font-bold text-lg select-none " +
+          (isEditingTitle || isEditingContent ? "" : "cursor-grab active:cursor-grabbing")
         }
         draggable={!(isEditingTitle || isEditingContent)}
         data-block-id={block.id}
@@ -223,30 +227,43 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onMouseDown={e => {
+        onMouseDown={(e) => {
           e.stopPropagation();
-          if (onSelectElement) onSelectElement(block.id, 'text', 'title');
+          if (onSelectElement) onSelectElement(block.id, "text", "title");
         }}
-        onDoubleClick={e => {
+        onDoubleClick={(e) => {
           e.stopPropagation();
           beginEditTitle();
         }}
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         {block.locked && isThisBlockSelected && (
-          <span style={{
-            position: 'absolute',
-            top: 8,
-            right: 12,
-            background: '#fff',
-            borderRadius: '50%',
-            padding: 2,
-            zIndex: 30,
-            boxShadow: '0 1px 4px rgba(0,0,0,0.08)'
-          }} title="Locked" aria-label="Locked">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="11" width="18" height="10" rx="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <span
+            style={{
+              position: "absolute",
+              top: 8,
+              right: 12,
+              background: "#fff",
+              borderRadius: "50%",
+              padding: 2,
+              zIndex: 30,
+              boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+            }}
+            title="Locked"
+            aria-label="Locked"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#888"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="11" width="18" height="10" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
           </span>
         )}
@@ -255,12 +272,12 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
             <input
               ref={titleInputRef}
               value={draftTitle}
-              onChange={e => handleTitleChange(e.target.value)}
+              onChange={(e) => handleTitleChange(e.target.value)}
               onBlur={() => {
                 if (isEditingTitle) commitEditTitle();
               }}
-              onKeyDown={e => {
-                if (e.key === 'Enter' || e.key === 'Escape') {
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === "Escape") {
                   e.preventDefault();
                   e.stopPropagation();
                   e.currentTarget.blur();
@@ -276,31 +293,36 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
               Enter: Save • Esc: Cancel
             </div>
           </div>
-        ) : typeof block.title === 'string' ? block.title : ''}
+        ) : typeof block.title === "string" ? (
+          block.title
+        ) : (
+          ""
+        )}
       </div>
       <div
         style={contentStyle}
-        className={
-          'max-w-none cursor-text prose'
-        }
+        className={"max-w-none cursor-text prose"}
         data-block-content="true"
-        onClick={e => {
+        onClick={(e) => {
           e.stopPropagation();
           if (isEditingContent || isEditingTitle) return;
-          if (onSelectElement) onSelectElement(block.id, 'text', 'content');
+          if (onSelectElement) onSelectElement(block.id, "text", "content");
         }}
-        onDoubleClick={e => {
+        onDoubleClick={(e) => {
           e.stopPropagation();
           if (!(isEditingContent || isEditingTitle)) {
             beginEditContent();
             requestAnimationFrame(() => {
-              if (onSelectElement) onSelectElement(block.id, 'text', 'content');
+              if (onSelectElement) onSelectElement(block.id, "text", "content");
             });
           }
         }}
       >
-        {editingCaret && editingCaret.blockId === block.id && !isEditingContent && !isEditingTitle &&
-          (editingCaret.field === 'title' || editingCaret.field === 'content') && (
+        {editingCaret &&
+          editingCaret.blockId === block.id &&
+          !isEditingContent &&
+          !isEditingTitle &&
+          (editingCaret.field === "title" || editingCaret.field === "content") && (
             <CaretOverlay block={block} field={editingCaret.field} index={editingCaret.index} />
           )}
         {isEditingContent && (
@@ -313,9 +335,9 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
             placeholder="Enter Markdown content..."
           />
         )}
-        <div className={isEditingContent ? 'prose' : ''}>
+        <div className={isEditingContent ? "prose" : ""}>
           <MarkdownRenderer
-            markdown={isEditingContent ? draftContent : (typeof block.content === 'string' ? block.content : '')}
+            markdown={isEditingContent ? draftContent : typeof block.content === "string" ? block.content : ""}
             denseMode={denseMode}
             borderColor={borderColor}
             tableHeaderBg={tableHeaderBg}
@@ -331,23 +353,31 @@ export function TextBlock({ block, style, themeStyle, denseMode, onSelectElement
 }
 
 // CaretOverlay: lightweight caret overlay for live preview.
-const CaretOverlay: React.FC<{ block: TextBlockType; field: 'title' | 'content'; index: number }> = ({ block, field, index }) => {
+const CaretOverlay: React.FC<{
+  block: TextBlockType;
+  field: "title" | "content";
+  index: number;
+}> = ({ block, field, index }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [pos, setPos] = useState<{ left: number; top: number; height: number }>({ left: 0, top: 0, height: 16 });
   useEffect(() => {
     const el = containerRef.current?.parentElement;
     if (!el) return;
-    if (field === 'title') {
+    if (field === "title") {
       const headingEl = el.parentElement?.querySelector('[data-block-heading="true"]') as HTMLElement | null;
       if (headingEl) {
-        const text = block.title || '';
+        const text = block.title || "";
         const sub = text.slice(0, Math.min(index, text.length));
         const meas = measureText(sub, headingEl);
-        setPos({ left: headingEl.offsetLeft + meas, top: headingEl.offsetTop + headingEl.clientHeight - 18, height: 16 });
+        setPos({
+          left: headingEl.offsetLeft + meas,
+          top: headingEl.offsetTop + headingEl.clientHeight - 18,
+          height: 16,
+        });
         return;
       }
     }
-    const text = block.content || '';
+    const text = block.content || "";
     const plain = stripMarkdown(text);
     const safeIdx = Math.min(index, plain.length);
     const sub = plain.slice(0, safeIdx);
@@ -358,20 +388,24 @@ const CaretOverlay: React.FC<{ block: TextBlockType; field: 'title' | 'content';
     const lineCharStart = line * charsPerLine;
     const inLineSub = plain.slice(lineCharStart, safeIdx);
     const inLineWidth = measureText(inLineSub, el);
-    const lineHeight = parseFloat(getComputedStyle(el).lineHeight || '20');
-    setPos({ left: el.offsetLeft + 16 + inLineWidth, top: el.offsetTop + 8 + line * lineHeight, height: lineHeight });
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight || "20");
+    setPos({
+      left: el.offsetLeft + 16 + inLineWidth,
+      top: el.offsetTop + 8 + line * lineHeight,
+      height: lineHeight,
+    });
   }, [block.title, block.content, field, index]);
   return (
-    <div ref={containerRef} style={{ position: 'absolute', pointerEvents: 'none', inset: 0 }}>
+    <div ref={containerRef} style={{ position: "absolute", pointerEvents: "none", inset: 0 }}>
       <div
         style={{
-          position: 'absolute',
+          position: "absolute",
           left: pos.left,
           top: pos.top,
           width: 1,
           height: pos.height,
-          background: 'black',
-          animation: 'blink 1s step-start infinite',
+          background: "black",
+          animation: "blink 1s step-start infinite",
         }}
       />
       <style>{`@keyframes blink { 50% { opacity: 0; } }`}</style>
@@ -382,18 +416,18 @@ const CaretOverlay: React.FC<{ block: TextBlockType; field: 'title' | 'content';
 // Helpers
 function stripMarkdown(src: string): string {
   return src
-    .replace(/`[^`]*`/g, '')
-    .replace(/\*\*|__|[*_~`>#-]/g, '')
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
-    .replace(/\[[^\]]*\]\([^)]*\)/g, '')
-    .replace(/\|/g, '');
+    .replace(/`[^`]*`/g, "")
+    .replace(/\*\*|__|[*_~`>#-]/g, "")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\|/g, "");
 }
 let _measureCanvas: HTMLCanvasElement | null = null;
 function measureText(text: string, refEl: HTMLElement): number {
-  if (!_measureCanvas) _measureCanvas = document.createElement('canvas');
-  const ctx = _measureCanvas.getContext('2d');
+  if (!_measureCanvas) _measureCanvas = document.createElement("canvas");
+  const ctx = _measureCanvas.getContext("2d");
   if (!ctx) return 0;
   const style = getComputedStyle(refEl);
-  ctx.font = `${style.fontWeight || 400} ${style.fontSize || '14px'} ${style.fontFamily || 'sans-serif'}`;
+  ctx.font = `${style.fontWeight || 400} ${style.fontSize || "14px"} ${style.fontFamily || "sans-serif"}`;
   return ctx.measureText(text).width;
 }

@@ -1,18 +1,21 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { UI_CONSTANTS } from '@/lib/ui-constants';
-import { TextBlock as TextBlockComponent } from './TextBlock';
-import type { TextBlock, SectionStylesType, LayoutSelectionType } from '@/features/newsletter/types';
-import type { ThemeType } from '@/lib/themes';
-import { CSSProperties } from 'react';
+import type React from "react";
+import type { CSSProperties } from "react";
+import type { LayoutSelectionType, SectionStylesType, TextBlock } from "@/features/newsletter/types";
+import type { ThemeType } from "@/lib/themes";
+import { UI_CONSTANTS } from "@/lib/ui-constants";
+import { cn } from "@/lib/utils";
+import { TextBlock as TextBlockComponent } from "./TextBlock";
 
 interface SectionsContainerProps {
   textBlocks: TextBlock[];
   sectionStyles: SectionStylesType;
   theme: ThemeType;
   denseMode: boolean;
-  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate' } | null;
-  onSelectElement: (id: string, type: 'text', subType?: 'title' | 'content') => void;
+  selectedElement: {
+    id: string;
+    type: "text" | "image" | "horizontalLine" | "calendarDate";
+  } | null;
+  onSelectElement: (id: string, type: "text", subType?: "title" | "content") => void;
   layoutSelection: LayoutSelectionType; // Add this to know how many sections the layout supports
 }
 
@@ -32,51 +35,54 @@ export function SectionsContainer({
   // Only render sections that the current layout can accommodate
   const maxSections = layoutSelection.base.sections;
   const visibleTextBlocks = textBlocks.slice(0, maxSections);
-  
+
   return (
-    <div style={{ display: 'contents' }}>
+    <div style={{ display: "contents" }}>
       {visibleTextBlocks.map((block, index) => {
         const gridArea = `sec${index + 1}`;
         if (!gridArea) return null;
-        
+
         const userStyle = sectionStyles[block.id] || {};
         const themeStyle = theme.styles.section;
-        const isSelected = selectedElement?.id === block.id && selectedElement?.type === 'text';
-        
+        const isSelected = selectedElement?.id === block.id && selectedElement?.type === "text";
+
         const sectionContainerStyle: CSSProperties = {
           gridArea,
-          borderWidth: userStyle.borderWidth ? `${userStyle.borderWidth}px` : '1px',
-          borderRadius: userStyle.borderRadius != null 
-            ? `${userStyle.borderRadius}px` 
-            : (themeStyle.borderRadius != null ? `${themeStyle.borderRadius}px` : '0px'),
-          borderColor: userStyle.borderColor || (isSelected ? 'blue' : themeStyle.borderColor),
-          borderStyle: 'solid',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
+          borderWidth: userStyle.borderWidth ? `${userStyle.borderWidth}px` : "1px",
+          borderRadius:
+            userStyle.borderRadius != null
+              ? `${userStyle.borderRadius}px`
+              : themeStyle.borderRadius != null
+                ? `${themeStyle.borderRadius}px`
+                : "0px",
+          borderColor: userStyle.borderColor || (isSelected ? "blue" : themeStyle.borderColor),
+          borderStyle: "solid",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
           backgroundColor: userStyle.backgroundColor || themeStyle.backgroundColor,
         };
-        
+
         const handleClick = (e: React.MouseEvent) => {
           e.stopPropagation();
           // Default click (background of section) selects content region
-          onSelectElement(block.id, 'text', 'content');
+          onSelectElement(block.id, "text", "content");
         };
 
         return (
-          <div 
-            key={block.id} 
-            style={sectionContainerStyle} 
+          <div
+            key={block.id}
+            style={sectionContainerStyle}
             onClick={handleClick}
             className={cn("cursor-pointer relative z-10", {
-              [UI_CONSTANTS.selection]: isSelected
+              [UI_CONSTANTS.selection]: isSelected,
             })}
           >
-            <TextBlockComponent 
-              block={block} 
-              style={userStyle} 
-              themeStyle={themeStyle} 
-              denseMode={denseMode} 
+            <TextBlockComponent
+              block={block}
+              style={userStyle}
+              themeStyle={themeStyle}
+              denseMode={denseMode}
               onSelectElement={onSelectElement}
             />
           </div>

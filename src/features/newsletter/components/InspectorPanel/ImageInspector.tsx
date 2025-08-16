@@ -1,11 +1,11 @@
 import React from "react";
-import { useStore } from '@/lib/store/index';
-import type { ImageElementType } from "@/features/newsletter/types";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import InspectorSection from '@/components/ui/InspectorSection';
-import FormGroup from '@/components/ui/FormGroup';
-import LockButton from '@/components/ui/LockButton';
+import FormGroup from "@/components/ui/FormGroup";
+import InspectorSection from "@/components/ui/InspectorSection";
+import { Input } from "@/components/ui/input";
+import LockButton from "@/components/ui/LockButton";
+import type { ImageElementType } from "@/features/newsletter/types";
+import { useStore } from "@/lib/store/index";
 
 interface ImageInspectorProps {
   image: ImageElementType;
@@ -13,8 +13,8 @@ interface ImageInspectorProps {
 }
 
 export const ImageInspector: React.FC<ImageInspectorProps> = ({ image, onUpdateImage }) => {
-  const deleteImage = useStore(s => s.deleteImage);
-  const setElementLocked = useStore(s => s.setElementLocked);
+  const deleteImage = useStore((s) => s.deleteImage);
+  const setElementLocked = useStore((s) => s.setElementLocked);
   const posXId = React.useId();
   const posYId = React.useId();
   const widthId = React.useId();
@@ -27,18 +27,38 @@ export const ImageInspector: React.FC<ImageInspectorProps> = ({ image, onUpdateI
       <div className="flex items-center justify-between mb-2">
         <h3 className="font-semibold text-lg">Image</h3>
         <div className="flex gap-2">
-          <LockButton locked={locked} onToggle={() => setElementLocked(image.id, 'image', !locked)} />
-          <Button variant="destructive" size="sm" onClick={() => deleteImage($1)} disabled={locked} aria-label="Delete image element">Delete</Button>
+          <LockButton locked={locked} onToggle={() => setElementLocked(image.id, "image", !locked)} />
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => deleteImage($1)}
+            disabled={locked}
+            aria-label="Delete image element"
+          >
+            Delete
+          </Button>
         </div>
       </div>
 
       <InspectorSection title="Position">
         <div className="grid grid-cols-2 gap-3">
           <FormGroup label="X" id={posXId} className="space-y-1">
-            <Input id={posXId} type="number" value={image.x} disabled={locked} onChange={e => onUpdateImage(image.id, { x: parseInt(e.target.value) || 0 })} />
+            <Input
+              id={posXId}
+              type="number"
+              value={image.x}
+              disabled={locked}
+              onChange={(e) => onUpdateImage(image.id, { x: parseInt(e.target.value) || 0 })}
+            />
           </FormGroup>
           <FormGroup label="Y" id={posYId} className="space-y-1">
-            <Input id={posYId} type="number" value={image.y} disabled={locked} onChange={e => onUpdateImage(image.id, { y: parseInt(e.target.value) || 0 })} />
+            <Input
+              id={posYId}
+              type="number"
+              value={image.y}
+              disabled={locked}
+              onChange={(e) => onUpdateImage(image.id, { y: parseInt(e.target.value) || 0 })}
+            />
           </FormGroup>
         </div>
       </InspectorSection>
@@ -46,10 +66,30 @@ export const ImageInspector: React.FC<ImageInspectorProps> = ({ image, onUpdateI
       <InspectorSection title="Size">
         <div className="grid grid-cols-2 gap-3">
           <FormGroup label="Width" id={widthId} className="space-y-1">
-            <Input id={widthId} type="number" value={image.width} disabled={locked} onChange={e => onUpdateImage(image.id, { width: parseInt(e.target.value) || 0 })} />
+            <Input
+              id={widthId}
+              type="number"
+              value={image.width}
+              disabled={locked}
+              onChange={(e) =>
+                onUpdateImage(image.id, {
+                  width: parseInt(e.target.value) || 0,
+                })
+              }
+            />
           </FormGroup>
           <FormGroup label="Height" id={heightId} className="space-y-1">
-            <Input id={heightId} type="number" value={image.height} disabled={locked} onChange={e => onUpdateImage(image.id, { height: parseInt(e.target.value) || 0 })} />
+            <Input
+              id={heightId}
+              type="number"
+              value={image.height}
+              disabled={locked}
+              onChange={(e) =>
+                onUpdateImage(image.id, {
+                  height: parseInt(e.target.value) || 0,
+                })
+              }
+            />
           </FormGroup>
         </div>
       </InspectorSection>

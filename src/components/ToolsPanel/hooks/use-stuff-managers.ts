@@ -1,27 +1,26 @@
 // Custom hooks following Single Responsibility Principle
 // Each hook manages a specific piece of functionality
 
-import { useState } from 'react';
-import { useStore } from '@/lib/store/index';
-import { LayoutSelectionType } from '@/features/newsletter/types';
-import { ThemeType } from '@/lib/themes';
-import type { TextBlock } from '@/features/newsletter/types';
+import { useState } from "react";
+import type { LayoutSelectionType, TextBlock } from "@/features/newsletter/types";
+import { useStore } from "@/lib/store/index";
+import type { ThemeType } from "@/lib/themes";
 
 // Layout management hook
 export const useLayoutManager = () => {
-  const currentLayoutSelection = useStore(state => state.layout);
-  const sectionCount = useStore(state => state.textBlocks.length);
-  const setLayout = useStore(state => state.setLayout);
-  const addTextBlock = useStore(state => state.addTextBlock);
-  const deleteTextBlock = useStore(state => state.deleteTextBlock);
-  
+  const currentLayoutSelection = useStore((state) => state.layout);
+  const sectionCount = useStore((state) => state.textBlocks.length);
+  const setLayout = useStore((state) => state.setLayout);
+  const addTextBlock = useStore((state) => state.addTextBlock);
+  const deleteTextBlock = useStore((state) => state.deleteTextBlock);
+
   const handleLayoutChange = (layout: LayoutSelectionType) => {
     setLayout(layout);
-    
+
     // Automatically adjust section count to match layout
     const targetSections = layout.base.sections;
     const currentSections = useStore.getState().textBlocks.length;
-    
+
     if (currentSections < targetSections) {
       // Add sections if we need more
       for (let i = currentSections; i < targetSections; i++) {
@@ -38,7 +37,7 @@ export const useLayoutManager = () => {
 
   const handleSectionCountChange = (count: number) => {
     const currentSections = useStore.getState().textBlocks.length;
-    
+
     if (currentSections < count) {
       // Add sections
       for (let i = currentSections; i < count; i++) {
@@ -57,14 +56,14 @@ export const useLayoutManager = () => {
     currentLayoutSelection,
     sectionCount,
     onLayoutChange: handleLayoutChange,
-    onSetSectionCount: handleSectionCountChange
+    onSetSectionCount: handleSectionCountChange,
   };
 };
 
 // Theme management hook
 export const useThemeManager = () => {
-  const currentTheme = useStore(state => state.theme);
-  const setTheme = useStore(state => state.setTheme);
+  const currentTheme = useStore((state) => state.theme);
+  const setTheme = useStore((state) => state.setTheme);
 
   const handleThemeChange = (theme: ThemeType) => {
     setTheme(theme);
@@ -72,16 +71,16 @@ export const useThemeManager = () => {
 
   return {
     currentTheme,
-    onThemeChange: handleThemeChange
+    onThemeChange: handleThemeChange,
   };
 };
 
 // Element creation hook
 export const useElementCreator = () => {
-  const addTextBlock = useStore(state => state.addTextBlock);
-  const addHorizontalLine = useStore(state => state.addHorizontalLine);
-  const addImage = useStore(state => state.addImage);
-  const updateImage = useStore(state => state.updateImage);
+  const addTextBlock = useStore((state) => state.addTextBlock);
+  const addHorizontalLine = useStore((state) => state.addHorizontalLine);
+  const addImage = useStore((state) => state.addImage);
+  const updateImage = useStore((state) => state.updateImage);
 
   const handleAddTextBlock = () => {
     addTextBlock();
@@ -103,7 +102,7 @@ export const useElementCreator = () => {
   return {
     onAddTextBlock: handleAddTextBlock,
     onAddHorizontalLine: handleAddHorizontalLine,
-    onAddImage: handleAddImage
+    onAddImage: handleAddImage,
   };
 };
 
@@ -112,13 +111,11 @@ export const useImageUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const allowedTypes = new Set([
-    'image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml'
-  ]);
+  const allowedTypes = new Set(["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp", "image/svg+xml"]);
 
   const uploadFromFile = async (file: File): Promise<string | null> => {
     if (!allowedTypes.has(file.type)) {
-      setError('File type not supported');
+      setError("File type not supported");
       return null;
     }
 
@@ -130,17 +127,17 @@ export const useImageUpload = () => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const result = e.target?.result;
-          if (typeof result === 'string') {
+          if (typeof result === "string") {
             resolve(result);
           } else {
-            reject(new Error('Failed to read file'));
+            reject(new Error("Failed to read file"));
           }
         };
-        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.onerror = () => reject(new Error("Failed to read file"));
         reader.readAsDataURL(file);
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Upload failed');
+      setError(err instanceof Error ? err.message : "Upload failed");
       return null;
     } finally {
       setIsUploading(false);
@@ -161,6 +158,6 @@ export const useImageUpload = () => {
     error,
     uploadFromFile,
     validateUrl,
-    clearError: () => setError(null)
+    clearError: () => setError(null),
   };
 };

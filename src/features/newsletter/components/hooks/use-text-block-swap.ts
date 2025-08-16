@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 interface UseTextBlockSwapProps {
   onSwapTextBlocks: (sourceId: string, targetId: string) => void;
@@ -16,7 +16,7 @@ export function useTextBlockSwap({ onSwapTextBlocks }: UseTextBlockSwapProps) {
       }
     };
 
-    window.addEventListener('swap-text-blocks', handleSwapEvent as EventListener);
-    return () => window.removeEventListener('swap-text-blocks', handleSwapEvent as EventListener);
+    window.addEventListener("swap-text-blocks", handleSwapEvent as EventListener);
+    return () => window.removeEventListener("swap-text-blocks", handleSwapEvent as EventListener);
   }, [onSwapTextBlocks]);
 }

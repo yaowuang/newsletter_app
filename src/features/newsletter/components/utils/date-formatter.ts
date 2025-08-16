@@ -7,29 +7,29 @@ const DATE_FORMATS = {
   MONTH_ONLY: /^\d{4}-\d{2}$/,
   ISO_SINGLE: /^\d{4}-\d{2}-\d{2}$/,
   ISO_RANGE: /^(\d{4}-\d{2}-\d{2})\s*(?:to|–|-)\s*(\d{4}-\d{2}-\d{2})$/,
-  FORMATTED_MONTH: /January|February|March|April|May|June|July|August|September|October|November|December/
+  FORMATTED_MONTH: /January|February|March|April|May|June|July|August|September|October|November|December/,
 };
 
-const formatter = new Intl.DateTimeFormat('en-US', { 
-  month: 'long', 
-  day: 'numeric', 
-  year: 'numeric' 
+const formatter = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
 });
 
-const monthYearFormatter = new Intl.DateTimeFormat('en-US', { 
-  month: 'long', 
-  year: 'numeric' 
+const monthYearFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  year: "numeric",
 });
 
 /**
  * Formats a raw date string into a human-readable format
  */
 export function formatDisplayDate(raw: string): string {
-  if (!raw) return '';
+  if (!raw) return "";
 
   // Month-only (YYYY-MM)
   if (DATE_FORMATS.MONTH_ONLY.test(raw)) {
-    const [y, m] = raw.split('-').map(Number);
+    const [y, m] = raw.split("-").map(Number);
     const date = new Date(y, m - 1, 1);
     return monthYearFormatter.format(date);
   }

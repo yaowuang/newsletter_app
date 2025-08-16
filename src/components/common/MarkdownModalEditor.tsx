@@ -1,7 +1,7 @@
-import React from 'react';
-import { createPortal } from 'react-dom';
-import FormattingToolbar, { FormattingAction } from '@/components/common/FormattingToolbar';
-import EmojiToolbar from '@/components/common/EmojiIconToolbar';
+import React from "react";
+import { createPortal } from "react-dom";
+import EmojiToolbar from "@/components/common/EmojiIconToolbar";
+import FormattingToolbar, { type FormattingAction } from "@/components/common/FormattingToolbar";
 
 interface MarkdownModalEditorProps {
   value: string;
@@ -19,9 +19,9 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
   onChange,
   onAccept,
   onCancel,
-  label = 'Edit Markdown',
-  placeholder = 'Enter Markdown content...',
-  className = '',
+  label = "Edit Markdown",
+  placeholder = "Enter Markdown content...",
+  className = "",
   style = {},
 }) => {
   // Ref for focusing
@@ -66,37 +66,63 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
     const end = el.selectionEnd ?? start;
     const selected = value.slice(start, end);
 
-    let replacement = '';
+    let replacement = "";
     let newStart = start;
     let newEnd = end;
-    const wrapOrInsert = (pre: string, post: string, placeholder: string) => selected ? pre + selected + post : pre + placeholder + post;
+    const wrapOrInsert = (pre: string, post: string, placeholder: string) =>
+      selected ? pre + selected + post : pre + placeholder + post;
 
-    switch(action) {
-      case 'bold':
-        replacement = wrapOrInsert('**', '**', 'bold text');
-        newStart = start + 2; newEnd = start + (selected ? selected.length : 9) + 2; break;
-      case 'italic':
-        replacement = wrapOrInsert('*', '*', 'italic text');
-        newStart = start + 1; newEnd = start + (selected ? selected.length : 11) + 1; break;
-      case 'ul': {
-        const text = selected || 'List item';
-        replacement = text.split('\n').map(l => l ? `- ${l}` : '- ').join('\n');
-        newStart = start + 2; newEnd = start + replacement.length; break; }
-      case 'ol': {
-        const text = selected || 'List item';
-        replacement = text.split('\n').map((l,i) => `${i+1}. ${l || 'List item'}`).join('\n');
-        newStart = start + 3; newEnd = start + replacement.length; break; }
-      case 'link': {
-        const placeholder = selected || 'link text';
+    switch (action) {
+      case "bold":
+        replacement = wrapOrInsert("**", "**", "bold text");
+        newStart = start + 2;
+        newEnd = start + (selected ? selected.length : 9) + 2;
+        break;
+      case "italic":
+        replacement = wrapOrInsert("*", "*", "italic text");
+        newStart = start + 1;
+        newEnd = start + (selected ? selected.length : 11) + 1;
+        break;
+      case "ul": {
+        const text = selected || "List item";
+        replacement = text
+          .split("\n")
+          .map((l) => (l ? `- ${l}` : "- "))
+          .join("\n");
+        newStart = start + 2;
+        newEnd = start + replacement.length;
+        break;
+      }
+      case "ol": {
+        const text = selected || "List item";
+        replacement = text
+          .split("\n")
+          .map((l, i) => `${i + 1}. ${l || "List item"}`)
+          .join("\n");
+        newStart = start + 3;
+        newEnd = start + replacement.length;
+        break;
+      }
+      case "link": {
+        const placeholder = selected || "link text";
         replacement = `[${placeholder}](https://)`;
-        newStart = start + 1; newEnd = start + 1 + placeholder.length; break; }
-      case 'table':
-        replacement = '\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Value 1 | Value 2 | Value 3 |\n';
-        newStart = start + 2; newEnd = start + replacement.length; break;
-      case 'hr':
-        replacement = '\n---\n';
-        newStart = start + 1; newEnd = newStart + 3; break;
-      default: return;
+        newStart = start + 1;
+        newEnd = start + 1 + placeholder.length;
+        break;
+      }
+      case "table":
+        replacement =
+          "\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Value 1 | Value 2 | Value 3 |\n";
+        newStart = start + 2;
+        newEnd = start + replacement.length;
+        break;
+      case "hr":
+        replacement = "\n---\n";
+        newStart = start + 1;
+        newEnd = newStart + 3;
+        break;
+      default:
+        return;
     }
 
     const next = value.slice(0, start) + replacement + value.slice(end);
@@ -110,7 +136,7 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
     });
   };
 
-  if (typeof window === 'undefined' || typeof document === 'undefined') return null;
+  if (typeof window === "undefined" || typeof document === "undefined") return null;
 
   // Accept and close modal on blur
   const handleBlur = () => {
@@ -122,15 +148,15 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
   };
 
   return createPortal(
-  <div className="fixed inset-0 z-[9999] flex items-start justify-end pt-12 pr-12">
+    <div className="fixed inset-0 z-[9999] flex items-start justify-end pt-12 pr-12">
       {/* Removed backdrop-blur-sm to eliminate blur. Positioned modal top-right with pt-12 pr-12, items-start justify-end. */}
       <div
         ref={modalRef}
         className={
-          'relative z-[10000] bg-white dark:bg-neutral-900 rounded-xl shadow-2xl border border-blue-600/90 flex flex-col min-w-[380px] min-h-[320px] max-w-[96vw] max-h-[92vh] p-0 ' +
+          "relative z-[10000] bg-white dark:bg-neutral-900 rounded-xl shadow-2xl border border-blue-600/90 flex flex-col min-w-[380px] min-h-[320px] max-w-[96vw] max-h-[92vh] p-0 " +
           className
         }
-        style={{ boxShadow: '0 8px 32px 0 rgba(0,0,0,0.22)', ...style }}
+        style={{ boxShadow: "0 8px 32px 0 rgba(0,0,0,0.22)", ...style }}
         role="dialog"
         aria-modal="true"
         aria-label={label}
@@ -141,7 +167,8 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
           <span className="text-lg font-semibold text-blue-900 dark:text-blue-100 select-none">{label}</span>
           <div className="flex gap-2">
             <button
-              onClick={e => {
+              type="button"
+              onClick={(e) => {
                 e.preventDefault();
                 onAccept();
               }}
@@ -151,11 +178,13 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
               tabIndex={0}
             >
               <svg className="w-5 h-5" viewBox="0 0 16 16" fill="currentColor">
+                <title>Save</title>
                 <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
               </svg>
             </button>
             <button
-              onClick={e => {
+              type="button"
+              onClick={(e) => {
                 e.preventDefault();
                 onCancel();
               }}
@@ -165,6 +194,7 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
               tabIndex={0}
             >
               <svg className="w-5 h-5" viewBox="0 0 16 16" fill="currentColor">
+                <title>Cancel</title>
                 <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
               </svg>
             </button>
@@ -189,14 +219,14 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
           <textarea
             ref={textareaRef}
             value={value}
-            onChange={e => onChange(e.target.value)}
-            onKeyDown={e => {
-              if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+            onChange={(e) => onChange(e.target.value)}
+            onKeyDown={(e) => {
+              if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
                 e.preventDefault();
                 closingRef.current = true;
                 onAccept();
                 onCancel();
-              } else if (e.key === 'Escape') {
+              } else if (e.key === "Escape") {
                 e.preventDefault();
                 closingRef.current = true;
                 onCancel();
@@ -207,9 +237,9 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
             style={{
               fontFamily:
                 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
-              lineHeight: '1.6',
-              letterSpacing: '0.01em',
-              boxSizing: 'border-box',
+              lineHeight: "1.6",
+              letterSpacing: "0.01em",
+              boxSizing: "border-box",
             }}
             aria-label={label}
             spellCheck={false}
@@ -220,10 +250,12 @@ export const MarkdownModalEditor: React.FC<MarkdownModalEditorProps> = ({
         {/* Footer */}
         <div className="flex items-center justify-between px-6 py-2 bg-blue-50/60 dark:bg-neutral-800/60 rounded-b-xl border-t border-blue-100/60">
           <span className="text-xs text-blue-600 dark:text-blue-200 font-mono select-none">Markdown</span>
-          <span className="text-xs text-gray-600 dark:text-gray-300 font-mono select-none">Cmd+Enter: Save • Esc: Cancel</span>
+          <span className="text-xs text-gray-600 dark:text-gray-300 font-mono select-none">
+            Cmd+Enter: Save • Esc: Cancel
+          </span>
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };

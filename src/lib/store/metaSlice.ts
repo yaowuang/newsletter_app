@@ -1,9 +1,7 @@
-import { StateCreator } from 'zustand';
-import { createUserTextBlock } from '../initialData';
-import type { TextBlockType, EditorSnapshotType } from '@/features/newsletter/types';
-import { RootStore } from '.';
-
-
+import type { StateCreator } from "zustand";
+import type { EditorSnapshotType, TextBlockType } from "@/features/newsletter/types";
+import { createUserTextBlock } from "../initialData";
+import type { RootStore } from ".";
 
 export interface MetaSlice {
   loadSnapshot: (snapshot: EditorSnapshotType) => void;
@@ -14,14 +12,14 @@ export interface MetaSlice {
 export const createMetaSlice: StateCreator<RootStore, [], [], MetaSlice> = (set, get) => ({
   loadSnapshot: (snapshot) => {
     try {
-      if (!snapshot || typeof snapshot !== 'object') return;
+      if (!snapshot || typeof snapshot !== "object") return;
       let textBlocks = Array.isArray(snapshot.textBlocks) ? [...snapshot.textBlocks] : [...get().textBlocks];
       let textBlockMap: Record<string, TextBlockType> = {};
       let textBlockOrder: string[] = [];
       if (snapshot.textBlockMap && snapshot.textBlockOrder) {
         textBlockMap = { ...snapshot.textBlockMap };
         textBlockOrder = [...snapshot.textBlockOrder];
-        textBlocks = textBlockOrder.map(id => textBlockMap[id]).filter((b): b is TextBlockType => Boolean(b));
+        textBlocks = textBlockOrder.map((id) => textBlockMap[id]).filter((b): b is TextBlockType => Boolean(b));
       } else {
         for (const block of textBlocks) {
           if (block && block.id) {
@@ -45,7 +43,7 @@ export const createMetaSlice: StateCreator<RootStore, [], [], MetaSlice> = (set,
         selectedElement: null,
       }));
     } catch (e) {
-      console.error('Failed to load snapshot', e);
+      console.error("Failed to load snapshot", e);
     }
   },
   setSectionCount: (count) => {
@@ -54,13 +52,13 @@ export const createMetaSlice: StateCreator<RootStore, [], [], MetaSlice> = (set,
     if (count === currentBlocks.length) return;
     if (count > currentBlocks.length) {
       const newBlocks = Array.from({ length: count - currentBlocks.length }, (_, i) =>
-        createUserTextBlock(currentBlocks.length + i)
+        createUserTextBlock(currentBlocks.length + i),
       );
       set({ textBlocks: [...currentBlocks, ...newBlocks] });
     } else {
       set({ textBlocks: currentBlocks.slice(0, count) });
     }
-    if (typeof state.selectElement === 'function') {
+    if (typeof state.selectElement === "function") {
       state.selectElement(null);
     }
   },

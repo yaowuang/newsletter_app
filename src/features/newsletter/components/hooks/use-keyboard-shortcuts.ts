@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import type { ElementSelectionType } from '@/features/newsletter/types';
+import { useEffect } from "react";
+import type { ElementSelectionType } from "@/features/newsletter/types";
 
 interface UseKeyboardShortcutsProps {
   selectedElement: ElementSelectionType | null;
@@ -9,32 +9,28 @@ interface UseKeyboardShortcutsProps {
 /**
  * Custom hook for handling keyboard shortcuts
  */
-export function useKeyboardShortcuts({ 
-  selectedElement, 
-  onDeleteElement 
-}: UseKeyboardShortcutsProps) {
+export function useKeyboardShortcuts({ selectedElement, onDeleteElement }: UseKeyboardShortcutsProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const activeElement = document.activeElement as HTMLElement | null;
-      
+
       // Don't handle shortcuts when user is typing in input fields
-      if (activeElement && (
-        activeElement.tagName === 'INPUT' || 
-        activeElement.tagName === 'TEXTAREA' || 
-        activeElement.isContentEditable
-      )) {
+      if (
+        activeElement &&
+        (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA" || activeElement.isContentEditable)
+      ) {
         return;
       }
 
-  if ((e.key === 'Delete') && selectedElement?.id) {
+      if (e.key === "Delete" && selectedElement?.id) {
         // Only delete supported element types
-        if (['text', 'image', 'horizontalLine'].includes(selectedElement.type)) {
+        if (["text", "image", "horizontalLine"].includes(selectedElement.type)) {
           onDeleteElement(selectedElement);
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedElement, onDeleteElement]);
 }

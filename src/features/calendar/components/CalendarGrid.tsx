@@ -1,22 +1,19 @@
-import React from 'react';
-import { useStore } from '@/lib/store/index';
-import { generateCalendarGrid, getWeekdayNames, formatCalendarTitle } from '../utils/calendar';
-import { mergeDerivedCalendarStyles } from '../utils/calendarTheme';
-import type { CalendarCell as CalendarCellType } from '../utils/calendar';
+import React from "react";
+import { useStore } from "@/lib/store/index";
+import type { CalendarCell as CalendarCellType } from "../utils/calendar";
+import { formatCalendarTitle, generateCalendarGrid, getWeekdayNames } from "../utils/calendar";
+import { mergeDerivedCalendarStyles } from "../utils/calendarTheme";
 
 interface CalendarGridProps {
   containerWidth: number;
   containerHeight: number;
-  onSelectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate') => void;
+  onSelectElement: (id: string | null, type?: "text" | "image" | "horizontalLine" | "calendarDate") => void;
 }
 
-
-
-import CalendarTitle from './CalendarTitle';
-import WeekdayHeader from './WeekdayHeader';
-import CalendarCell from './CalendarCell';
-import SplitCalendarCell from './SplitCalendarCell';
-
+import CalendarCell from "./CalendarCell";
+import CalendarTitle from "./CalendarTitle";
+import SplitCalendarCell from "./SplitCalendarCell";
+import WeekdayHeader from "./WeekdayHeader";
 
 export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, containerHeight, onSelectElement }) => {
   const { calendarData, theme, setEditingDateKey, setDraftContent } = useStore();
@@ -25,11 +22,11 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
 
   // Generate calendar grid for selected month
   const calendarGrid = generateCalendarGrid(selectedDate);
-  const weekdayNames = getWeekdayNames('long');
-  const calendarTitle = formatCalendarTitle(selectedDate, 'full', 'full');
+  const weekdayNames = getWeekdayNames("long");
+  const calendarTitle = formatCalendarTitle(selectedDate, "full", "full");
   const textEffectId = theme.styles.title.textEffectId;
-  const isPastelRotate = textEffectId === 'pastel-rotate';
-  const isRainbowRotate = textEffectId === 'rainbow-rotate';
+  const isPastelRotate = textEffectId === "pastel-rotate";
+  const isRainbowRotate = textEffectId === "rainbow-rotate";
 
   // Calculate dimension
   const columns = 7;
@@ -41,19 +38,19 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
 
   const toDateKey = (d: Date) => {
     const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
     return `${y}-${m}-${day}`;
   };
 
   const getCellContent = (date: Date) => {
     const dateKey = toDateKey(date);
-    return cellContents?.[dateKey] || '';
+    return cellContents?.[dateKey] || "";
   };
 
   const handleCellClick = (date: Date) => {
     const dateKey = toDateKey(date);
-    onSelectElement(dateKey, 'calendarDate');
+    onSelectElement(dateKey, "calendarDate");
   };
 
   const handleCellDoubleClick = (date: Date) => {
@@ -61,81 +58,86 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
     const key = toDateKey(date);
     setEditingDateKey?.(key);
     setDraftContent?.(getCellContent(date));
-    onSelectElement(key, 'calendarDate');
+    onSelectElement(key, "calendarDate");
   };
 
   const getHeaderStyles = () => ({
-    fontFamily: calendarStyles.headerFontFamily || theme.styles.title.fontFamily || 'inherit',
-    color: calendarStyles.headerColor || '#1f2937',
-    backgroundColor: 'transparent',
-    backgroundImage: 'none',
+    fontFamily: calendarStyles.headerFontFamily || theme.styles.title.fontFamily || "inherit",
+    color: calendarStyles.headerColor || "#1f2937",
+    backgroundColor: "transparent",
+    backgroundImage: "none",
     textShadow: theme.styles.title.textShadow,
     filter: theme.styles.title.filter,
-    transform: theme.styles.title.transform
+    transform: theme.styles.title.transform,
   });
 
   const headerTextStyle: React.CSSProperties = {};
   if (!isPastelRotate && !isRainbowRotate) {
     if (theme.styles.title.backgroundImage) headerTextStyle.backgroundImage = theme.styles.title.backgroundImage;
     if (theme.styles.title.backgroundSize) headerTextStyle.backgroundSize = theme.styles.title.backgroundSize;
-    if (theme.styles.title.WebkitBackgroundClip) headerTextStyle.WebkitBackgroundClip = theme.styles.title.WebkitBackgroundClip as unknown as string;
+    if (theme.styles.title.WebkitBackgroundClip)
+      headerTextStyle.WebkitBackgroundClip = theme.styles.title.WebkitBackgroundClip as unknown as string;
     if (theme.styles.title.backgroundClip) headerTextStyle.backgroundClip = theme.styles.title.backgroundClip;
     if (theme.styles.title.color) headerTextStyle.color = theme.styles.title.color;
   }
 
   const getWeekdayStyles = () => ({
-    fontFamily: calendarStyles.weekdayFontFamily || theme.styles.title.fontFamily || theme.styles.section.contentFontFamily || 'inherit',
-    color: calendarStyles.weekdayColor || '#1f2937',
-    backgroundColor: calendarStyles.weekdayBackgroundColor || '#f9fafb'
+    fontFamily:
+      calendarStyles.weekdayFontFamily ||
+      theme.styles.title.fontFamily ||
+      theme.styles.section.contentFontFamily ||
+      "inherit",
+    color: calendarStyles.weekdayColor || "#1f2937",
+    backgroundColor: calendarStyles.weekdayBackgroundColor || "#f9fafb",
   });
 
-  const getCellStyles = (isCurrentMonth: boolean, isToday: boolean, isWeekend: boolean) => {
-    let backgroundColor = calendarStyles.cellBackgroundColor || theme.styles.page.backgroundColor || '#ffffff';
-    let textColor = calendarStyles.cellTextColor || theme.styles.section.contentColor || '#1f2937';
+  const getCellStyles = (isCurrentMonth: boolean, isWeekend: boolean) => {
+    let backgroundColor = calendarStyles.cellBackgroundColor || theme.styles.page.backgroundColor || "#ffffff";
+    let textColor = calendarStyles.cellTextColor || theme.styles.section.contentColor || "#1f2937";
     let opacity = 1;
     if (!isCurrentMonth) {
       backgroundColor = calendarStyles.nonCurrentMonthCellBackgroundColor || backgroundColor;
-      textColor = calendarStyles.nonCurrentMonthCellTextColor || '#9ca3af';
+      textColor = calendarStyles.nonCurrentMonthCellTextColor || "#9ca3af";
       opacity = calendarStyles.nonCurrentMonthOpacity ?? 0.5;
     } else if (isWeekend) {
       backgroundColor = calendarStyles.weekendCellBackgroundColor || backgroundColor;
       textColor = calendarStyles.weekendCellTextColor || textColor;
     }
     return {
-      fontFamily: calendarStyles.cellFontFamily || theme.styles.section.contentFontFamily || 'inherit',
+      fontFamily: calendarStyles.cellFontFamily || theme.styles.section.contentFontFamily || "inherit",
       backgroundColor,
       color: textColor,
-      border: `1px solid ${calendarStyles.cellBorderColor || '#e5e7eb'}`,
-      opacity
+      border: `1px solid ${calendarStyles.cellBorderColor || "#e5e7eb"}`,
+      opacity,
     };
   };
 
   return (
     <div
       style={{
-        position: 'relative',
+        position: "relative",
         width: containerWidth,
         height: containerHeight,
-        backgroundColor: 'transparent',
-        fontFamily: theme.styles.section.contentFontFamily || 'inherit'
+        backgroundColor: "transparent",
+        fontFamily: theme.styles.section.contentFontFamily || "inherit",
       }}
     >
       <div
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: titleHeight,
           left: 0,
           width: containerWidth,
           height: containerHeight - titleHeight,
-          backgroundColor: theme.styles.page.backgroundColor || '#ffffff',
-          zIndex: 0
+          backgroundColor: theme.styles.page.backgroundColor || "#ffffff",
+          zIndex: 0,
         }}
       />
       <CalendarTitle
         width={containerWidth}
         height={titleHeight}
         title={calendarTitle}
-        textEffectId={textEffectId || ''}
+        textEffectId={textEffectId || ""}
         headerStyles={getHeaderStyles()}
         headerTextStyle={headerTextStyle}
       />
@@ -148,7 +150,9 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
         getWeekdayStyles={getWeekdayStyles}
       />
       {calendarGrid.weeks.slice(0, 4).map((week: CalendarCellType[], weekIndex: number) => (
-        <React.Fragment key={weekIndex}>
+        <React.Fragment
+          key={week.length > 0 ? week.map((cell) => cell.date.getTime()).join("-") : `empty-week-${weekIndex}`}
+        >
           {week.map((cell: CalendarCellType, dayIndex: number) => (
             <CalendarCell
               key={`${cell.date.getTime()}-${weekIndex}-${dayIndex}`}
@@ -160,7 +164,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
               colIndex={dayIndex}
               cellWidth={cellWidth}
               cellHeight={cellHeight}
-              cellStyles={getCellStyles(cell.isCurrentMonth, cell.isToday, cell.isWeekend)}
+              cellStyles={getCellStyles(cell.isCurrentMonth, cell.isWeekend)}
               cellContent={getCellContent(cell.date)}
               toDateKey={toDateKey}
               onClick={handleCellClick}
@@ -178,7 +182,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
         const baseWeek = hasSixth ? weeks[4] : weeks[weeks.length - 1];
         const overflowWeek = hasSixth ? weeks[5] : [];
         const visualRowIndex = 4;
-        const rowTop = titleHeight + headerHeight + (visualRowIndex * cellHeight);
+        const rowTop = titleHeight + headerHeight + visualRowIndex * cellHeight;
         if (!hasSixth) {
           return baseWeek.map((cell: CalendarCellType, dayIndex: number) => (
             <CalendarCell
@@ -191,7 +195,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
               colIndex={dayIndex}
               cellWidth={cellWidth}
               cellHeight={cellHeight}
-              cellStyles={getCellStyles(cell.isCurrentMonth, cell.isToday, cell.isWeekend)}
+              cellStyles={getCellStyles(cell.isCurrentMonth, cell.isWeekend)}
               cellContent={getCellContent(cell.date)}
               toDateKey={toDateKey}
               onClick={handleCellClick}
@@ -201,7 +205,10 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
         }
         return baseWeek.map((topCell: CalendarCellType, dayIndex: number) => {
           const bottomCell = overflowWeek[dayIndex];
-          const bottomInCurrentMonth = bottomCell && bottomCell.date.getMonth() === selectedMonth && bottomCell.date.getFullYear() === selectedYear;
+          const bottomInCurrentMonth =
+            bottomCell &&
+            bottomCell.date.getMonth() === selectedMonth &&
+            bottomCell.date.getFullYear() === selectedYear;
           if (!bottomInCurrentMonth) {
             return (
               <CalendarCell
@@ -214,7 +221,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
                 colIndex={dayIndex}
                 cellWidth={cellWidth}
                 cellHeight={cellHeight}
-                cellStyles={getCellStyles(topCell.isCurrentMonth, topCell.isToday, topCell.isWeekend)}
+                cellStyles={getCellStyles(topCell.isCurrentMonth, topCell.isWeekend)}
                 cellContent={getCellContent(topCell.date)}
                 toDateKey={toDateKey}
                 onClick={handleCellClick}
@@ -224,21 +231,20 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
           }
           return (
             <SplitCalendarCell
-              key={`split-${dayIndex}`}
+              key={`split-${topCell.date.getTime()}-${bottomCell ? bottomCell.date.getTime() : "none"}`}
               dayIndex={dayIndex}
               rowTop={rowTop}
               cellWidth={cellWidth}
               cellHeight={cellHeight}
-              calendarStyles={calendarStyles as Record<string, unknown>}
+              calendarStyles={calendarStyles}
               topCell={topCell}
               bottomCell={bottomCell}
               topCellContent={getCellContent(topCell.date)}
-              bottomCellContent={bottomCell ? getCellContent(bottomCell.date) : ''}
-              topStyles={getCellStyles(topCell.isCurrentMonth, topCell.isToday, topCell.isWeekend)}
-              bottomStyles={bottomCell ? getCellStyles(bottomCell.isCurrentMonth, bottomCell.isToday, bottomCell.isWeekend) : {}}
+              bottomCellContent={bottomCell ? getCellContent(bottomCell.date) : ""}
+              topStyles={getCellStyles(topCell.isCurrentMonth, topCell.isWeekend)}
+              bottomStyles={bottomCell ? getCellStyles(bottomCell.isCurrentMonth, bottomCell.isWeekend) : {}}
               toDateKey={toDateKey}
               onClick={handleCellClick}
-              onDoubleClick={handleCellDoubleClick}
             />
           );
         });
@@ -246,6 +252,5 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ containerWidth, cont
     </div>
   );
 };
-
 
 export default CalendarGrid;

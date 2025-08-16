@@ -1,13 +1,13 @@
 // Centralized type definitions for the newsletter editor store.
 // Keeping these separate avoids large monolithic store files and helps re-use across components.
 
-import { ThemeType } from '@/lib/themes';
-import { LayoutType, LayoutVariantType } from '@/features/newsletter/utils/layouts';
-import { CalendarData } from '@/features/calendar/types';
+import type { CalendarData } from "@/features/calendar/types";
+import type { LayoutType, LayoutVariantType } from "@/features/newsletter/utils/layouts";
+import type { ThemeType } from "@/lib/themes";
 
 export type TextBlockType = {
   id: string;
-  type: 'text';
+  type: "text";
   title: string;
   content: string;
   locked?: boolean; // when true, block cannot be edited or deleted until unlocked
@@ -15,7 +15,7 @@ export type TextBlockType = {
 
 export type ImageElementType = {
   id: string;
-  type: 'image';
+  type: "image";
   src: string;
   x: number;
   y: number;
@@ -26,14 +26,14 @@ export type ImageElementType = {
 
 export type HorizontalLineElementType = {
   id: string;
-  type: 'horizontalLine';
+  type: "horizontalLine";
   x: number;
   y: number;
   width: number | string;
   height?: number; // Height for SVG scaling
   color: string;
   thickness: number;
-  style: 'solid' | 'dashed' | 'dotted' | 'clipart' | 'shadow';
+  style: "solid" | "dashed" | "dotted" | "clipart" | "shadow";
   clipartSrc?: string;
   locked?: boolean; // when true, position / style cannot change or be deleted
   // Auto-generated from layout decorations (non-user-originated)
@@ -41,11 +41,13 @@ export type HorizontalLineElementType = {
   decorationKey?: string; // stable key layoutId:variant:position:sectionIndex
 };
 
-export type SelectableElementType = (TextBlockType | ImageElementType | HorizontalLineElementType) & { type: 'text' | 'image' | 'horizontalLine' };
+export type SelectableElementType = (TextBlockType | ImageElementType | HorizontalLineElementType) & {
+  type: "text" | "image" | "horizontalLine";
+};
 
 export type CalendarDateElement = {
   id: string; // dateKey format: 'YYYY-MM-DD'
-  type: 'calendarDate';
+  type: "calendarDate";
   date: Date;
 };
 
@@ -96,7 +98,11 @@ export interface AppStateType {
   textBlockMap: Record<string, TextBlockType>;
   textBlockOrder: string[];
   horizontalLines: HorizontalLineElementType[];
-  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' } | null;
+  selectedElement: {
+    id: string;
+    type: "text" | "image" | "horizontalLine" | "calendarDate";
+    subType?: "title" | "content";
+  } | null;
   sectionStyles: SectionStylesType;
   theme: ThemeType;
   layout: LayoutSelectionType;
@@ -104,25 +110,33 @@ export interface AppStateType {
   // Calendar-specific state
   calendarData: CalendarData;
   // Caret tracking for reflecting cursor position on canvas
-  editingCaret?: { blockId: string; field: 'title' | 'content'; index: number } | null;
+  editingCaret?: {
+    blockId: string;
+    field: "title" | "content";
+    index: number;
+  } | null;
 
   // Calendar cell editing actions
   setEditingDateKey?: (key: string | null) => void;
   setDraftContent?: (content: string) => void;
-  
+
   setTitle: (title: string) => void;
   setDate: (date: string) => void;
   addTextBlock: () => void;
-  updateTextBlock: (id: string, property: 'title' | 'content', value: string) => void;
-  selectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate', subType?: 'title' | 'content') => void;
+  updateTextBlock: (id: string, property: "title" | "content", value: string) => void;
+  selectElement: (
+    id: string | null,
+    type?: "text" | "image" | "horizontalLine" | "calendarDate",
+    subType?: "title" | "content",
+  ) => void;
   updateStyle: (blockId: string, newStyles: Partial<SectionStyleType>) => void;
   setTheme: (theme: ThemeType) => void;
   setThemeTitleFont?: (font: string) => void;
   setThemeDateFont?: (font: string) => void;
   setThemeTitleColor?: (color: string) => void;
   setThemeDateColor?: (color: string) => void;
-  setThemeTitleAlignment?: (align: 'left' | 'center' | 'right') => void;
-  setThemeDateAlignment?: (align: 'left' | 'center' | 'right') => void;
+  setThemeTitleAlignment?: (align: "left" | "center" | "right") => void;
+  setThemeDateAlignment?: (align: "left" | "center" | "right") => void;
   setThemeTitleTextEffect?: (effectId: string | undefined) => void;
   setThemePageBackgroundColor?: (color: string) => void;
   setThemePageBackgroundImage?: (image: string | null) => void;
@@ -134,13 +148,13 @@ export interface AppStateType {
   loadSnapshot: (snapshot: EditorSnapshotType) => void;
   swapTextBlocks: (id1: string, id2: string) => void;
   setDenseMode: (denseMode: boolean) => void;
-  
-  setEditingCaret?: (blockId: string, field: 'title' | 'content', index: number) => void;
+
+  setEditingCaret?: (blockId: string, field: "title" | "content", index: number) => void;
 }
 
 export interface ElementSelectionType {
   id: string;
-  type: 'text' | 'image' | 'horizontalLine';
+  type: "text" | "image" | "horizontalLine";
 }
 
 export interface ZoomControlsType {

@@ -1,6 +1,6 @@
-import type { ThemeType } from '@/lib/themes';
-import type { LayoutSelectionType } from '@/features/newsletter/types';
-import { CSSProperties } from 'react';
+import type { CSSProperties } from "react";
+import type { LayoutSelectionType } from "@/features/newsletter/types";
+import type { ThemeType } from "@/lib/themes";
 
 interface StyleConfig {
   theme: ThemeType;
@@ -13,18 +13,18 @@ interface StyleConfig {
  */
 export function createPageStyle({ theme, layoutSelection, denseMode }: StyleConfig): CSSProperties {
   const { base, variant } = layoutSelection;
-  
+
   return {
-    display: 'grid',
+    display: "grid",
     gridTemplateAreas: base.gridTemplateAreas,
     gridTemplateColumns: variant.gridTemplateColumns,
     gridTemplateRows: variant.gridTemplateRows,
-    rowGap: denseMode ? '12px' : '24px',
-    columnGap: denseMode ? '12px' : '24px',
+    rowGap: denseMode ? "12px" : "24px",
+    columnGap: denseMode ? "12px" : "24px",
     backgroundColor: theme.styles.page.backgroundColor,
-    position: 'relative',
-    width: '100%',
-    height: '100%',
+    position: "relative",
+    width: "100%",
+    height: "100%",
   };
 }
 
@@ -33,13 +33,13 @@ export function createPageStyle({ theme, layoutSelection, denseMode }: StyleConf
  */
 export function createTitleStyle({ theme, layoutSelection, denseMode }: StyleConfig): CSSProperties {
   const { variant } = layoutSelection;
-  
+
   return {
-    gridArea: 'title',
+    gridArea: "title",
     fontFamily: theme.styles.title.fontFamily,
     color: theme.styles.title.color,
-    textAlign: variant.titleAlign || theme.styles.title.textAlign || 'center',
-    marginBottom: denseMode ? '12px' : '0px',
+    textAlign: variant.titleAlign || theme.styles.title.textAlign || "center",
+    marginBottom: denseMode ? "12px" : "0px",
   };
 }
 
@@ -48,13 +48,13 @@ export function createTitleStyle({ theme, layoutSelection, denseMode }: StyleCon
  */
 export function createDateStyle({ theme, layoutSelection, denseMode }: StyleConfig): CSSProperties {
   const { variant } = layoutSelection;
-  
+
   return {
-    gridArea: 'date',
+    gridArea: "date",
     fontFamily: theme.styles.date.fontFamily,
     color: theme.styles.date.color,
-    textAlign: variant.dateAlign || theme.styles.date.textAlign || 'center',
-    marginBottom: denseMode ? '12px' : '0px',
+    textAlign: variant.dateAlign || theme.styles.date.textAlign || "center",
+    marginBottom: denseMode ? "12px" : "0px",
   };
 }
 
@@ -63,14 +63,14 @@ export function createDateStyle({ theme, layoutSelection, denseMode }: StyleConf
  */
 export function createBackgroundImageStyle(theme: ThemeType): CSSProperties {
   if (!theme.styles.page.backgroundImage) return {};
-  
+
   return {
     backgroundImage: theme.styles.page.backgroundImage,
-    backgroundSize: theme.styles.page.backgroundSize || 'cover',
-    backgroundPosition: theme.styles.page.backgroundPosition || 'center',
-    backgroundRepeat: theme.styles.page.backgroundRepeat || 'no-repeat',
+    backgroundSize: theme.styles.page.backgroundSize || "cover",
+    backgroundPosition: theme.styles.page.backgroundPosition || "center",
+    backgroundRepeat: theme.styles.page.backgroundRepeat || "no-repeat",
     opacity: theme.styles.page.backgroundImageOpacity ?? 1,
-    pointerEvents: 'none' as const,
+    pointerEvents: "none" as const,
     zIndex: 0,
   };
 }

@@ -1,28 +1,40 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { useStore } from '@/lib/store/index';
-import type { LayoutSelectionType, TextBlock, ImageElementType, SectionStylesType } from '@/features/newsletter/types';
-import type { ThemeType } from '@/lib/themes';
-import { CSSProperties } from 'react';
-import { updateHorizontalLinePositions } from '@/features/newsletter/components/utils/positionUtils';
+import { type CSSProperties, useCallback, useEffect, useId, useRef, useState } from "react";
+import CalendarGrid from "@/features/calendar/components/CalendarGrid";
+import { HorizontalLinesLayer } from "@/features/newsletter/components/HorizontalLinesLayer";
+import { ImagesLayer } from "@/features/newsletter/components/ImagesLayer";
+import { NewsletterHeader } from "@/features/newsletter/components/NewsletterHeader";
 
 // Component imports
-import { PageBackground } from '@/features/newsletter/components/PageBackground';
-import { NewsletterHeader } from '@/features/newsletter/components/NewsletterHeader';
-import { SectionsContainer } from '@/features/newsletter/components/SectionsContainer';
-import { HorizontalLinesLayer } from '@/features/newsletter/components/HorizontalLinesLayer';
-import { ImagesLayer } from '@/features/newsletter/components/ImagesLayer';
-import { Watermark } from './Watermark';
-import { ZoomControlsComponent } from './ZoomControls';
-import CalendarGrid from '@/features/calendar/components/CalendarGrid';
+import { PageBackground } from "@/features/newsletter/components/PageBackground";
+import { SectionsContainer } from "@/features/newsletter/components/SectionsContainer";
+import { updateHorizontalLinePositions } from "@/features/newsletter/components/utils/positionUtils";
+import type {
+  ImageElementType,
+  LayoutSelectionType,
+  SectionStylesType,
+  TextBlockType,
+} from "@/features/newsletter/types";
+import { useStore } from "@/lib/store/index";
+import type { ThemeType } from "@/lib/themes";
+import { Watermark } from "./Watermark";
+import { ZoomControlsComponent } from "./ZoomControls";
 
 interface CanvasPanelProps {
   title: string;
   date: string;
-  textBlocks: TextBlock[];
+  textBlocks: TextBlockType[];
   images: ImageElementType[];
   layoutSelection: LayoutSelectionType;
-  onSelectElement: (id: string | null, type?: 'text' | 'image' | 'horizontalLine' | 'calendarDate', subType?: 'title' | 'content') => void;
-  selectedElement: { id: string; type: 'text' | 'image' | 'horizontalLine' | 'calendarDate'; subType?: 'title' | 'content' } | null;
+  onSelectElement: (
+    id: string | null,
+    type?: "text" | "image" | "horizontalLine" | "calendarDate",
+    subType?: "title" | "content",
+  ) => void;
+  selectedElement: {
+    id: string;
+    type: "text" | "image" | "horizontalLine" | "calendarDate";
+    subType?: "title" | "content";
+  } | null;
   sectionStyles: SectionStylesType;
   theme: ThemeType;
   onUpdateImage: (id: string, newProps: Partial<ImageElementType>) => void;
@@ -50,21 +62,21 @@ export function CanvasPanel({
   onUpdateImage,
 }: CanvasPanelProps) {
   // Debug hook to help troubleshoot layout issues
-  
+
   // Store dependencies
-  const horizontalLines = useStore(state => state.horizontalLines);
-  const updateHorizontalLine = useStore(state => state.updateHorizontalLine);
-  const denseMode = useStore(state => state.denseMode);
+  const horizontalLines = useStore((state) => state.horizontalLines);
+  const updateHorizontalLine = useStore((state) => state.updateHorizontalLine);
+  const denseMode = useStore((state) => state.denseMode);
   const { swapTextBlocks } = useStore.getState();
 
   // Zoom functionality
   const [zoom, setZoom] = useState(1);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLButtonElement | null>(null);
   const handleZoomIn = useCallback(() => {
-    setZoom(prev => Math.min(prev + 0.25, 2));
+    setZoom((prev) => Math.min(prev + 0.25, 2));
   }, []);
   const handleZoomOut = useCallback(() => {
-    setZoom(prev => Math.max(prev - 0.25, 0.25));
+    setZoom((prev) => Math.max(prev - 0.25, 0.25));
   }, []);
   const handleResetZoom = useCallback(() => {
     setZoom(1);
@@ -72,18 +84,22 @@ export function CanvasPanel({
 
   // Auto-adjust zoom & centering when switching to / from calendar layout
   useEffect(() => {
-    const isCalendar = layoutSelection.base.type === 'calendar';
+    const isCalendar = layoutSelection.base.type === "calendar";
     if (isCalendar) {
       // Set to 75% zoom specifically for calendar for better overview
-      setZoom(prev => (prev !== 0.75 ? 0.75 : prev));
+      setZoom((prev) => (prev !== 0.75 ? 0.75 : prev));
       // Center after next paint to ensure dimensions available
       requestAnimationFrame(() => {
         const sc = scrollContainerRef.current;
-        const canvasEl = sc?.querySelector('#newsletter-canvas')?.parentElement as HTMLDivElement | null;
+        const canvasEl = sc?.querySelector("#newsletter-canvas")?.parentElement as HTMLDivElement | null;
         if (sc && canvasEl) {
           const targetScrollLeft = Math.max(0, (canvasEl.scrollWidth - sc.clientWidth) / 2);
           const targetScrollTop = Math.max(0, (canvasEl.scrollHeight - sc.clientHeight) / 2);
-          sc.scrollTo({ left: targetScrollLeft, top: targetScrollTop, behavior: 'smooth' });
+          sc.scrollTo({
+            left: targetScrollLeft,
+            top: targetScrollTop,
+            behavior: "smooth",
+          });
         }
       });
     }
@@ -93,28 +109,27 @@ export function CanvasPanel({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const activeElement = document.activeElement as HTMLElement | null;
-      
+
       // Don't handle shortcuts when user is typing in input fields
-      if (activeElement && (
-        activeElement.tagName === 'INPUT' || 
-        activeElement.tagName === 'TEXTAREA' || 
-        activeElement.isContentEditable
-      )) {
+      if (
+        activeElement &&
+        (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA" || activeElement.isContentEditable)
+      ) {
         return;
       }
 
-  if ((e.key === 'Delete') && selectedElement?.id) {
+      if (e.key === "Delete" && selectedElement?.id) {
         // Only delete supported element types
-        if (['text', 'image', 'horizontalLine'].includes(selectedElement.type)) {
-          if (typeof window !== 'undefined' && window.dispatchEvent) {
-            window.dispatchEvent(new CustomEvent('delete-element', { detail: selectedElement }));
+        if (["text", "image", "horizontalLine"].includes(selectedElement.type)) {
+          if (typeof window !== "undefined" && window.dispatchEvent) {
+            window.dispatchEvent(new CustomEvent("delete-element", { detail: selectedElement }));
           }
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedElement]);
 
   // Text block swapping
@@ -126,18 +141,14 @@ export function CanvasPanel({
       }
     };
 
-    window.addEventListener('swap-text-blocks', handleSwapEvent as EventListener);
-    return () => window.removeEventListener('swap-text-blocks', handleSwapEvent as EventListener);
+    window.addEventListener("swap-text-blocks", handleSwapEvent as EventListener);
+    return () => window.removeEventListener("swap-text-blocks", handleSwapEvent as EventListener);
   }, [swapTextBlocks]);
 
   // Update horizontal line positions based on layout (not DOM measurements)
   useEffect(() => {
     const timer = setTimeout(() => {
-      updateHorizontalLinePositions(
-        horizontalLines,
-        layoutSelection,
-        updateHorizontalLine
-      );
+      updateHorizontalLinePositions(horizontalLines, layoutSelection, updateHorizontalLine);
     }, 50); // Small delay to ensure state is updated
 
     return () => clearTimeout(timer);
@@ -145,25 +156,25 @@ export function CanvasPanel({
 
   // Layout and styling
   const { base, variant } = layoutSelection;
-  const isCalendarLayout = base.type === 'calendar';
-  const isLandscape = variant.orientation === 'landscape' || base.orientation === 'landscape';
+  const isCalendarLayout = base.type === "calendar";
+  const isLandscape = variant.orientation === "landscape" || base.orientation === "landscape";
 
   const pageStyle: CSSProperties = {
-    display: 'grid',
+    display: "grid",
     gridTemplateAreas: base.gridTemplateAreas,
     gridTemplateColumns: variant.gridTemplateColumns,
     gridTemplateRows: variant.gridTemplateRows,
-    rowGap: denseMode ? '12px' : '24px',
-    columnGap: denseMode ? '12px' : '24px',
+    rowGap: denseMode ? "12px" : "24px",
+    columnGap: denseMode ? "12px" : "24px",
     backgroundColor: theme.styles.page.backgroundColor,
-    position: 'relative',
-    width: '100%',
-    height: '100%',
+    position: "relative",
+    width: "100%",
+    height: "100%",
   };
 
   // Adjust canvas dimensions for landscape orientation
-  const canvasWidth = isLandscape ? '11in' : '8.5in';
-  const canvasHeight = isLandscape ? '8.5in' : '11in';
+  const canvasWidth = isLandscape ? "11in" : "8.5in";
+  const canvasHeight = isLandscape ? "8.5in" : "11in";
   const canvasWidthPx = isLandscape ? 11 * 96 : 8.5 * 96;
   const canvasHeightPx = isLandscape ? 8.5 * 96 : 11 * 96;
 
@@ -179,7 +190,7 @@ export function CanvasPanel({
   return (
     <div className="relative h-full bg-gray-100 dark:bg-gray-800">
       {/* Zoom Controls */}
-      <ZoomControlsComponent 
+      <ZoomControlsComponent
         zoom={zoom}
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
@@ -187,37 +198,36 @@ export function CanvasPanel({
       />
 
       {/* Scrollable Canvas Container */}
-  <div ref={scrollContainerRef} className="h-full overflow-auto p-8" onClick={handleCanvasClick}>
-        <div 
-          className="mx-auto shadow-lg bg-white origin-top" 
+      <button
+        type="button"
+        ref={scrollContainerRef}
+        className="h-full overflow-auto p-8"
+        onClick={handleCanvasClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            handleCanvasClick();
+          }
+        }}
+        tabIndex={0}
+      >
+        <div
+          className="mx-auto shadow-lg bg-white origin-top"
           style={{
             width: canvasWidth,
             height: canvasHeight,
-            ...canvasStyle
+            ...canvasStyle,
           }}
         >
-          <div 
-            id="newsletter-canvas" 
-            className="w-full h-full p-8 outline-none" 
-            style={pageStyle}
-            tabIndex={-1}
-          >
+          <div id={useId()} className="w-full h-full p-8 outline-none" style={pageStyle} tabIndex={-1}>
             {/* Background Layer */}
             <PageBackground theme={theme} />
 
             {/* Header Layer - Only show for newsletter layouts */}
-            {!isCalendarLayout && (
-              <NewsletterHeader
-                title={title}
-                date={date}
-                theme={theme}
-                denseMode={denseMode}
-              />
-            )}
+            {!isCalendarLayout && <NewsletterHeader title={title} date={date} theme={theme} denseMode={denseMode} />}
 
             {/* Calendar Layer - Only for calendar layouts */}
             {isCalendarLayout && (
-              <div style={{ gridArea: 'calendar', position: 'relative' }}>
+              <div style={{ gridArea: "calendar", position: "relative" }}>
                 <CalendarGrid
                   containerWidth={canvasWidthPx - 64} // Subtract padding
                   containerHeight={canvasHeightPx - 64} // No header space needed
@@ -261,7 +271,7 @@ export function CanvasPanel({
             <Watermark theme={theme} />
           </div>
         </div>
-      </div>
+      </button>
     </div>
   );
 }

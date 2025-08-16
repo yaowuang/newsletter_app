@@ -1,29 +1,11 @@
 // Calendar-specific types and helpers for the monthly calendar layout
+import type { CalendarStylesType } from "../types";
+
 export interface CalendarData {
   selectedDate: Date;
   customEvents?: CalendarEvent[];
   cellContents?: { [dateKey: string]: string };
-  calendarStyles?: CalendarStyles;
-}
-
-export interface CalendarStyles {
-  headerFontFamily?: string;
-  headerColor?: string;
-  headerBackgroundColor?: string;
-  weekdayFontFamily?: string;
-  weekdayColor?: string;
-  weekdayBackgroundColor?: string;
-  cellFontFamily?: string;
-  cellTextColor?: string;
-  cellBackgroundColor?: string;
-  cellBorderColor?: string;
-  weekendCellTextColor?: string;
-  weekendCellBackgroundColor?: string;
-  nonCurrentMonthCellTextColor?: string;
-  nonCurrentMonthCellBackgroundColor?: string;
-  nonCurrentMonthOpacity?: number;
-  weekNumberTextColor?: string;
-  weekNumberBackgroundColor?: string;
+  calendarStyles?: CalendarStylesType;
 }
 
 export interface CalendarEvent {
@@ -86,7 +68,7 @@ export function generateCalendarGrid(date: Date): CalendarGrid {
         isToday,
         isWeekend,
         events: [],
-        weekNumber: week + 1
+        weekNumber: week + 1,
       });
       currentCellIndex++;
     }
@@ -95,28 +77,43 @@ export function generateCalendarGrid(date: Date): CalendarGrid {
   return {
     month,
     year,
-    weeks
+    weeks,
   };
 }
 
-export function formatCalendarTitle(date: Date, monthFormat: 'full' | 'short' | 'numeric' = 'full', yearFormat: 'full' | 'short' = 'full'): string {
+export function formatCalendarTitle(
+  date: Date,
+  monthFormat: "full" | "short" | "numeric" = "full",
+  yearFormat: "full" | "short" = "full",
+): string {
   const monthNames = {
-    full: ['January', 'February', 'March', 'April', 'May', 'June',
-           'July', 'August', 'September', 'October', 'November', 'December'],
-    short: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    numeric: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+    full: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+    short: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    numeric: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
   };
   const month = monthNames[monthFormat][date.getMonth()];
-  const year = yearFormat === 'full' ? date.getFullYear().toString() : date.getFullYear().toString().slice(-2);
+  const year = yearFormat === "full" ? date.getFullYear().toString() : date.getFullYear().toString().slice(-2);
   return `${month} ${year}`;
 }
 
-export function getWeekdayNames(format: 'long' | 'short' | 'narrow' = 'short'): string[] {
+export function getWeekdayNames(format: "long" | "short" | "narrow" = "short"): string[] {
   const weekdays = {
-    long: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-    short: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    narrow: ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+    long: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    short: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    narrow: ["S", "M", "T", "W", "T", "F", "S"],
   };
   return weekdays[format];
 }
